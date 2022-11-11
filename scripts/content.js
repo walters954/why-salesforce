@@ -19,14 +19,21 @@ function init(setupTabUl){
 
 }
 
-function timeoutFunction() {
-    const setupTabUl  = document.getElementsByClassName("tabBarItems slds-grid")[0]
+function delayLoadSetupTabs(count) {
+    const setupTabUl  = document.getElementsByClassName("tabBarItems slds-grid")[0];
+    count++;
+
+    if (count > 5){
+        console.log('Why Salesforce - failed to find setup tab.');
+        return;
+    }
+
     if (!setupTabUl) {
-        setTimeout(timeoutFunction, 3000);
+        setTimeout(function() { delayLoadSetupTabs(0); }, 3000);
     } else {
         init(setupTabUl);
     }
 }
 
-setTimeout(timeoutFunction, 3000);
+setTimeout(function() { delayLoadSetupTabs(0); }, 3000);
 
