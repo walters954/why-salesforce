@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Why Salesforce",
     "version": "1.0",
-    "description": "Stuff that Salesforce should have added already...",
+    "description": "Stuff that Salesforce should have added already... Adding flow and user tabs into setup.",
     "content_scripts": [
         {
           "js": ["scripts/content.js"],
@@ -11,5 +11,11 @@
           ],
           "run_at": "document_idle"
         }
-      ]
+      ],
+      "icons": {
+        "16": "images/whysf16.png",
+        "32": "images/whysf32.png",
+        "48": "images/whysf48.png",
+        "128": "images/whysf128.png"
+      }
   }

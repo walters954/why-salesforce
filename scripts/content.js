@@ -19,8 +19,6 @@ function init(setupTabUl){
 
 }
 
-var counter = 0;
-
 function timeoutFunction() {
     const setupTabUl  = document.getElementsByClassName("tabBarItems slds-grid")[0]
     if (!setupTabUl) {
