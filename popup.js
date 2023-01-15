@@ -47,7 +47,7 @@ function processTabs(){
         console.log(tab);
         
         let tabTitle = tab.querySelector('.tabTitle').value;
-        let url = tab.querySelector('.tabTitle').value;
+        let url = tab.querySelector('.url').value;
 
         if (tabTitle && url){
             tabs.push({tabTitle, url});
