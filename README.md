@@ -6,3 +6,6 @@ https://chrome.google.com/webstore/detail/why-salesforce/ghakkjfjpnhpggbkfkeplbe
 Roadmap
 - Ability to customize tab
 - Dark mode for flows
+- Org specific tab customization
+- Highlight tab when user is on that url
+- Better solutions for waiting until Salesforce setup is completely loaded

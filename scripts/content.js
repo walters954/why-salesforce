@@ -1,20 +1,19 @@
 function init(setupTabUl){
     if (setupTabUl){
-        //TODO if select active the tabs and deactivate other tabs
-        //TODO make in popup menu
-        let flowSetupTabHTML = `
-        <li role="presentation" style="" class="oneConsoleTabItem tabItem slds-context-bar__item borderRight  navexConsoleTabItem" data-aura-class="navexConsoleTabItem">
-            <a role="tab" tabindex="-1" title="Flow" aria-selected="false" href="/lightning/setup/Flows/home" class="tabHeader slds-context-bar__label-action " >
-                <span class="title slds-truncate" >Flow</span>
-            </a>
-        </li>
-        <li role="presentation" style="" class="oneConsoleTabItem tabItem slds-context-bar__item borderRight  navexConsoleTabItem" data-aura-class="navexConsoleTabItem">
-            <a role="tab" tabindex="-1" title="User" aria-selected="false" href="/lightning/setup/ManageUsers/home" class="tabHeader slds-context-bar__label-action " >
-                <span class="title slds-truncate" >User</span>
-            </a>
-        </li>
-        `;
-        setupTabUl.insertAdjacentHTML('beforeend', flowSetupTabHTML);
+        let rows = [];
+        chrome.storage.sync.get(['sfmWhySF'], function(items) {
+            console.log('Settings retrieved', items);
+            const rowObj = items['sfmWhySF'];
+            for (const rowId in rowObj) {
+                console.log(`${rowId}: ${rowObj[rowId]}`);
+                let row = rowObj[rowId];
+                rows.push(generateRowTemplate(row.tabTitle,row.url))
+            }
+
+            console.log(rows);
+            setupTabUl.insertAdjacentHTML('beforeend', rows.join(''));
+        });
+        
     }
 
 }
@@ -37,3 +36,11 @@ function delayLoadSetupTabs(count) {
 
 setTimeout(function() { delayLoadSetupTabs(0); }, 3000);
 
+
+function generateRowTemplate(tabTitle, url){
+    return `<li role="presentation" style="" class="oneConsoleTabItem tabItem slds-context-bar__item borderRight  navexConsoleTabItem" data-aura-class="navexConsoleTabItem">
+                <a role="tab" tabindex="-1" title="${tabTitle}" aria-selected="false" href="${url}" class="tabHeader slds-context-bar__label-action " >
+                    <span class="title slds-truncate" >${tabTitle}</span>
+                </a>
+            </li>`
+}

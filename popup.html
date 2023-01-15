@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+    <button class="save">Save</button>
+    <button class="add">Add</button>
+    <ul class="tabs"></ul>
+
+    <template id="li_template">
+      <li class="tab">
+        <input
+            type="text"
+            id="tabTitle0"
+            name="tabTitle"
+            class="tabTitle"
+            placeholder="tabTitle"
+        />
+        <input 
+            type="url" 
+            id="url0" 
+            name="url" 
+            class="url" 
+            placeholder="url"
+        />
+        <button class="delete">Delete</button>
+      </li>
+    </template>
+
+    <script src="./popup.js" type="module"></script>
+  </body>
+</html>
