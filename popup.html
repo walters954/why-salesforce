@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./popup.css"/>
+        <link rel="stylesheet" href="./assets/salesforce-lightning-design-system.sanitized.css"/>
+    </head>
+<body class="slds-p-around_none">
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container" title="Why Salesforce">
+                        <img src="./images/whysf32.png"/>
+                        <span class="slds-assistive-text">Why Salesforce</span>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <span>Why Salesforce</span>
+                    </h2>
+                </div>
+                <div class="slds-no-flex">
+                    <button class="save slds-button slds-button_brand">Save</button>
+                    <button class="add slds-button slds-button_neutral">Add</button>
+                </div>
+            </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner slds-p-around_none">
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                <thead>
+                    <tr>
+                        <th class="" scope="col">
+                            <div title="Tab Name">Tab Name</div>
+                        </th>
+                        <th scope="col">
+                            <div title="Tab Url">Tab Url</div>
+                        </th>
+                        <th scope="col" style="width: 3.25rem">
+                            <div class="slds-assistive-text" title="Actions">Actions</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="tabs">
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+    <template id="tr_template">
+        <tr class="tab">
+            <td data-label="Tab Name" scope="row">
+                <div class="slds-form-element__control">
+                <input
+                    type="text"
+                    name="tabTitle"
+                    class="tabTitle slds-input"
+                    placeholder="Flow"
+                />
+            </div>
+            </td>
+            <td data-label="Tab Url">
+                <div class="slds-form-element__control">
+                    <input
+                    type="url"
+                    name="url"
+                    class="url slds-input"
+                    placeholder="/lightning/setup/Flows/home"
+                    />
+                </div>
+                
+            </td>
+            <td>
+                <button class="delete slds-button slds-button_destructive">Delete</button>
+            </td>
+        </tr>
+    </template>
+
+    <script src="./popup.js" type="module"></script>
+</body>
+</html>
