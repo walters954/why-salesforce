@@ -2,15 +2,11 @@ function init(setupTabUl){
     if (setupTabUl){
         let rows = [];
         chrome.storage.sync.get(['sfmWhySF'], function(items) {
-            console.log('Settings retrieved', items);
             const rowObj = items['sfmWhySF'];
             for (const rowId in rowObj) {
-                console.log(`${rowId}: ${rowObj[rowId]}`);
                 let row = rowObj[rowId];
                 rows.push(generateRowTemplate(row.tabTitle,row.url))
             }
-
-            console.log(rows);
             setupTabUl.insertAdjacentHTML('beforeend', rows.join(''));
         });
         
