@@ -7,14 +7,28 @@
         <link rel="stylesheet" href="./popup.css"/>
         <link rel="stylesheet" href="./assets/salesforce-lightning-design-system.sanitized.css"/>
     </head>
-<body>
-    <div class="slds-p-top_large slds-p-bottom_large">
-        <div class="slds-float_right">
-            <button class="save slds-button slds-button_brand">Save</button>
-            <button class="add slds-button slds-button_neutral">Add</button>
+<body class="slds-p-around_none">
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container" title="Why Salesforce">
+                        <img src="./images/whysf32.png"/>
+                        <span class="slds-assistive-text">Why Salesforce</span>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <span>Why Salesforce</span>
+                    </h2>
+                </div>
+                <div class="slds-no-flex">
+                    <button class="save slds-button slds-button_brand">Save</button>
+                    <button class="add slds-button slds-button_neutral">Add</button>
+                </div>
+            </header>
         </div>
-
-        <div class="slds-p-top_large slds-m-top_large">
+        <div class="slds-card__body slds-card__body_inner slds-p-around_none">
             <table class="slds-table slds-table_cell-buffer slds-table_bordered">
                 <thead>
                     <tr>
@@ -25,17 +39,15 @@
                             <div title="Tab Url">Tab Url</div>
                         </th>
                         <th scope="col" style="width: 3.25rem">
-                            <div class="slds-assistive-text" title="Actions">
-                                Actions
-                            </div>
+                            <div class="slds-assistive-text" title="Actions">Actions</div>
                         </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="tabs">
                 </tbody>
             </table>
         </div>
-    </div>
+    </article>
 
     <template id="tr_template">
         <tr class="tab">
@@ -45,7 +57,7 @@
                     type="text"
                     name="tabTitle"
                     class="tabTitle slds-input"
-                    placeholder="User"
+                    placeholder="Flow"
                 />
             </div>
             </td>
