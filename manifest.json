@@ -6,7 +6,7 @@
     "description": "Stuff that Salesforce should have added already... Adding flow and user tabs into setup.",
     "content_scripts": [
         {
-          "js": ["scripts/content.js"],
+          "js": ["content.js"],
           "matches": [
             "*://*.lightning.force.com/lightning/setup/*"
           ],

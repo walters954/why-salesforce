@@ -1,10 +1,11 @@
 'use strict';
+const tabTemplate = 'tr_template';
+const tabAppendElement = 'tbody';
 loadTabs();
-
 
 function loadTabs(){
     console.log('loadTabs');  
-    const template = document.getElementById("li_template");
+    const template = document.getElementById(tabTemplate);
     const elements = new Set();
 
     chrome.storage.sync.get(['sfmWhySF'], function(items) {
@@ -20,17 +21,17 @@ function loadTabs(){
         }
 
         console.log(elements);
-        document.querySelector("ul").append(...elements);
+        document.querySelector(tabAppendElement).append(...elements);
     });
 
 }
 
 function addTab(){
     console.log('add tab');
-    const template = document.getElementById("li_template");
+    const template = document.getElementById(tabTemplate);
     const element = template.content.firstElementChild.cloneNode(true);
     element.querySelector(".delete").addEventListener("click", deleteTab);
-    document.querySelector("ul").append(element);
+    document.querySelector(tabAppendElement).append(element);
 }
 
 function saveTab(){

@@ -5,9 +5,12 @@ https://chrome.google.com/webstore/detail/why-salesforce/ghakkjfjpnhpggbkfkeplbe
 
 Roadmap
 - [x] Ability to customize tab
-    - Salesforce SLDS
+    - [x] Salesforce SLDS
+    - Feedback on save
     - Update tabs onSave without refresh 
 - Dark mode for flows
 - Org specific tab customization
 - Highlight tab when user is on that url
 - Better solutions for waiting until Salesforce setup is completely loaded
+- Utils class for templates or other shared code
+- Minify SLDS files
