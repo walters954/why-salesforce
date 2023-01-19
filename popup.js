@@ -66,3 +66,16 @@ saveButton.addEventListener("click", saveTab);
 
 const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
+
+const clearButton = document.querySelector(".clear");
+clearButton.addEventListener("click", clearChromeStorage);
+
+function clearChromeStorage(){
+    chrome.storage.sync.remove(["sfmWhySF"],function(){
+        console.log('removed chrome storage key sfmWhySF');
+        var error = chrome.runtime.lastError;
+           if (error) {
+               console.error(error);
+           }
+       })
+}
