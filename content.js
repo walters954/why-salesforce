@@ -2,7 +2,12 @@ function init(setupTabUl){
     if (setupTabUl){
         let rows = [];
         chrome.storage.sync.get(['sfmWhySF'], function(items) {
-            const rowObj = items['sfmWhySF'];
+            let rowObj = items['sfmWhySF'];
+            console.log(rowObj);
+            if (!rowObj) {
+                //Did not find data inside chrome storage
+                rowObj = initTabs();
+            }
             for (const rowId in rowObj) {
                 let row = rowObj[rowId];
                 rows.push(generateRowTemplate(row.tabTitle,row.url))
@@ -39,4 +44,11 @@ function generateRowTemplate(tabTitle, url){
                     <span class="title slds-truncate" >${tabTitle}</span>
                 </a>
             </li>`
+}
+
+function initTabs(){
+    return [
+        {tabTitle : 'Flow', url: '/lightning/setup/Flows/home'},
+        {tabTitle : 'User', url: '/lightning/setup/ManageUsers/home'}
+    ]
 }
