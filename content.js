@@ -5,7 +5,6 @@ function init(setupTabUl){
         let rows = [];
         chrome.storage.sync.get([storageKey], function(items) {
             let rowObj = items[storageKey];
-            console.log('retrieved from chrome storage', rowObj);
 
             if (!rowObj) { //Did not find data inside chrome storage
                 rowObj = initTabs();
@@ -50,7 +49,6 @@ function generateRowTemplate(tabTitle, url){
 }
 
 function initTabs(){
-    console.log('Create initial set of tabs');
     let tabs = [
         {tabTitle : 'Flow', url: '/lightning/setup/Flows/home'},
         {tabTitle : 'User', url: '/lightning/setup/ManageUsers/home'}
