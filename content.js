@@ -1,8 +1,15 @@
+const storageKey = 'sfmWhySF';
+
 function init(setupTabUl){
     if (setupTabUl){
         let rows = [];
-        chrome.storage.sync.get(['sfmWhySF'], function(items) {
-            const rowObj = items['sfmWhySF'];
+        chrome.storage.sync.get([storageKey], function(items) {
+            let rowObj = items[storageKey];
+
+            if (!rowObj) { //Did not find data inside chrome storage
+                rowObj = initTabs();
+            }
+
             for (const rowId in rowObj) {
                 let row = rowObj[rowId];
                 rows.push(generateRowTemplate(row.tabTitle,row.url))
@@ -39,4 +46,17 @@ function generateRowTemplate(tabTitle, url){
                     <span class="title slds-truncate" >${tabTitle}</span>
                 </a>
             </li>`
+}
+
+function initTabs(){
+    let tabs = [
+        {tabTitle : 'Flow', url: '/lightning/setup/Flows/home'},
+        {tabTitle : 'User', url: '/lightning/setup/ManageUsers/home'}
+    ]
+
+    chrome.storage.sync.set({storageKey: tabs}, function() {
+        //TODO combine with popup.js with background service
+    });
+
+    return tabs;
 }

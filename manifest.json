@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Why Salesforce",
-    "version": "1.1",
+    "version": "1.2",
     "permissions": ["storage"],
     "description": "Stuff that Salesforce should have added already... Adding flow and user tabs into setup.",
     "content_scripts": [

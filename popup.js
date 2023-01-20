@@ -66,3 +66,13 @@ saveButton.addEventListener("click", saveTab);
 
 const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
+
+
+function clearChromeStorage(){
+    chrome.storage.sync.remove(["sfmWhySF"],function(){
+        var error = chrome.runtime.lastError;
+           if (error) {
+               console.error(error);
+           }
+       })
+}
