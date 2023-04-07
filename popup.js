@@ -9,8 +9,10 @@ function loadTabs(){
 
     chrome.storage.sync.get(['sfmWhySF'], function(items) {
         const rowObj = items['sfmWhySF'];
+        if(rowObj == null)
+            return;
         for (const rowId in rowObj) {
-            let tab = rowObj[rowId];
+            const tab = rowObj[rowId];
             const element = template.content.firstElementChild.cloneNode(true);
             element.querySelector(".tabTitle").value = tab.tabTitle;
             element.querySelector(".url").value = tab.url;
@@ -30,18 +32,18 @@ function addTab(){
 }
 
 function saveTab(){
-    let validTabs = processTabs();
+    const validTabs = processTabs();
     setChromeStorage(validTabs);
 }
 
 function processTabs(){
-    let tabs = [];
+    const tabs = [];
     const tabElements = document.getElementsByClassName('tab');
     Array.from(tabElements).forEach(function (tab) {        
-        let tabTitle = tab.querySelector('.tabTitle').value;
-        let url = tab.querySelector('.url').value;
+        const tabTitle = tab.querySelector('.tabTitle').value;
+        const url = tab.querySelector('.url').value;
 
-        if (tabTitle && url){
+        if (tabTitle != null && url != null){
             tabs.push({tabTitle, url});
         }
     });
@@ -70,9 +72,9 @@ addButton.addEventListener("click", addTab);
 
 function clearChromeStorage(){
     chrome.storage.sync.remove(["sfmWhySF"],function(){
-        var error = chrome.runtime.lastError;
-           if (error) {
-               console.error(error);
-           }
-       })
+       const error = chrome.runtime.lastError;
+       if (error) {
+           console.error(error);
+       }
+   })
 }

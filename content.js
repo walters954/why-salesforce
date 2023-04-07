@@ -1,37 +1,37 @@
 const storageKey = 'sfmWhySF';
 
 function init(setupTabUl){
-    if (setupTabUl){
-        let rows = [];
-        chrome.storage.sync.get([storageKey], function(items) {
-            let rowObj = items[storageKey];
+    if (setupTabUl == null)
+        return;
+    const rows = [];
+    chrome.storage.sync.get([storageKey], function(items) {
+        let rowObj = items[storageKey];
 
-            if (!rowObj) { //Did not find data inside chrome storage
-                rowObj = initTabs();
-            }
+        if (rowObj == null) { //Did not find data inside chrome storage
+            rowObj = initTabs();
+        }
 
-            for (const rowId in rowObj) {
-                let row = rowObj[rowId];
-                rows.push(generateRowTemplate(row.tabTitle,row.url))
-            }
-            setupTabUl.insertAdjacentHTML('beforeend', rows.join(''));
-        });
+        for (const rowId in rowObj) {
+            const row = rowObj[rowId];
+            rows.push(generateRowTemplate(row.tabTitle,row.url))
+        }
+        setupTabUl.insertAdjacentHTML('beforeend', rows.join(''));
+    });
         
-    }
 
 }
 
 function delayLoadSetupTabs(count) {
     const setupTabUl  = document.getElementsByClassName("tabBarItems slds-grid")[0];
-    count++;
 
     if (count > 5){
         console.log('Why Salesforce - failed to find setup tab.');
         return;
     }
+    count++;
 
-    if (!setupTabUl) {
-        setTimeout(function() { delayLoadSetupTabs(0); }, 3000);
+    if (setupTabUl == null) {
+        setTimeout(function() { delayLoadSetupTabs(count); }, 3000);
     } else {
         init(setupTabUl);
     }
@@ -49,7 +49,7 @@ function generateRowTemplate(tabTitle, url){
 }
 
 function initTabs(){
-    let tabs = [
+    const tabs = [
         {tabTitle : 'Flow', url: '/lightning/setup/Flows/home'},
         {tabTitle : 'User', url: '/lightning/setup/ManageUsers/home'}
     ]
