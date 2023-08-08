@@ -1,9 +1,9 @@
 # why-salesforce
-Chrome extension used to add Flow and User tab into the Salesforce setup. 
+This extension allows users to create custom tabs in Setup for their most-used settings
 
-https://chrome.google.com/webstore/detail/why-salesforce/ghakkjfjpnhpggbkfkeplbefkipfoaod
+[Chrome Web Store](https://chrome.google.com/webstore/detail/why-salesforce/ghakkjfjpnhpggbkfkeplbefkipfoaod)
 
-Roadmap
+### Roadmap
 - [x] Ability to customize tab
     - [x] Salesforce SLDS
     - Feedback on save and delete
@@ -16,3 +16,7 @@ Roadmap
 - Open full urls in new tab
 - Better solutions for waiting until Salesforce setup is completely loaded
 - Utils class for templates or other shared code
+
+Contributors
+- [Warren Walters](https://www.linkedin.com/in/walters954/)
+- [Chris Rouse (Firefox port)](https://www.linkedin.com/in/chris-rouse/)
