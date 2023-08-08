@@ -3,10 +3,10 @@ const storageKey = 'sfmWhySF';
 function init(setupTabUl){
     if (setupTabUl){
         let rows = [];
-        chrome.storage.sync.get([storageKey], function(items) {
+        browser.storage.sync.get([storageKey], function(items) {
             let rowObj = items[storageKey];
 
-            if (!rowObj) { //Did not find data inside chrome storage
+            if (!rowObj) { //Did not find data inside browser storage
                 rowObj = initTabs();
             }
 
@@ -18,7 +18,6 @@ function init(setupTabUl){
         });
         
     }
-
 }
 
 function delayLoadSetupTabs(count) {
@@ -54,7 +53,7 @@ function initTabs(){
         {tabTitle : 'User', url: '/lightning/setup/ManageUsers/home'}
     ]
 
-    chrome.storage.sync.set({storageKey: tabs}, function() {
+    browser.storage.sync.set({storageKey: tabs}, function() {
         //TODO combine with popup.js with background service
     });
 

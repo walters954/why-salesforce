@@ -7,7 +7,7 @@ function loadTabs(){
     const template = document.getElementById(tabTemplate);
     const elements = new Set();
 
-    chrome.storage.sync.get(['sfmWhySF'], function(items) {
+    browser.storage.sync.get(['sfmWhySF'], function(items) {
         const rowObj = items['sfmWhySF'];
         for (const rowId in rowObj) {
             let tab = rowObj[rowId];
@@ -31,7 +31,7 @@ function addTab(){
 
 function saveTab(){
     let validTabs = processTabs();
-    setChromeStorage(validTabs);
+    setBrowserStorage(validTabs);
 }
 
 function processTabs(){
@@ -53,9 +53,9 @@ function deleteTab(){
     saveTab();
 }
 
-function setChromeStorage(tabs){
-    // Save it using the Chrome extension storage API.
-    chrome.storage.sync.set({'sfmWhySF': tabs}, function() {
+function setBrowserStorage(tabs){
+    // Save it using the Browser extension storage API.
+    browser.storage.sync.set({'sfmWhySF': tabs}, function() {
         //TODO notify user of save
     });
 }
@@ -68,9 +68,9 @@ const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
 
 
-function clearChromeStorage(){
-    chrome.storage.sync.remove(["sfmWhySF"],function(){
-        var error = chrome.runtime.lastError;
+function clearBrowserStorage(){
+    browser.storage.sync.remove(["sfmWhySF"],function(){
+        var error = browser.runtime.lastError;
            if (error) {
                console.error(error);
            }
