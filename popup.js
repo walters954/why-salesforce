@@ -1,51 +1,23 @@
-'use strict';
-const tabTemplate = 'tr_template';
-const tabAppendElement = 'tbody';
-loadTabs();
+"use strict";
+const tabTemplate = document.getElementById("tr_template");
+const tabAppendElement = document.querySelector("tbody");
+const saveButton = document.querySelector(".save");
+const addButton = document.querySelector(".add");
+const whyKey = "sfmWhySF";
 
-function loadTabs(){
-    const template = document.getElementById(tabTemplate);
-    const elements = new Set();
-
-    chrome.storage.sync.get(['sfmWhySF'], function(items) {
-        const rowObj = items['sfmWhySF'];
-        for (const rowId in rowObj) {
-            let tab = rowObj[rowId];
-            const element = template.content.firstElementChild.cloneNode(true);
-            element.querySelector(".tabTitle").value = tab.tabTitle;
-            element.querySelector(".url").value = tab.url;
-            element.querySelector(".delete").addEventListener("click", deleteTab);
-            elements.add(element);
-        }
-        document.querySelector(tabAppendElement).append(...elements);
+function getStorage(callback){
+    chrome.storage.sync.get([whyKey], function(items) {
+        console.log(`get ${items}`);
+        callback(items);
     });
-
 }
 
-function addTab(){
-    const template = document.getElementById(tabTemplate);
-    const element = template.content.firstElementChild.cloneNode(true);
-    element.querySelector(".delete").addEventListener("click", deleteTab);
-    document.querySelector(tabAppendElement).append(element);
-}
-
-function saveTab(){
-    let validTabs = processTabs();
-    setChromeStorage(validTabs);
-}
-
-function processTabs(){
-    let tabs = [];
-    const tabElements = document.getElementsByClassName('tab');
-    Array.from(tabElements).forEach(function (tab) {        
-        let tabTitle = tab.querySelector('.tabTitle').value;
-        let url = tab.querySelector('.url').value;
-
-        if (tabTitle && url){
-            tabs.push({tabTitle, url});
-        }
+function setStorage(tabs){
+    // Save it using the Chrome extension storage API.
+    chrome.storage.sync.set({whyKey: tabs}, function() {
+        //TODO notify user of save
+        console.log("saved");
     });
-    return tabs;
 }
 
 function deleteTab(){
@@ -53,26 +25,58 @@ function deleteTab(){
     saveTab();
 }
 
-function setChromeStorage(tabs){
-    // Save it using the Chrome extension storage API.
-    chrome.storage.sync.set({'sfmWhySF': tabs}, function() {
-        //TODO notify user of save
+function createElement(){
+    const element = tabTemplate.content.firstElementChild.cloneNode(true);
+    element.querySelector(".delete").addEventListener("click", deleteTab);
+    return element;
+}
+
+function loadTabs(items){
+    console.log(items);
+    if(items == null)
+        return;
+    const rowObjs = items[whyKey];
+    const elements = [];
+    for (const tab of rowObjs) {
+        console.log(tab);
+        const element = createElement();
+        element.querySelector(".tabTitle").value = tab.tabTitle;
+        element.querySelector(".url").value = tab.url;
+        elements.add(element);
+    }
+    tabAppendElement.append(...elements);
+}
+
+function clearStorage(){
+    chrome.storage.sync.remove([whyKey],function(){
+        const error = chrome.runtime.lastError;
+        if (error != null)
+            console.error(error);
+    })
+}
+
+function addTab(){
+    tabAppendElement.append(createElement());
+}
+
+function processTabs(){
+    const tabs = [];
+    const tabElements = document.getElementsByClassName("tab");
+    Array.from(tabElements).forEach(function (tab) {        
+        const tabTitle = tab.querySelector(".tabTitle").value;
+        const url = tab.querySelector(".url").value;
+        if (tabTitle != null && url != null){
+            tabs.push({tabTitle, url});
+        }
     });
+    return tabs;
 }
 
+function saveTab(){
+    const validTabs = processTabs();
+    setStorage(validTabs);
+}
 
-const saveButton = document.querySelector(".save");
 saveButton.addEventListener("click", saveTab);
-
-const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
-
-
-function clearChromeStorage(){
-    chrome.storage.sync.remove(["sfmWhySF"],function(){
-        var error = chrome.runtime.lastError;
-           if (error) {
-               console.error(error);
-           }
-       })
-}
+getStorage(loadTabs);

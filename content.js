@@ -1,62 +1,67 @@
-const storageKey = 'sfmWhySF';
+"use strict";
+//const { getStorage, setStorage } = require("./popup");
+//import { getStorage, setStorage } from "./popup";
 
-function init(setupTabUl){
-    if (setupTabUl){
-        let rows = [];
-        chrome.storage.sync.get([storageKey], function(items) {
-            let rowObj = items[storageKey];
+const whyKey = 'sfmWhySF';
+const setupTabUl  = document.getElementsByClassName("tabBarItems slds-grid")[0];
 
-            if (!rowObj) { //Did not find data inside chrome storage
-                rowObj = initTabs();
-            }
-
-            for (const rowId in rowObj) {
-                let row = rowObj[rowId];
-                rows.push(generateRowTemplate(row.tabTitle,row.url))
-            }
-            setupTabUl.insertAdjacentHTML('beforeend', rows.join(''));
-        });
-        
-    }
-
+function getStorage(callback){
+    chrome.storage.sync.get([whyKey], function(items) {
+        console.log(`get ${items}`);
+        callback(items);
+    });
 }
 
-function delayLoadSetupTabs(count) {
-    const setupTabUl  = document.getElementsByClassName("tabBarItems slds-grid")[0];
-    count++;
+function setStorage(tabs){
+    // Save it using the Chrome extension storage API.
+    chrome.storage.sync.set({whyKey: tabs}, function() {
+        //TODO notify user of save
+        console.log("saved");
+    });
+}
+
+function generateRowTemplate(tabTitle, url){
+    return `<li role="presentation" style="" class="oneConsoleTabItem tabItem slds-context-bar__item borderRight navexConsoleTabItem" data-aura-class="navexConsoleTabItem">
+                <a role="tab" tabindex="-1" title="${tabTitle}" aria-selected="false" href="${url}" class="tabHeader slds-context-bar__label-action" >
+                    <span class="title slds-truncate">${tabTitle}</span>
+                </a>
+            </li>`
+}
+
+function initTabs(){
+    const tabs = [
+        {tabTitle : 'Flows', url: '/lightning/setup/Flows/home'},
+        {tabTitle : 'Users', url: '/lightning/setup/ManageUsers/home'}
+    ]
+    setStorage(tabs);
+    return tabs;
+}
+
+function _init(items){
+    //call inittabs if we did not find data inside storage
+    const rowObj = (items == null || items[whyKey] == null) ? initTabs() : items[whyKey];
+
+    const rows = [];
+    for (const row of rowObj) {
+        rows.push(generateRowTemplate(row.tabTitle,row.url))
+    }
+    setupTabUl.insertAdjacentHTML('beforeend', rows.join(''));
+}
+
+function init(setupTabUl){
+    if (setupTabUl == null)
+        return;
+    getStorage(_init);
+}
+
+function delayLoadSetupTabs(count = 0) {
 
     if (count > 5){
         console.log('Why Salesforce - failed to find setup tab.');
         return;
     }
 
-    if (!setupTabUl) {
-        setTimeout(function() { delayLoadSetupTabs(0); }, 3000);
-    } else {
-        init(setupTabUl);
-    }
+    setupTabUl == null ? setTimeout(function() { delayLoadSetupTabs(count++); }, 500) : init(setupTabUl);
 }
 
 setTimeout(function() { delayLoadSetupTabs(0); }, 3000);
-
-
-function generateRowTemplate(tabTitle, url){
-    return `<li role="presentation" style="" class="oneConsoleTabItem tabItem slds-context-bar__item borderRight  navexConsoleTabItem" data-aura-class="navexConsoleTabItem">
-                <a role="tab" tabindex="-1" title="${tabTitle}" aria-selected="false" href="${url}" class="tabHeader slds-context-bar__label-action " >
-                    <span class="title slds-truncate" >${tabTitle}</span>
-                </a>
-            </li>`
-}
-
-function initTabs(){
-    let tabs = [
-        {tabTitle : 'Flow', url: '/lightning/setup/Flows/home'},
-        {tabTitle : 'User', url: '/lightning/setup/ManageUsers/home'}
-    ]
-
-    chrome.storage.sync.set({storageKey: tabs}, function() {
-        //TODO combine with popup.js with background service
-    });
-
-    return tabs;
-}
