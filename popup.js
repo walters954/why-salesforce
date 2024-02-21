@@ -26,7 +26,7 @@ function deleteTab(){
 
 function createElement(){
     const element = tabTemplate.content.firstElementChild.cloneNode(true);
-    element.getElementById("delete").addEventListener("click", deleteTab);
+    element.querySelector("#delete").addEventListener("click", deleteTab);
     return element;
 }
 
@@ -44,27 +44,19 @@ function loadTabs(items){
     for (const tab of rowObjs){
         console.log(tab);
         const element = createElement();
-        element.getElementById("tabTitle").value = tab.tabTitle;
-        element.getElementById("url").value = tab.url;
+        element.querySelector("#tabTitle").value = tab.tabTitle;
+        element.querySelector("#url").value = tab.url;
         elements.add(element);
     }
     tabAppendElement.append(...elements);
 }
 
-/*function clearStorage(){
-    chrome.storage.sync.remove([whyKey],function(){
-        const error = chrome.runtime.lastError;
-        if (error != null)
-            console.error(error);
-    })
-}*/
-
 function saveTabs(){
     const tabs = [];
     const tabElements = document.getElementsByClassName("tab");
     Array.from(tabElements).forEach(function (tab) {        
-        const tabTitle = tab.getElementById("tabTitle").value;
-        const url = tab.getElementById("url").value;
+        const tabTitle = tab.querySelector("#tabTitle").value;
+        const url = tab.querySelector("#url").value;
         if (tabTitle != null && url != null){
             tabs.push({tabTitle, url});
         }
