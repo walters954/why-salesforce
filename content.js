@@ -3,11 +3,12 @@
 //import { getStorage, setStorage } from "./popup";
 
 const whyKey = 'sfmWhySF';
-const setupTabUl  = document.getElementsByClassName("tabBarItems slds-grid")[0];
+let setupTabUl = document.getElementsByClassName("tabBarItems slds-grid")[0];
+const setupLightning = "/lightning/setup/";
+const setupDefaultPage = "/home";
 
 function getStorage(callback){
     chrome.storage.sync.get([whyKey], function(items) {
-        console.log(`get ${items}`);
         callback(items);
     });
 }
@@ -20,7 +21,14 @@ function setStorage(tabs){
     });
 }
 
-function generateRowTemplate(tabTitle, url){
+function generateRowTemplate(row){
+    let { tabTitle, url } = row;
+    if(url.startsWith("/"))
+        url = url.slice(1);
+    if(url.endsWith("/"))
+        url = url.slice(0,url.length-1);
+    url = `${setupLightning}${url}${setupDefaultPage}`;
+
     return `<li role="presentation" style="" class="oneConsoleTabItem tabItem slds-context-bar__item borderRight navexConsoleTabItem" data-aura-class="navexConsoleTabItem">
                 <a role="tab" tabindex="-1" title="${tabTitle}" aria-selected="false" href="${url}" class="tabHeader slds-context-bar__label-action" >
                     <span class="title slds-truncate">${tabTitle}</span>
@@ -30,38 +38,35 @@ function generateRowTemplate(tabTitle, url){
 
 function initTabs(){
     const tabs = [
-        {tabTitle : 'Flows', url: '/lightning/setup/Flows/home'},
-        {tabTitle : 'Users', url: '/lightning/setup/ManageUsers/home'}
+        {tabTitle : 'Flows', url: 'Flows/home'},
+        {tabTitle : 'Users', url: 'ManageUsers/home'}
     ]
     setStorage(tabs);
     return tabs;
 }
 
-function _init(items){
+function init(items){
+    console.log(items);
     //call inittabs if we did not find data inside storage
     const rowObj = (items == null || items[whyKey] == null) ? initTabs() : items[whyKey];
 
     const rows = [];
     for (const row of rowObj) {
-        rows.push(generateRowTemplate(row.tabTitle,row.url))
+        rows.push(generateRowTemplate(row))
     }
     setupTabUl.insertAdjacentHTML('beforeend', rows.join(''));
 }
 
-function init(setupTabUl){
-    if (setupTabUl == null)
-        return;
-    getStorage(_init);
-}
-
 function delayLoadSetupTabs(count = 0) {
-
     if (count > 5){
-        console.log('Why Salesforce - failed to find setup tab.');
+        console.error('Why Salesforce - failed to find setup tab.');
         return;
     }
 
-    setupTabUl == null ? setTimeout(function() { delayLoadSetupTabs(count++); }, 500) : init(setupTabUl);
+    if(setupTabUl == null){
+        setupTabUl = document.getElementsByClassName("tabBarItems slds-grid")[0];
+        setTimeout(function() { delayLoadSetupTabs(count + 1); }, 500);
+    } else getStorage(init);
 }
 
-setTimeout(function() { delayLoadSetupTabs(0); }, 3000);
+delayLoadSetupTabs();

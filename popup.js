@@ -7,7 +7,6 @@ const whyKey = "sfmWhySF";
 
 function getStorage(callback){
     chrome.storage.sync.get([whyKey], function(items) {
-        console.log(`get ${items}`);
         callback(items);
     });
 }
@@ -22,7 +21,7 @@ function setStorage(tabs){
 
 function deleteTab(){
     this.closest(".tab").remove();
-    saveTab();
+    saveTabs();
 }
 
 function createElement(){
@@ -31,13 +30,18 @@ function createElement(){
     return element;
 }
 
+function loadTemplateTab(){
+    tabAppendElement.append(createElement());
+}
+
 function loadTabs(items){
     console.log(items);
-    if(items == null)
-        return;
+    if(items == null || items[whyKey] == null)
+        return loadTemplateTab();
+
     const rowObjs = items[whyKey];
     const elements = [];
-    for (const tab of rowObjs) {
+    for (const tab of rowObjs){
         console.log(tab);
         const element = createElement();
         element.querySelector(".tabTitle").value = tab.tabTitle;
@@ -47,19 +51,15 @@ function loadTabs(items){
     tabAppendElement.append(...elements);
 }
 
-function clearStorage(){
+/*function clearStorage(){
     chrome.storage.sync.remove([whyKey],function(){
         const error = chrome.runtime.lastError;
         if (error != null)
             console.error(error);
     })
-}
+}*/
 
-function addTab(){
-    tabAppendElement.append(createElement());
-}
-
-function processTabs(){
+function saveTabs(){
     const tabs = [];
     const tabElements = document.getElementsByClassName("tab");
     Array.from(tabElements).forEach(function (tab) {        
@@ -69,14 +69,14 @@ function processTabs(){
             tabs.push({tabTitle, url});
         }
     });
-    return tabs;
+    setStorage(tabs);
 }
 
-function saveTab(){
-    const validTabs = processTabs();
-    setStorage(validTabs);
+function addTab(){
+    tabAppendElement.append(createElement());
+    saveTabs()
 }
 
-saveButton.addEventListener("click", saveTab);
+saveButton.addEventListener("click", saveTabs);
 addButton.addEventListener("click", addTab);
 getStorage(loadTabs);

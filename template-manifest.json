@@ -21,7 +21,7 @@
       "128": "images/whysf128.png"
     },
     "action": {
-      "default_title": "Why Salesforce",
+      "default_title": "Why Salesforce Reloaded",
       "default_popup": "popup.html"
     },
     "minimum_chrome_version": "120.0.0",
