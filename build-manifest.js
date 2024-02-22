@@ -17,7 +17,6 @@ if (browser === "firefox") {
 
     delete manifest.minimum_chrome_version;
     delete manifest.background.service_worker;
-    delete manifest.background.persistent;
 }
 else if (browser === "chrome") {
     delete manifest.browser_specific_settings;
