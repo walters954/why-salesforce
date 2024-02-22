@@ -45,8 +45,8 @@ function generateRowTemplate(row){
 
 function initTabs(){
     const tabs = [
-        {tabTitle : 'Flows', url: 'Flows'},
-        {tabTitle : 'Users', url: 'ManageUsers'}
+        {tabTitle : 'Flows', url: 'Flows/home'},
+        {tabTitle : 'Users', url: 'ManageUsers/home'}
     ]
     setStorage(tabs);
     return tabs;
@@ -78,7 +78,6 @@ function delayLoadSetupTabs(count = 0) {
 }
 
 function reloadTabs(){
-    //const myTabs = setupTabUl.querySelectorAll(".again-why-salesforce");
     getStorage(init);
     while(setupTabUl.childElementCount > 3){// hidden li + Home + Object Manager
         setupTabUl.removeChild(setupTabUl.lastChild);

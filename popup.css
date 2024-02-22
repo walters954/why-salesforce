@@ -145,6 +145,13 @@ article > div:last-child {
                 }
             }
         }
+
+        & > tbody#tabs > tr.tab:last-child button.delete {
+            color: #333333;
+            background-color: #C9C9C9;
+            border-color: #C9C9C9;
+            cursor: not-allowed;
+        }
     }
 }
 

@@ -2,13 +2,10 @@
 
 const tabTemplate = document.getElementById("tr_template");
 const tabAppendElement = document.getElementById("tabs");
-const saveButton = document.getElementById("save");
-const addButton = document.getElementById("add");
 
 const setupLightning = "/lightning/setup/";
-const setupDefaultPage = "/home";
-
 let knownTabs = [];
+let loggers = [];
 
 function sendMessage(message, callback){
     chrome.runtime.sendMessage({message, url: location.href}, callback);
@@ -39,8 +36,6 @@ function cleanupUrl(url){
         url = url.slice(0,url.length-1);
     if(url.includes(setupLightning))
         url = url.slice(url.indexOf(setupLightning)+setupLightning.length);
-    if(url.includes(setupDefaultPage))
-        url = url.slice(0,url.indexOf(setupDefaultPage));
     
     return url;
 }
@@ -50,14 +45,72 @@ function deleteTab(){
     saveTabs();
 }
 
+function addTab(){
+    tabAppendElement.append(createElement());
+}
+
+function checkAddTab(inputObj){
+    //add a new tab if both fields are not empty
+    if(inputObj.title && inputObj.url){
+        addTab();
+    }
+}
+
+let focusedIndex = 0;
+
+function inputTitleListener(){
+    const currentObj = loggers[focusedIndex];
+    const titleElement = currentObj.title;
+    const value = titleElement.value;
+    //currentObj.timeout.title = 0;
+    const inputObj = currentObj.last_input;
+    const last_input = inputObj.title || "";
+    const delta = last_input.length - value.length;
+    if(delta < -2 || delta > 2){
+        //user has copied
+        console.log("copied title");
+    }
+    inputObj.title = value;
+    if(focusedIndex == loggers.length - 1)
+        checkAddTab(inputObj);
+}
+
+function inputUrlListener(){
+    const currentObj = loggers[focusedIndex];
+    const urlElement = currentObj.url;
+    const value = urlElement.value;
+    //currentObj.timeout.url = 0;
+    const inputObj = currentObj.last_input;
+    const last_input = inputObj.url || "";
+    const delta = last_input.length - value.length;
+    if(delta < -2 || delta > 2){
+        //user has copied
+        console.log("copied url");
+        urlElement.value = cleanupUrl(value);
+    }
+    inputObj.url = value;
+    if(focusedIndex == loggers.length - 1)
+        checkAddTab(inputObj);
+}
+
+function focusListener(e){
+    focusedIndex = e.target.dataset.element_index;
+    saveTabs(false);
+}
+
 function createElement(){
     const element = tabTemplate.content.firstElementChild.cloneNode(true);
     element.querySelector(".delete").addEventListener("click", deleteTab);
+    const title = element.querySelector(".tabTitle");
+    const url = element.querySelector(".url");
+    title.addEventListener("input", inputTitleListener);
+    url.addEventListener("input", inputUrlListener);
+    title.addEventListener("focus", focusListener);
+    url.addEventListener("focus", focusListener);
+    title.dataset.element_index = loggers.length;
+    url.dataset.element_index = loggers.length;
+    loggers.push({title, url, timeout: {}, last_input: {}});
     return element;
-}
-
-function addTab(){
-    tabAppendElement.append(createElement());
 }
 
 function loadTabs(items){
@@ -70,13 +123,25 @@ function loadTabs(items){
         const element = createElement();
         element.querySelector(".tabTitle").value = tab.tabTitle;
         element.querySelector(".url").value = tab.url;
+        const logger = loggers.pop();
+        logger.last_input.title = tab.tabTitle;
+        logger.last_input.url = tab.url;
+        loggers.push(logger);
         elements.push(element);
     }
     tabAppendElement.append(...elements);
+    tabAppendElement.append(createElement());// always leave a blank at the bottom
     knownTabs = rowObjs;
 }
 
-function saveTabs(){
+function reloadRows(items){
+    while(tabAppendElement.childElementCount > 0)
+        tabAppendElement.removeChild(tabAppendElement.lastChild);
+    loggers = [];
+    loadTabs(items);
+}
+
+function saveTabs(doReload = true){
     const tabs = [];
     const tabElements = document.getElementsByClassName("tab");
     Array.from(tabElements).forEach(tab => {        
@@ -87,9 +152,11 @@ function saveTabs(){
         }
     });
     setStorage(tabs);
+    if(doReload)
+        reloadRows({tabs, key: "tabs"});
 }
 
-saveButton.addEventListener("click", saveTabs);
-addButton.addEventListener("click", addTab);
+document.getElementById("save").addEventListener("click", saveTabs);
+document.getElementById("add").addEventListener("click", addTab);
 
 getStorage(loadTabs);
