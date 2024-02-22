@@ -46,6 +46,8 @@ function deleteTab(){
 }
 
 function addTab(){
+    const deleteButton = tabAppendElement.querySelector("td:last-child button.delete");
+    deleteButton.disabled = false;
     tabAppendElement.append(createElement());
 }
 
@@ -130,7 +132,10 @@ function loadTabs(items){
         elements.push(element);
     }
     tabAppendElement.append(...elements);
-    tabAppendElement.append(createElement());// always leave a blank at the bottom
+    const blank = createElement();
+    blank.dataset.draggable = "false";
+    blank.querySelector(".delete").disabled = true;
+    tabAppendElement.append(blank);// always leave a blank at the bottom
     knownTabs = rowObjs;
 }
 
@@ -155,6 +160,16 @@ function saveTabs(doReload = true){
     if(doReload)
         reloadRows({tabs, key: "tabs"});
 }
+
+// listen to possible updates from tableDragHandler
+window.addEventListener("message", e => {
+    if (e.source != window) {
+        return;
+    }
+    const what = e.data.what;
+    if(what === "order")
+        saveTabs();
+});
 
 document.getElementById("save").addEventListener("click", saveTabs);
 document.getElementById("add").addEventListener("click", addTab);

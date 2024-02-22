@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="./popup.css"/>
         <script src="./popup.js" type="module"></script>
+        <script src="./tableDragHandler.js" type="module"></script>
     </head>
 
     <body>
@@ -26,9 +27,12 @@
               </div>
             </header>
             <div>
-                <table>
+                <table id="sortable-table">
                     <thead>
                         <tr>
+                            <th scope="col">
+                                <div><!-- used for the svg --></div>
+                            </th>
                             <th scope="col">
                                 <div title="Tab Label">Tab Label</div>
                             </th>
@@ -47,16 +51,19 @@
         </article>
 
         <template id="tr_template">
-            <tr class="tab">
+            <tr class="tab" draggable="true">
+                <td scope="row">
+                    <img src="./drag.svg" data-draggable="true"/>
+                </td>
                 <td data-label="Tab Label" scope="row">
                     <div>
-                    <input
-                        type="text"
-                        name="tabTitle"
-                        class="tabTitle"
-                        placeholder="Flows"
-                    />
-                </div>
+                        <input
+                            type="text"
+                            name="tabTitle"
+                            class="tabTitle"
+                            placeholder="Flows"
+                        />
+                    </div>
                 </td>
                 <td data-label="Tab Url">
                     <div>
@@ -67,7 +74,6 @@
                         placeholder="Flows/home"
                         />
                     </div>
-                    
                 </td>
                 <td>
                     <button class="delete">Delete</button>

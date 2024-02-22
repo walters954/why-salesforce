@@ -23,8 +23,8 @@ function setStorage(tabs){
     sendMessage({"what": "set", tabs}, afterSet);
 }
 
-function cleanupUrl(url = href){
-    const asis = url === href;
+function cleanupUrl(url = href, nochange = null){
+    const asis = nochange == null ? url === href : nochange;
 
     if(url.startsWith("/"))
         url = url.slice(1);
@@ -41,7 +41,7 @@ function generateRowTemplate(row){
     url = cleanupUrl(url);
 
     return `<li role="presentation" class="oneConsoleTabItem tabItem slds-context-bar__item borderRight navexConsoleTabItem again-why-salesforce" data-aura-class="navexConsoleTabItem">
-                <a role="tab" tabindex="-1" title="${tabTitle}" aria-selected="false" href="${url}" class="tabHeader slds-context-bar__label-action" >
+                <a data-draggable="true" role="tab" tabindex="-1" title="${tabTitle}" aria-selected="false" href="${url}" class="tabHeader slds-context-bar__label-action" >
                     <span class="title slds-truncate">${tabTitle}</span>
                 </a>
             </li>`;
@@ -152,6 +152,29 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         sendResponse(null);
         afterSet();
     }
+});
+
+function reorderTabs(){
+    // get the list of tabs
+    const tabs = [];
+    Array.from(setupTabUl.children).slice(3).forEach(tab => {
+        const tabTitle = tab.querySelector("a > span").innerText;
+        const url = cleanupUrl(tab.querySelector("a").href, true);
+        if (tabTitle && url){
+            tabs.push({tabTitle, url});
+        }
+    });
+    setStorage(tabs);
+}
+
+// listen to possible updates from tableDragHandler
+window.addEventListener("message", e => {
+    if (e.source != window) {
+        return;
+    }
+    const what = e.data.what;
+    if(what === "order")
+        reorderTabs();
 });
 
 delayLoadSetupTabs();
