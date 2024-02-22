@@ -59,7 +59,7 @@ function init(items){
     const rows = [];
     for (const row of rowObj) {
         const htmlEl = generateRowTemplate(row);
-        const replaceVector = href === cleanupUrl(row.url) ? "slds-is-active" : "";
+        const replaceVector = `again-why-salesforce ${href === cleanupUrl(row.url) ? "slds-is-active" : ""}`;
         rows.push(htmlEl.replace("again-why-salesforce", replaceVector))
     }
     setupTabUl.insertAdjacentHTML('beforeend', rows.join(''));
@@ -76,5 +76,21 @@ function delayLoadSetupTabs(count = 0) {
         setTimeout(function() { delayLoadSetupTabs(count + 1); }, 500);
     } else getStorage(init);
 }
+
+function reloadTabs(){
+    //const myTabs = setupTabUl.querySelectorAll(".again-why-salesforce");
+    getStorage(init);
+    while(setupTabUl.childElementCount > 3){// hidden li + Home + Object Manager
+        setupTabUl.removeChild(setupTabUl.lastChild);
+    }
+}
+
+// listen from saves from the action page
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    if (message != null && message.what === "saved") {
+        sendResponse(null);
+        reloadTabs();
+    }
+});
 
 delayLoadSetupTabs();

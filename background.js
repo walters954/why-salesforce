@@ -17,8 +17,6 @@ function setStorage(tabs, callback){
     const set = {};
     set[whyKey] = tabs;
     browserObj.storage.sync.set(set, function() {
-        //TODO notify user of save
-        console.log("saved",set);
         callback(null);
     });
 }
@@ -31,11 +29,24 @@ browserObj.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse(null);
         return false;
     }
+    let captured = false;
     if(message.what === "get"){
         getStorage(sendResponse);
+        captured = true;
     }
     else if(message.what === "set"){
         setStorage(message.tabs, sendResponse);
+        captured = true;
     }
-    return true;// will call sendResponse asynchronously
+    else if(message.what === "saved"){
+        browserObj.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+            browserObj.tabs.sendMessage(tabs[0].id, message);
+        });
+        //browserObj.tabs.executeScript(sender.tab.id, { file: 'content.js' });
+        return false;
+    }
+    if(!captured)
+        console.error({"error": "Unknown message",message});
+
+    return captured;// will call sendResponse asynchronously if true
 });

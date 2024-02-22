@@ -8,6 +8,8 @@ const addButton = document.getElementById("add");
 const setupLightning = "/lightning/setup/";
 const setupDefaultPage = "/home";
 
+let knownTabs = [];
+
 function sendMessage(message, callback){
     chrome.runtime.sendMessage({message, url: location.href}, callback);
 }
@@ -16,8 +18,18 @@ function getStorage(callback){
     sendMessage({"what": "get"}, callback);
 }
 
+function afterSet(){
+    sendMessage({"what": "saved"});
+}
+
+function arraysAreEqual(arr1, arr2) {
+    return JSON.stringify(arr1) === JSON.stringify(arr2);
+}
+
 function setStorage(tabs){
-    sendMessage({"what": "set", tabs}, null);
+    if(!arraysAreEqual(tabs,knownTabs))
+        sendMessage({"what": "set", tabs}, afterSet);
+    knownTabs = tabs;
 }
 
 function cleanupUrl(url){
@@ -44,24 +56,24 @@ function createElement(){
     return element;
 }
 
-function loadTemplateTab(){
+function addTab(){
     tabAppendElement.append(createElement());
 }
 
 function loadTabs(items){
     if(items == null || items[items.key] == null)
-        return loadTemplateTab();
+        return addTab();
 
     const rowObjs = items[items.key];
     const elements = [];
     for (const tab of rowObjs){
-        console.log(tab);
         const element = createElement();
         element.querySelector(".tabTitle").value = tab.tabTitle;
         element.querySelector(".url").value = tab.url;
         elements.push(element);
     }
     tabAppendElement.append(...elements);
+    knownTabs = rowObjs;
 }
 
 function saveTabs(){
@@ -70,16 +82,11 @@ function saveTabs(){
     Array.from(tabElements).forEach(tab => {        
         const tabTitle = tab.querySelector(".tabTitle").value;
         const url = cleanupUrl(tab.querySelector(".url").value);
-        if (tabTitle != null && url != null){
+        if (tabTitle && url){
             tabs.push({tabTitle, url});
         }
     });
     setStorage(tabs);
-}
-
-function addTab(){
-    tabAppendElement.append(createElement());
-    saveTabs()
 }
 
 saveButton.addEventListener("click", saveTabs);
