@@ -1,31 +1,41 @@
 const isChrome = navigator.userAgent.includes("Chrome");
+const browserObj = isChrome ? chrome : browser;
 const whyKey = 'sfmWhySF';
 
-async function getStorage(callback){
-    console.log({isChrome});
-    if(isChrome)
-        return chrome.storage.sync.get([whyKey], callback);//chrome
-    //firefox
-    const result = await browser.storage.sync.get([whyKey]);
-    callback(await result);
+function addKey(items, callback){
+    items.key = whyKey; 
+    callback(items);
 }
 
-function setStorage(tabs){
-    // Save it using the Chrome extension storage API.
-    chrome.storage.sync.set({whyKey: tabs}, function() {
+async function getStorage(callback){
+    browserObj.storage.sync.get([whyKey], items => {
+        addKey(items, callback);
+    });
+}
+
+function setStorage(tabs, callback){
+    const set = {};
+    set[whyKey] = tabs;
+    browserObj.storage.sync.set(set, function() {
         //TODO notify user of save
-        console.log("saved");
+        console.log("saved",set);
+        callback(null);
     });
 }
 
 // need to use message in order to work in private windows
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+browserObj.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const message = request.message;
-    if(message.what === "get")
-        return getStorage(sendResponse);
-    if(message.what === "set")
-        return setStorage(message.tabs);
-    if(message.what === "getKey")
-        return sendResponse(whyKey)
-    console.error(`invalid message: ${message}`);
+    if(message == null || message.what == null){
+        console.error(`invalid message: ${message}`);
+        sendResponse(null);
+        return false;
+    }
+    if(message.what === "get"){
+        getStorage(sendResponse);
+    }
+    else if(message.what === "set"){
+        setStorage(message.tabs, sendResponse);
+    }
+    return true;// will call sendResponse asynchronously
 });

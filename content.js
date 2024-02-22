@@ -1,6 +1,5 @@
 "use strict";
 
-let whyKey;
 let setupTabUl = document.getElementsByClassName("tabBarItems slds-grid")[0];//This is on Salesforce Setup
 const setupLightning = "/lightning/setup/";
 const setupDefaultPage = "/home";
@@ -15,14 +14,6 @@ function getStorage(callback){
 
 function setStorage(tabs){
     sendMessage({"what": "set", tabs}, null);
-}
-
-function setWhyKey(value){
-    whyKey = value;
-}
-
-function getWhyKey(){
-    sendMessage({"what": "getKey"}, setWhyKey);
 }
 
 function generateRowTemplate(row){
@@ -50,9 +41,9 @@ function initTabs(){
 }
 
 function init(items){
-    console.log(items, whyKey);
+    console.log(items);
     //call inittabs if we did not find data inside storage
-    const rowObj = (items == null || items[whyKey] == null) ? initTabs() : items[whyKey];
+    const rowObj = (items == null || items[items.key] == null) ? initTabs() : items[items.key];
 
     const rows = [];
     for (const row of rowObj) {
@@ -73,5 +64,4 @@ function delayLoadSetupTabs(count = 0) {
     } else getStorage(init);
 }
 
-getWhyKey();
 delayLoadSetupTabs();
