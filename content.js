@@ -1,24 +1,28 @@
 "use strict";
-//const { getStorage, setStorage } = require("./popup");
-//import { getStorage, setStorage } from "./popup";
 
-const whyKey = 'sfmWhySF';
-let setupTabUl = document.getElementsByClassName("tabBarItems slds-grid")[0];
+let whyKey;
+let setupTabUl = document.getElementsByClassName("tabBarItems slds-grid")[0];//This is on Salesforce Setup
 const setupLightning = "/lightning/setup/";
 const setupDefaultPage = "/home";
 
+function sendMessage(message, callback){
+    chrome.runtime.sendMessage({message, url: location.href}, callback);
+}
+
 function getStorage(callback){
-    chrome.storage.sync.get([whyKey], function(items) {
-        callback(items);
-    });
+    sendMessage({"what": "get"}, callback);
 }
 
 function setStorage(tabs){
-    // Save it using the Chrome extension storage API.
-    chrome.storage.sync.set({whyKey: tabs}, function() {
-        //TODO notify user of save
-        console.log("saved");
-    });
+    sendMessage({"what": "set", tabs}, null);
+}
+
+function setWhyKey(value){
+    whyKey = value;
+}
+
+function getWhyKey(){
+    sendMessage({"what": "getKey"}, setWhyKey);
 }
 
 function generateRowTemplate(row){
@@ -38,15 +42,15 @@ function generateRowTemplate(row){
 
 function initTabs(){
     const tabs = [
-        {tabTitle : 'Flows', url: 'Flows/home'},
-        {tabTitle : 'Users', url: 'ManageUsers/home'}
+        {tabTitle : 'Flows', url: 'Flows'},
+        {tabTitle : 'Users', url: 'ManageUsers'}
     ]
     setStorage(tabs);
     return tabs;
 }
 
 function init(items){
-    console.log(items);
+    console.log(items, whyKey);
     //call inittabs if we did not find data inside storage
     const rowObj = (items == null || items[whyKey] == null) ? initTabs() : items[whyKey];
 
@@ -69,4 +73,5 @@ function delayLoadSetupTabs(count = 0) {
     } else getStorage(init);
 }
 
+getWhyKey();
 delayLoadSetupTabs();

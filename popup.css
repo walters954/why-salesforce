@@ -77,13 +77,13 @@ header {
     & > div:last-child {
         flex: none;
 
-        & > button#save {
+        & > button.save {
             color: #FFFFFF;
             background-color: #0176D3;
             border-color: #0176D3;
         }
 
-        & > button#add {
+        & > button.add {
             color: #0176D3;
             background-color: #FFFFFF;
             border-color: #CBCBCB;
@@ -138,7 +138,7 @@ article > div:last-child {
                     clear: left;
                     position: relative;
                 }
-                & > button#delete {
+                & > button.delete {
                     color: #FFFFFF;
                     background-color: #BA0517;
                     border-color: #BA0517;

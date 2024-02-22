@@ -1,28 +1,33 @@
 {
     "manifest_version": 3,
-    "name": "Why Salesforce Reloaded",
+    "name": "Again, Why Salesforce",
     "version": "1.3",
     "permissions": ["storage"],
-    "description": "Stuff that Salesforce should have already added... Setting favourite tabs in Setup.",
-    "homepage_url": "https://github.com/Astisme/why-salesforce-reloaded",
+    "description": "Stuff that Salesforce should have already added... Easily setting favourite tabs in Setup.",
+    "homepage_url": "https://github.com/Astisme/again-Why-Salesforce",
     "content_scripts": [
         {
-          "matches": [
-            "*://*.lightning.force.com/lightning/setup/*"
-          ],
-          "js": ["content.js"],
-          "run_at": "document_end"
+            "matches": [
+                "*://*.lightning.force.com/lightning/setup/*"
+            ],
+            "js": ["content.js"],
+            "run_at": "document_end"
         }
-      ],
+    ],
     "icons": {
-      "16": "images/whysf16.png",
-      "32": "images/whysf32.png",
-      "48": "images/whysf48.png",
-      "128": "images/whysf128.png"
+        "16": "images/whysf16.png",
+        "32": "images/whysf32.png",
+        "48": "images/whysf48.png",
+        "128": "images/whysf128.png"
     },
     "action": {
-      "default_title": "Why Salesforce Reloaded",
-      "default_popup": "popup.html"
+        "default_title": "Again, Why Salesforce",
+        "default_popup": "popup.html"
+    },
+    "background": {
+        "service_worker": "background.js",
+        "persistent": false,
+        "type": "module"
     },
     "minimum_chrome_version": "120.0.0",
     "browser_specific_settings": {

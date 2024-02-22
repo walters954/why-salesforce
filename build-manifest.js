@@ -12,16 +12,21 @@ const manifest = require("./template-manifest");
 
 const browser = process.argv[2];
 if (browser === "firefox") {
-  delete manifest.minimum_chrome_version;
+    const background_script = manifest.background.service_worker;
+    manifest.background.scripts = [background_script];
+
+    delete manifest.minimum_chrome_version;
+    delete manifest.background.service_worker;
+    delete manifest.background.persistent;
 }
 else if (browser === "chrome") {
-  delete manifest.browser_specific_settings;
+    delete manifest.browser_specific_settings;
 }
 else if (browser === "safari") {
-  delete manifest.browser_specific_settings;
+    delete manifest.browser_specific_settings;
 }
 else {
-  throw new Error(`Unknown browser: ${browser}`);
+    throw new Error(`Unknown browser: ${browser}`);
 }
 
 const fs = require("fs");

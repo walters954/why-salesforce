@@ -1,22 +1,29 @@
 "use strict";
+
+let whyKey;
 const tabTemplate = document.getElementById("tr_template");
 const tabAppendElement = document.getElementById("tabs");
 const saveButton = document.getElementById("save");
 const addButton = document.getElementById("add");
-const whyKey = "sfmWhySF";
+
+function sendMessage(message, callback){
+    chrome.runtime.sendMessage({message, url: location.href}, callback);
+}
 
 function getStorage(callback){
-    chrome.storage.sync.get([whyKey], function(items) {
-        callback(items);
-    });
+    sendMessage({"what": "get"}, callback);
 }
 
 function setStorage(tabs){
-    // Save it using the Chrome extension storage API.
-    chrome.storage.sync.set({whyKey: tabs}, function() {
-        //TODO notify user of save
-        console.log("saved");
-    });
+    sendMessage({"what": "set", tabs}, null);
+}
+
+function setWhyKey(value){
+    whyKey = value;
+}
+
+function getWhyKey(){
+    sendMessage({"what": "getKey"}, setWhyKey);
 }
 
 function deleteTab(){
@@ -26,7 +33,7 @@ function deleteTab(){
 
 function createElement(){
     const element = tabTemplate.content.firstElementChild.cloneNode(true);
-    element.querySelector("#delete").addEventListener("click", deleteTab);
+    element.querySelector(".delete").addEventListener("click", deleteTab);
     return element;
 }
 
@@ -35,7 +42,7 @@ function loadTemplateTab(){
 }
 
 function loadTabs(items){
-    console.log(items);
+    console.log(items, whyKey);
     if(items == null || items[whyKey] == null)
         return loadTemplateTab();
 
@@ -44,9 +51,9 @@ function loadTabs(items){
     for (const tab of rowObjs){
         console.log(tab);
         const element = createElement();
-        element.querySelector("#tabTitle").value = tab.tabTitle;
-        element.querySelector("#url").value = tab.url;
-        elements.add(element);
+        element.querySelector(".tabTitle").value = tab.tabTitle;
+        element.querySelector(".url").value = tab.url;
+        elements.push(element);
     }
     tabAppendElement.append(...elements);
 }
@@ -71,4 +78,6 @@ function addTab(){
 
 saveButton.addEventListener("click", saveTabs);
 addButton.addEventListener("click", addTab);
+
+getWhyKey();
 getStorage(loadTabs);
