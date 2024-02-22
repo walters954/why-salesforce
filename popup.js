@@ -5,6 +5,9 @@ const tabAppendElement = document.getElementById("tabs");
 const saveButton = document.getElementById("save");
 const addButton = document.getElementById("add");
 
+const setupLightning = "/lightning/setup/";
+const setupDefaultPage = "/home";
+
 function sendMessage(message, callback){
     chrome.runtime.sendMessage({message, url: location.href}, callback);
 }
@@ -15,6 +18,19 @@ function getStorage(callback){
 
 function setStorage(tabs){
     sendMessage({"what": "set", tabs}, null);
+}
+
+function cleanupUrl(url){
+    if(url.startsWith("/"))
+        url = url.slice(1);
+    if(url.endsWith("/"))
+        url = url.slice(0,url.length-1);
+    if(url.includes(setupLightning))
+        url = url.slice(url.indexOf(setupLightning)+setupLightning.length);
+    if(url.includes(setupDefaultPage))
+        url = url.slice(0,url.indexOf(setupDefaultPage));
+    
+    return url;
 }
 
 function deleteTab(){
@@ -33,7 +49,6 @@ function loadTemplateTab(){
 }
 
 function loadTabs(items){
-    console.log(items);
     if(items == null || items[items.key] == null)
         return loadTemplateTab();
 
@@ -52,9 +67,9 @@ function loadTabs(items){
 function saveTabs(){
     const tabs = [];
     const tabElements = document.getElementsByClassName("tab");
-    Array.from(tabElements).forEach(function (tab) {        
+    Array.from(tabElements).forEach(tab => {        
         const tabTitle = tab.querySelector(".tabTitle").value;
-        const url = tab.querySelector(".url").value;
+        const url = cleanupUrl(tab.querySelector(".url").value);
         if (tabTitle != null && url != null){
             tabs.push({tabTitle, url});
         }
