@@ -10,7 +10,7 @@
             "matches": [
                 "*://*.lightning.force.com/lightning/setup/*"
             ],
-            "js": ["content.js", "tableDragHandler.js", "import.js"],
+            "js": ["./salesforce/content.js", "./dragHandler.js", "./salesforce/import.js"],
             "run_at": "document_end"
         }
     ],
@@ -22,7 +22,7 @@
     },
     "action": {
         "default_title": "Again, Why Salesforce",
-        "default_popup": "popup.html"
+        "default_popup": "./action/popup.html"
     },
     "background": {
         "service_worker": "background.js",
