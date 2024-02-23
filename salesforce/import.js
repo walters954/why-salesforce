@@ -1,7 +1,7 @@
 "use strict";
 
 function listenToFileUpload(){
-    const dropArea = document.getElementById("again-why-salesforce-import");
+    const dropArea = document.getElementById("why-salesforce-import");
 
     function readFile(file){
         if(file.type !== "application/json")

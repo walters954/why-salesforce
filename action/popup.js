@@ -175,7 +175,7 @@ function exportHandler(){
     // Create a download link
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'again-why-salesforce.json';
+    link.download = 'why-salesforce.json';
 
     // Append the link to the body and trigger the download
     document.body.appendChild(link);
