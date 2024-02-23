@@ -1,4 +1,4 @@
-# Again,Why Salesforce
+# Why Salesforce
 This extension allows users to create custom tabs in Setup for their most-used settings
 
 [Demo Video](https://youtu.be/BtlKRvac9ZQ)
@@ -19,8 +19,9 @@ This extension allows users to create custom tabs in Setup for their most-used s
 - [x] Open full urls in new tab
 - [ ] Better solutions for waiting until Salesforce setup is completely loaded
 - [ ] Utils class for templates or other shared code
+- [x] Allow links to SF Classic #4
+- [x] Import & Export tabs #11
 - [x] Favourite button on current Setup page #12
-- [x] Import & Export tabs
 
 Contributors
 - [Warren Walters](https://www.linkedin.com/in/walters954/)
