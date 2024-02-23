@@ -23,9 +23,9 @@ function arraysAreEqual(arr1, arr2) {
     return JSON.stringify(arr1) === JSON.stringify(arr2);
 }
 
-function setStorage(tabs){
-    if(!arraysAreEqual(tabs,knownTabs))
-        sendMessage({"what": "set", tabs}, afterSet);
+function setStorage(tabs, check = true){
+    if((check && !arraysAreEqual(tabs,knownTabs)) || !check)
+       sendMessage({"what": "set", tabs}, afterSet); 
     knownTabs = tabs;
 }
 
@@ -157,8 +157,32 @@ function saveTabs(doReload = true){
         }
     });
     setStorage(tabs);
-    if(doReload)
+    if(doReload && !arraysAreEqual(tabs,knownTabs))
         reloadRows({tabs, key: "tabs"});
+}
+
+function importHandler(){
+    //window.open('import.html', 'File Input Popup', 'width=300,height=200');
+    const message = {"what": "add"}; 
+    chrome.runtime.sendMessage({message, url: location.href});
+    window.close();
+}
+
+function exportHandler(){
+    // Convert JSON string to Blob
+    const blob = new Blob([JSON.stringify(knownTabs, null, 4)], { type: 'application/json' });
+
+    // Create a download link
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'again-why-salesforce.json';
+
+    // Append the link to the body and trigger the download
+    document.body.appendChild(link);
+    link.click();
+
+    // Cleanup
+    document.body.removeChild(link)
 }
 
 // listen to possible updates from tableDragHandler
@@ -171,7 +195,8 @@ window.addEventListener("message", e => {
         saveTabs();
 });
 
-document.getElementById("save").addEventListener("click", saveTabs);
-document.getElementById("add").addEventListener("click", addTab);
+document.getElementById("import").addEventListener("click", importHandler);
+document.getElementById("export").addEventListener("click", exportHandler);
+document.addEventListener("click", saveTabs);
 
 getStorage(loadTabs);

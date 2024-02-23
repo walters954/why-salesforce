@@ -77,16 +77,16 @@ header {
     & > div:last-child {
         flex: none;
 
-        & > button#save {
+        & > button#export {
+            color: #040F0F;
+            background-color: #5FB49C;
+            border-color: #5FB49C;
+        }
+
+        & > button#import {
             color: #FFFFFF;
             background-color: #0176D3;
             border-color: #0176D3;
-        }
-
-        & > button#add {
-            color: #0176D3;
-            background-color: #FFFFFF;
-            border-color: #CBCBCB;
         }
     }
 }

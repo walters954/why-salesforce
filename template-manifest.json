@@ -10,7 +10,7 @@
             "matches": [
                 "*://*.lightning.force.com/lightning/setup/*"
             ],
-            "js": ["content.js", "tableDragHandler.js"],
+            "js": ["content.js", "tableDragHandler.js", "import.js"],
             "run_at": "document_end"
         }
     ],

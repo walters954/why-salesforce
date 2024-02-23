@@ -38,13 +38,20 @@ browserObj.runtime.onMessage.addListener((request, sender, sendResponse) => {
         setStorage(message.tabs, sendResponse);
         captured = true;
     }
-    else if(message.what === "saved"){
-        browserObj.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-            browserObj.tabs.sendMessage(tabs[0].id, message);
-        });
-        //browserObj.tabs.executeScript(sender.tab.id, { file: 'content.js' });
-        return false;
+    else if(message.what === "saved" || message.what === "add"){
+        const notify = (count = 0) => {
+            browserObj.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                if(tabs && tabs[0])
+                    browserObj.tabs.sendMessage(tabs[0].id, message);
+                else if(count < 5)
+                    setTimeout(() => notify(count + 1), 500);
+            });
+        };
+        notify();
+        sendResponse(null);
+        return false;// we won't call sendResponse
     }
+    captured = captured || message.what === "import"
     if(!captured)
         console.error({"error": "Unknown message",message});
 
