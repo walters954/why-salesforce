@@ -46,8 +46,12 @@ function deleteTab(){
 }
 
 function addTab(){
-    const deleteButton = tabAppendElement.querySelector("td:last-child button.delete");
-    deleteButton.disabled = false;
+     // enable current last child button
+    if(tabAppendElement.childElementCount >= 1){// if list is empty, there's nothing to disable
+      const deleteButton = tabAppendElement.querySelector("td:last-child button.delete");
+      deleteButton.disabled = false;
+    }
+    // add a new empty element
     tabAppendElement.append(createElement());
 }
 
@@ -64,7 +68,6 @@ function inputTitleListener(){
     const currentObj = loggers[focusedIndex];
     const titleElement = currentObj.title;
     const value = titleElement.value;
-    //currentObj.timeout.title = 0;
     const inputObj = currentObj.last_input;
     const last_input = inputObj.title || "";
     const delta = last_input.length - value.length;
@@ -73,15 +76,14 @@ function inputTitleListener(){
         console.log("copied title");
     }
     inputObj.title = value;
-    if(focusedIndex == loggers.length - 1)
-        checkAddTab(inputObj);
+    if(focusedIndex == loggers.length - 1)// if the user is on the last td
+       checkAddTab(inputObj);
 }
 
 function inputUrlListener(){
     const currentObj = loggers[focusedIndex];
     const urlElement = currentObj.url;
     const value = urlElement.value;
-    //currentObj.timeout.url = 0;
     const inputObj = currentObj.last_input;
     const last_input = inputObj.url || "";
     const delta = last_input.length - value.length;
@@ -91,7 +93,7 @@ function inputUrlListener(){
         urlElement.value = cleanupUrl(value);
     }
     inputObj.url = value;
-    if(focusedIndex == loggers.length - 1)
+    if(focusedIndex == loggers.length - 1)// if the user is on the last td
         checkAddTab(inputObj);
 }
 
@@ -102,16 +104,22 @@ function focusListener(e){
 
 function createElement(){
     const element = tabTemplate.content.firstElementChild.cloneNode(true);
-    element.querySelector(".delete").addEventListener("click", deleteTab);
+    element.dataset.draggable = "false";
+    const deleteButton = element.querySelector("button.delete");
+    deleteButton.addEventListener("click", deleteTab);
+    deleteButton.disabled = true;
+
+    const setInfoForDrag = (element, listener) => {
+      element.addEventListener("input", listener);
+      element.addEventListener("focus", focusListener);
+      element.dataset.element_index = loggers.length;
+    };
     const title = element.querySelector(".tabTitle");
+    setInfoForDrag(title, inputTitleListener);
     const url = element.querySelector(".url");
-    title.addEventListener("input", inputTitleListener);
-    url.addEventListener("input", inputUrlListener);
-    title.addEventListener("focus", focusListener);
-    url.addEventListener("focus", focusListener);
-    title.dataset.element_index = loggers.length;
-    url.dataset.element_index = loggers.length;
-    loggers.push({title, url, timeout: {}, last_input: {}});
+    setInfoForDrag(url, inputUrlListener);
+
+    loggers.push({title, url, last_input: {}});
     return element;
 }
 
@@ -132,10 +140,7 @@ function loadTabs(items){
         elements.push(element);
     }
     tabAppendElement.append(...elements);
-    const blank = createElement();
-    blank.dataset.draggable = "false";
-    blank.querySelector(".delete").disabled = true;
-    tabAppendElement.append(blank);// always leave a blank at the bottom
+    tabAppendElement.append(createElement());// always leave a blank at the bottom
     knownTabs = rowObjs;
 }
 
