@@ -5,7 +5,6 @@
 const whyKey = 'sfmWhySF';
 let setupTabUl = document.getElementsByClassName("tabBarItems slds-grid")[0];
 const setupLightning = "/lightning/setup/";
-const setupDefaultPage = "/home";
 
 function getStorage(callback){
     chrome.storage.sync.get([whyKey], function(items) {
@@ -14,6 +13,7 @@ function getStorage(callback){
 }
 
 function setStorage(tabs){
+    console.log({tabs});
     // Save it using the Chrome extension storage API.
     chrome.storage.sync.set({whyKey: tabs}, function() {
         //TODO notify user of save
@@ -27,7 +27,7 @@ function generateRowTemplate(row){
         url = url.slice(1);
     if(url.endsWith("/"))
         url = url.slice(0,url.length-1);
-    url = `${setupLightning}${url}${setupDefaultPage}`;
+    url = `${setupLightning}${url}`;
 
     return `<li role="presentation" style="" class="oneConsoleTabItem tabItem slds-context-bar__item borderRight navexConsoleTabItem" data-aura-class="navexConsoleTabItem">
                 <a role="tab" tabindex="-1" title="${tabTitle}" aria-selected="false" href="${url}" class="tabHeader slds-context-bar__label-action" >
@@ -46,7 +46,7 @@ function initTabs(){
 }
 
 function init(items){
-    console.log(items);
+    console.log({items});
     //call inittabs if we did not find data inside storage
     const rowObj = (items == null || items[whyKey] == null) ? initTabs() : items[whyKey];
 
@@ -62,7 +62,7 @@ function delayLoadSetupTabs(count = 0) {
         console.error('Why Salesforce - failed to find setup tab.');
         return;
     }
-
+console.log({count});
     if(setupTabUl == null){
         setupTabUl = document.getElementsByClassName("tabBarItems slds-grid")[0];
         setTimeout(function() { delayLoadSetupTabs(count + 1); }, 500);

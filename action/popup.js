@@ -13,6 +13,7 @@ function getStorage(callback){
 
 function setStorage(tabs){
     // Save it using the Chrome extension storage API.
+    console.log({tabs});
     chrome.storage.sync.set({whyKey: tabs}, function() {
         //TODO notify user of save
         console.log("saved");
@@ -35,7 +36,7 @@ function loadTemplateTab(){
 }
 
 function loadTabs(items){
-    console.log(items);
+    console.log({items});
     if(items == null || items[whyKey] == null)
         return loadTemplateTab();
 
