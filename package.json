@@ -1,5 +1,5 @@
 {
-  "name": "again-why-salesforce",
+  "name": "why-salesforce",
   "scripts": {
     "dev-firefox": "node build-manifest.js firefox",
     "dev-chrome": "node build-manifest.js chrome"
