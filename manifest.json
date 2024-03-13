@@ -1,12 +1,12 @@
 {
     "manifest_version": 3,
-    "name": "Again, Why Salesforce",
+    "name": "Why Salesforce",
     "version": "1.3",
     "permissions": [
         "storage"
     ],
     "description": "Stuff that Salesforce should have already added... Easily setting favourite tabs in Setup.",
-    "homepage_url": "https://github.com/astisme/again-Why-Salesforce",
+    "homepage_url": "https://github.com/walters954/why-salesforce",
     "content_scripts": [
         {
             "matches": [
@@ -25,7 +25,7 @@
         "128": "images/whysf128.png"
     },
     "action": {
-        "default_title": "Again, Why Salesforce",
+        "default_title": "Why Salesforce",
         "default_popup": "popup.html"
     },
     "background": {
@@ -33,15 +33,6 @@
         "scripts": [
             "background.js"
         ]
-    },
-    "browser_specific_settings": {
-        "gecko": {
-            "id": "again@why.salesforce",
-            "strict_min_version": "112.0.2"
-        },
-        "safari": {
-            "strict_min_version": "14"
-        }
     },
     "incognito": "spanning"
 }
