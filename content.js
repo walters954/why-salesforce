@@ -35,12 +35,9 @@ function initTabs(){
     let tabs = [
         {tabTitle : 'Flow', url: '/lightning/setup/Flows/home'},
         {tabTitle : 'User', url: '/lightning/setup/ManageUsers/home'}
-    ]
+    ];
 
-    chrome.storage.sync.set({storageKey: tabs}, function() {
-        //TODO combine with popup.js with background service
-    });
-
+    setStorage(tabs);
     return tabs;
 }
 

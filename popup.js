@@ -19,7 +19,17 @@ function setStorage(tabs){
 
 function deleteTab(){
     this.closest(".tab").remove();
-    saveTab();
+    saveTabs();
+}
+
+function addTab(){
+     // enable current last child button
+    if(tabAppendElement.childElementCount >= 1){// if list is empty, there's nothing to disable
+      const deleteButton = tabAppendElement.querySelector("td:last-child button.delete");
+      deleteButton.disabled = false;
+    }
+    // add a new empty element
+    tabAppendElement.append(createElement());
 }
 
 function createElement(){
@@ -59,13 +69,11 @@ function saveTabs(){
             tabs.push({tabTitle, url});
         }
     });
+    setStorage(tabs);
 }
 
 
-const saveButton = document.querySelector(".save");
-saveButton.addEventListener("click", saveTab);
-
-const addButton = document.querySelector(".add");
+saveButton.addEventListener("click", saveTabs);
 addButton.addEventListener("click", addTab);
 
 getStorage(loadTabs);
