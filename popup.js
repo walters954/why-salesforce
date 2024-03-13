@@ -1,6 +1,5 @@
 "use strict";
 
-let whyKey;
 const tabTemplate = document.getElementById("tr_template");
 const tabAppendElement = document.getElementById("tabs");
 const saveButton = document.getElementById("save");
@@ -16,14 +15,6 @@ function getStorage(callback){
 
 function setStorage(tabs){
     sendMessage({"what": "set", tabs}, null);
-}
-
-function setWhyKey(value){
-    whyKey = value;
-}
-
-function getWhyKey(){
-    sendMessage({"what": "getKey"}, setWhyKey);
 }
 
 function deleteTab(){
@@ -42,11 +33,11 @@ function loadTemplateTab(){
 }
 
 function loadTabs(items){
-    console.log(items, whyKey);
-    if(items == null || items[whyKey] == null)
+    console.log(items);
+    if(items == null || items[items.key] == null)
         return loadTemplateTab();
 
-    const rowObjs = items[whyKey];
+    const rowObjs = items[items.key];
     const elements = [];
     for (const tab of rowObjs){
         console.log(tab);
@@ -62,8 +53,8 @@ function saveTabs(){
     const tabs = [];
     const tabElements = document.getElementsByClassName("tab");
     Array.from(tabElements).forEach(function (tab) {        
-        const tabTitle = tab.querySelector("#tabTitle").value;
-        const url = tab.querySelector("#url").value;
+        const tabTitle = tab.querySelector(".tabTitle").value;
+        const url = tab.querySelector(".url").value;
         if (tabTitle != null && url != null){
             tabs.push({tabTitle, url});
         }
@@ -77,5 +68,4 @@ saveButton.addEventListener("click", saveTab);
 const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
 
-getWhyKey();
 getStorage(loadTabs);
