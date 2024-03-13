@@ -5,7 +5,7 @@
     "permissions": [
         "storage"
     ],
-    "description": "Stuff that Salesforce should have already added... Easily setting favourite tabs in Setup.",
+    "description": "Stuff that Salesforce should have already added... Adding flow and user tabs into setup.",
     "homepage_url": "https://github.com/walters954/why-salesforce",
     "content_scripts": [
         {
