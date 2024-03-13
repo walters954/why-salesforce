@@ -1,6 +1,6 @@
 const isChrome = navigator.userAgent.includes("Chrome");
 const browserObj = isChrome ? chrome : browser;
-const whyKey = 'sfmWhySF';
+const whyKey = 'againWhySalesforce';
 
 function addKey(items, callback){
     items.key = whyKey; 
