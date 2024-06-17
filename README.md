@@ -8,7 +8,7 @@ This extension allows users to create custom tabs in Setup for their most-used s
 ### Roadmap
 - [x] Ability to customize tab
     - [x] Salesforce SLDS
-    - Feedback on save and delete
+    - [x] Feedback on save and delete
     - Update tabs onSave without refresh 
     - Disable save button if tabs list empty
 - [x] Minify SLDS files
@@ -22,3 +22,4 @@ This extension allows users to create custom tabs in Setup for their most-used s
 Contributors
 - [Warren Walters](https://www.linkedin.com/in/walters954/)
 - [Chris Rouse (Firefox port)](https://www.linkedin.com/in/chris-rouse/)
+- [Jonathan Valoto](https://www.linkedin.com/in/jonathan-valoto/)
