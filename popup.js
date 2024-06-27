@@ -19,6 +19,7 @@ function loadTabs(){
             elements.add(element);
         }
         document.querySelector(tabAppendElement).append(...elements);
+        updateSaveButtonState();
     });
 }
 
@@ -27,6 +28,7 @@ function addTab(){
     const element = template.content.firstElementChild.cloneNode(true);
     element.querySelector(".delete").addEventListener("click", deleteTab);
     document.querySelector(tabAppendElement).append(element);
+    updateSaveButtonState();
 }
 
 function saveTab(){
@@ -52,6 +54,7 @@ function processTabs(){
 function deleteTab(){
     this.closest(".tab").remove();
     saveTab();
+    updateSaveButtonState();
 }
 
 function setChromeStorage(tabs){
@@ -59,6 +62,12 @@ function setChromeStorage(tabs){
     chrome.storage.sync.set({'sfmWhySF': tabs}, function() {
         //TODO notify user of save
     });
+}
+
+function updateSaveButtonState() {
+    const saveButton = document.querySelector(".save");
+    const tabElements = document.getElementsByClassName('tab');
+    saveButton.disabled = tabElements.length === 0;
 }
 
 const saveButton = document.querySelector(".save");
@@ -75,3 +84,6 @@ function clearChromeStorage(){
         }
     });
 }
+
+// Initial check to set the state of the save button
+updateSaveButtonState();

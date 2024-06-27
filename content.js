@@ -1,5 +1,5 @@
-function init(setupTabUl){
-    if (setupTabUl){
+function init(setupTabUl) {
+    if (setupTabUl) {
         let rows = [];
         chrome.storage.sync.get(['sfmWhySF'], function(items) {
             const rowObj = items['sfmWhySF'] || [];
@@ -19,13 +19,13 @@ function delayLoadSetupTabs(count) {
     const setupTabUl = document.getElementsByClassName("tabBarItems slds-grid")[0];
     count++;
 
-    if (count > 5){
+    if (count > 5) {
         console.log('Why Salesforce - failed to find setup tab.');
         return;
     }
 
     if (!setupTabUl) {
-        setTimeout(function() { delayLoadSetupTabs(count); }, 3000);  // Fixed to pass count correctly
+        setTimeout(function() { delayLoadSetupTabs(count); }, 3000); // Fixed to pass count correctly
     } else {
         init(setupTabUl);
     }
@@ -33,16 +33,16 @@ function delayLoadSetupTabs(count) {
 
 setTimeout(function() { delayLoadSetupTabs(0); }, 3000);
 
-function generateRowTemplate(tabTitle, url, openInNewTab){
+function generateRowTemplate(tabTitle, url, openInNewTab) {
     const target = openInNewTab ? '_blank' : '_self';
-    return `<li role="presentation" style="" class="oneConsoleTabItem tabItem slds-context-bar__item borderRight navexConsoleTabItem" data-aura-class="navexConsoleTabItem">
+    return `<li role="presentation" class="oneConsoleTabItem tabItem slds-context-bar__item borderRight navexConsoleTabItem" data-aura-class="navexConsoleTabItem" data-url="${url}">
             <a role="tab" tabindex="-1" title="${tabTitle}" aria-selected="false" href="${url}" target="${target}" class="tabHeader slds-context-bar__label-action">
                 <span class="title slds-truncate">${tabTitle}</span>
             </a>
         </li>`;
 }
 
-function initTabs(){
+function initTabs() {
     let tabs = [
         { tabTitle: 'Flow', url: '/lightning/setup/Flows/home', openInNewTab: true },
         { tabTitle: 'User', url: '/lightning/setup/ManageUsers/home', openInNewTab: false }
