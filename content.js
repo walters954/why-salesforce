@@ -1,4 +1,4 @@
-const storageKey = 'sfmwhySF';
+const storageKey = 'sfmWhySF';
 
 function init(setupTabUl) {
     if (setupTabUl) {

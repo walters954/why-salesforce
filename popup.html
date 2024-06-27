@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./popup.css">
-    <link rel="stylesheet" href="./assets/salesforce-lightning-design-system.sanitized.css">
+    <link rel="stylesheet" href="./assets/salesforce-lightning-design-system.min.css">
     <title>Tab Manager</title>
 </head>
 <body class="slds-p-around_none">
@@ -58,12 +58,12 @@
         <tr class="tab">
             <td data-label="Tab Name" scope="row">
                 <div class="slds-form-element__control">
-                    <input type="text" name="tabTitle" class="tabTitle slds-input">
+                    <input type="text" name="tabTitle" class="tabTitle slds-input" placeholder="Flow">
                 </div>
             </td>
             <td data-label="Tab Url">
                 <div class="slds-form-element__control">
-                    <input type="url" name="url" class="url slds-input">
+                    <input type="url" name="url" class="url slds-input" placeholder="/lightning/setup/Flows/home">
                 </div>
             </td>
             <td data-label="New Tab">
