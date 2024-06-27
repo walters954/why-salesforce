@@ -1,3 +1,24 @@
 body {
     width: 40rem;
 }
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+body.dark-mode button {
+    background-color: #444444;
+    color: #ffffff;
+}
+
+
+
