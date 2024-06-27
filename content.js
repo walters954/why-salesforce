@@ -1,8 +1,10 @@
+const storageKey = 'sfmwhySF';
+
 function init(setupTabUl) {
     if (setupTabUl) {
         let rows = [];
-        chrome.storage.sync.get(['sfmWhySF'], function(items) {
-            const rowObj = items['sfmWhySF'] || [];
+        chrome.storage.sync.get([storageKey], function(items) {
+            const rowObj = items[storageKey] || [];
             for (const rowId in rowObj) {
                 let row = rowObj[rowId];
                 rows.push(generateRowTemplate(row.tabTitle, row.url, row.openInNewTab));
@@ -44,11 +46,12 @@ function generateRowTemplate(tabTitle, url, openInNewTab) {
 
 function initTabs() {
     let tabs = [
+        { tabTitle: 'Home', url: '/', openInNewTab: false },
         { tabTitle: 'Flow', url: '/lightning/setup/Flows/home', openInNewTab: true },
         { tabTitle: 'User', url: '/lightning/setup/ManageUsers/home', openInNewTab: false }
     ];
 
-    chrome.storage.sync.set({ 'sfmWhySF': tabs }, function() {
+    chrome.storage.sync.set({ storageKey: tabs }, function() {
         //TODO combine with popup.js with background service
     });
 
@@ -56,8 +59,8 @@ function initTabs() {
 }
 
 function addClickEventListeners() {
-    chrome.storage.sync.get(['sfmWhySF'], function(items) {
-        const rowObj = items['sfmWhySF'] || [];
+    chrome.storage.sync.get([storageKey], function(items) {
+        const rowObj = items[storageKey] || [];
         for (const rowId in rowObj) {
             let tab = rowObj[rowId];
             document.querySelectorAll(`a[href="${tab.url}"]`).forEach(link => {
