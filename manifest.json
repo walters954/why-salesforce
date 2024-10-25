@@ -9,7 +9,8 @@
         {
           "js": ["content.js"],
           "matches": [
-            "*://*.lightning.force.com/lightning/setup/*"
+            "*://*.lightning.force.com/lightning/setup/*",
+            "*://*.salesforce-setup.com/lightning/setup/*"
           ],
           "run_at": "document_end"
         }
