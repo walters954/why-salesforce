@@ -9,7 +9,7 @@ function loadTabs() {
     const template = document.getElementById(tabTemplate);
     const elements = new Set();
 
-    chrome.storage.sync.get([storageKey], function (items) {
+    browser.storage.sync.get([storageKey], function (items) {
         const rowObj = items[storageKey];
         for (const rowId in rowObj) {
             let tab = rowObj[rowId];
@@ -24,7 +24,6 @@ function loadTabs() {
             elements.add(element);
         }
         document.querySelector(tabAppendElement).append(...elements);
-        updateSaveButtonState();
         updateSaveButtonState();
     });
 }
@@ -61,7 +60,6 @@ function processTabs() {
 function deleteTab() {
     this.closest(".tab").remove();
     saveTab();
-    updateSaveButtonState();
     updateSaveButtonState();
 }
 
@@ -103,9 +101,6 @@ saveButton.addEventListener("click", saveTab);
 
 const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
-
-// Initial check to set the state of the save button
-updateSaveButtonState();
 
 // Initial check to set the state of the save button
 updateSaveButtonState();

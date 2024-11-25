@@ -2,8 +2,6 @@ const storageKey = "sfmWhySF";
 
 function init(setupTabUl) {
     if (setupTabUl) {
-function init(setupTabUl) {
-    if (setupTabUl) {
         let rows = [];
         browser.storage.sync.get([storageKey], function (items) {
             let rowObj = items[storageKey] || [];
@@ -60,7 +58,6 @@ function generateRowTemplate(tabTitle, url, openInNewTab) {
 }
 
 function initTabs() {
-function initTabs() {
     let tabs = [
         { tabTitle: "Home", url: "/", openInNewTab: false },
         {
@@ -82,7 +79,7 @@ function initTabs() {
 }
 
 function addClickEventListeners() {
-    chrome.storage.sync.get([storageKey], function (items) {
+    browser.storage.sync.get([storageKey], function (items) {
         const rowObj = items[storageKey] || [];
         for (const rowId in rowObj) {
             let tab = rowObj[rowId];
