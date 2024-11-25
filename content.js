@@ -6,6 +6,8 @@ function init(setupTabUl) {
         chrome.storage.sync.get([storageKey], function (items) {
             const rowObj = items[storageKey] || [];
 
+            console.log(rowObj);
+
             if (!rowObj) {
                 //Did not find data inside browser storage
                 rowObj = initTabs();
@@ -41,6 +43,7 @@ function delayLoadSetupTabs(count) {
             delayLoadSetupTabs(count);
         }, 3000); // Fixed to pass count correctly
     } else {
+        console.log("Why Salesforce - found setup tab.");
         init(setupTabUl);
     }
 }
