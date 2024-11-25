@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="./popup.css"/>
-        <link rel="stylesheet" href="./assets/salesforce-lightning-design-system.min.css"/> 
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./popup.css">
+    <link rel="stylesheet" href="./assets/salesforce-lightning-design-system.min.css">
+    <title>Tab Manager</title>
+</head>
 <body class="slds-p-around_none">
     <article class="slds-card">
         <div class="slds-card__header slds-grid">
             <header class="slds-media slds-media_center slds-has-flexi-truncate">
                 <div class="slds-media__figure">
                     <span class="slds-icon_container" title="Why Salesforce">
-                        <img src="./images/whysf32.png"/>
+                        <img src="./images/whysf32.png" alt="Why Salesforce">
                         <span class="slds-assistive-text">Why Salesforce</span>
                     </span>
                 </div>
@@ -32,11 +33,14 @@
             <table class="slds-table slds-table_cell-buffer slds-table_bordered">
                 <thead>
                     <tr>
-                        <th class="" scope="col">
+                        <th scope="col">
                             <div title="Tab Name">Tab Name</div>
                         </th>
                         <th scope="col">
                             <div title="Tab URL">Tab URL</div>
+                        </th>
+                        <th scope="col" style="width: 3.25rem">
+                            <div title="Open in New Tab">New Tab</div>
                         </th>
                         <th scope="col" style="width: 3.25rem">
                             <div class="slds-assistive-text" title="Actions">Actions</div>
@@ -44,6 +48,7 @@
                     </tr>
                 </thead>
                 <tbody class="tabs">
+                    <!-- Rows will be dynamically added here -->
                 </tbody>
             </table>
         </div>
@@ -53,24 +58,18 @@
         <tr class="tab">
             <td data-label="Tab Name" scope="row">
                 <div class="slds-form-element__control">
-                <input
-                    type="text"
-                    name="tabTitle"
-                    class="tabTitle slds-input"
-                    placeholder="Flow"
-                />
-            </div>
+                    <input type="text" name="tabTitle" class="tabTitle slds-input" placeholder="Flow">
+                </div>
             </td>
             <td data-label="Tab URL">
                 <div class="slds-form-element__control">
-                    <input
-                    type="url"
-                    name="url"
-                    class="url slds-input"
-                    placeholder="/lightning/setup/Flows/home"
-                    />
+                    <input type="url" name="url" class="url slds-input" placeholder="/lightning/setup/Flows/home">
                 </div>
-                
+            </td>
+            <td data-label="New Tab">
+                <div class="slds-form-element__control">
+                    <input type="checkbox" name="openInNewTab" class="openInNewTab slds-checkbox">
+                </div>
             </td>
             <td>
                 <button class="delete slds-button slds-button_destructive">Delete</button>
