@@ -1,3 +1,7 @@
 body {
     width: 40rem;
 }
+
+.hidden{
+    display: none;
+}
