@@ -1,35 +1,34 @@
 {
     "manifest_version": 3,
     "name": "Why Salesforce",
-    "version": "1.0",
+    "version": "1.5",
     "permissions": ["storage"],
     "description": "Stuff that Salesforce should have added already... Adding flow and user tabs into setup.",
     "homepage_url": "https://github.com/walters954/why-salesforce/tree/firefox",
     "content_scripts": [
         {
-          "js": ["content.js"],
-          "matches": [
-            "*://*.lightning.force.com/lightning/setup/*",
-            "*://*.salesforce-setup.com/lightning/setup/*"
-          ],
-          "run_at": "document_end"
+            "js": ["content.js"],
+            "matches": [
+                "*://*.lightning.force.com/lightning/setup/*",
+                "*://*.salesforce-setup.com/lightning/setup/*"
+            ],
+            "run_at": "document_end"
         }
-      ],
+    ],
     "icons": {
-      "16": "images/whysf16.png",
-      "32": "images/whysf32.png",
-      "48": "images/whysf48.png",
-      "128": "images/whysf128.png"
+        "16": "images/whysf16.png",
+        "32": "images/whysf32.png",
+        "48": "images/whysf48.png",
+        "128": "images/whysf128.png"
     },
     "action": {
-      "default_title": "Why Salesforce",
-      "default_popup": "popup.html"
+        "default_title": "Why Salesforce",
+        "default_popup": "popup.html"
     },
     "browser_specific_settings": {
-      "gecko": {
-          "id": "whysf@plugin",
-          "strict_min_version": "112.0.2"
+        "gecko": {
+            "id": "whysf@plugin",
+            "strict_min_version": "112.0.2"
         }
     }
-
-  }
+}
