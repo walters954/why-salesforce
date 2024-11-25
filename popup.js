@@ -10,7 +10,6 @@ function loadTabs() {
     const elements = new Set();
 
     chrome.storage.sync.get([storageKey], function (items) {
-        console.log(items[storageKey]);
         const rowObj = items[storageKey] || [];
         for (const rowId in rowObj) {
             let tab = rowObj[rowId];
@@ -102,15 +101,6 @@ saveButton.addEventListener("click", saveTab);
 
 const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
-
-function clearBrowserStorage() {
-    chrome.storage.sync.remove([storageKey], function () {
-        var error = chrome.runtime.lastError;
-        if (error) {
-            console.error(error);
-        }
-    });
-}
 
 // Initial check to set the state of the save button
 updateSaveButtonState();
