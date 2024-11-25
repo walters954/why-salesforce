@@ -2,15 +2,16 @@
 const tabTemplate = "tr_template";
 const tabAppendElement = "tbody";
 const SUCCESS_MESSAGE = "Your changes were saved successfully";
+const storageKey = "sfmWhySF";
 loadTabs();
 
 function loadTabs() {
     const template = document.getElementById(tabTemplate);
     const elements = new Set();
 
-    chrome.storage.sync.get(["sfmWhySF"], function (items) {
-        console.log(items["sfmWhySF"]);
-        const rowObj = items["sfmWhySF"] || [];
+    chrome.storage.sync.get([storageKey], function (items) {
+        console.log(items[storageKey]);
+        const rowObj = items[storageKey] || [];
         for (const rowId in rowObj) {
             let tab = rowObj[rowId];
             const element = template.content.firstElementChild.cloneNode(true);
@@ -39,7 +40,7 @@ function addTab() {
 
 function saveTab() {
     let validTabs = processTabs();
-    setChromeStorage(validTabs);
+    setBrowserStorage(validTabs);
 }
 
 function processTabs() {
@@ -63,7 +64,7 @@ function deleteTab() {
     updateSaveButtonState();
 }
 
-function setChromeStorage(tabs) {
+function setBrowserStorage(tabs) {
     // Save it using the Chrome extension storage API.
     chrome.storage.sync.set({ sfmWhySF: tabs }, function () {
         setMessage("success", SUCCESS_MESSAGE);
@@ -79,6 +80,10 @@ function setMessage(type, message) {
 
     const messageBody = document.querySelector("#message-body");
     messageBody.innerText = message;
+
+    setTimeout(function () {
+        clearMessage();
+    }, 3000);
 }
 
 function clearMessage() {
@@ -98,8 +103,8 @@ saveButton.addEventListener("click", saveTab);
 const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
 
-function clearChromeStorage() {
-    chrome.storage.sync.remove(["sfmWhySF"], function () {
+function clearBrowserStorage() {
+    chrome.storage.sync.remove([storageKey], function () {
         var error = chrome.runtime.lastError;
         if (error) {
             console.error(error);

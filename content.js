@@ -4,11 +4,8 @@ function init(setupTabUl) {
     if (setupTabUl) {
         let rows = [];
         chrome.storage.sync.get([storageKey], function (items) {
-            const rowObj = items[storageKey] || [];
-
-            console.log(rowObj);
-
-            if (!rowObj) {
+            let rowObj = items[storageKey] || [];
+            if (rowObj.length === 0) {
                 //Did not find data inside browser storage
                 rowObj = initTabs();
             }
@@ -43,7 +40,6 @@ function delayLoadSetupTabs(count) {
             delayLoadSetupTabs(count);
         }, 3000); // Fixed to pass count correctly
     } else {
-        console.log("Why Salesforce - found setup tab.");
         init(setupTabUl);
     }
 }
@@ -76,10 +72,9 @@ function initTabs() {
         },
     ];
 
-    chrome.storage.sync.set({ storageKey: tabs }, function () {
+    chrome.storage.sync.set({ sfmWhySF: tabs }, function () {
         //TODO combine with popup.js with background service
     });
-
     return tabs;
 }
 
