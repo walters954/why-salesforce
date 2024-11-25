@@ -25,6 +25,7 @@ function loadTabs() {
         }
         document.querySelector(tabAppendElement).append(...elements);
         updateSaveButtonState();
+        updateSaveButtonState();
     });
 }
 
@@ -60,6 +61,7 @@ function processTabs() {
 function deleteTab() {
     this.closest(".tab").remove();
     saveTab();
+    updateSaveButtonState();
     updateSaveButtonState();
 }
 
@@ -101,6 +103,9 @@ saveButton.addEventListener("click", saveTab);
 
 const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
+
+// Initial check to set the state of the save button
+updateSaveButtonState();
 
 // Initial check to set the state of the save button
 updateSaveButtonState();

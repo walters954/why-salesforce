@@ -2,6 +2,8 @@ const storageKey = "sfmWhySF";
 
 function init(setupTabUl) {
     if (setupTabUl) {
+function init(setupTabUl) {
+    if (setupTabUl) {
         let rows = [];
         browser.storage.sync.get([storageKey], function (items) {
             let rowObj = items[storageKey] || [];
@@ -57,6 +59,7 @@ function generateRowTemplate(tabTitle, url, openInNewTab) {
         </li>`;
 }
 
+function initTabs() {
 function initTabs() {
     let tabs = [
         { tabTitle: "Home", url: "/", openInNewTab: false },
