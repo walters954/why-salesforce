@@ -113,15 +113,18 @@ function processTabs() {
         let tabTitle     = tab.querySelector(".tabTitle").value;
         let url          = tab.querySelector(".url").value;
         let openInNewTab = tab.querySelector(".openInNewTab").checked;
-        let order        = tab.querySelector(".order").value;
+        let order        = Number(tab.querySelector(".order").value);
+        if (order == 0) {order = null;}
 
         if (tabTitle && url) {
             tabs.push({ tabTitle, url, openInNewTab, order });
         }
     });
 
-    let sortedTabs = tabs.sort((a, b) => a.order - b.order);
-    return sortedTabs;
+    // Sorts tabs by order with nulls at the end
+    tabs.sort((a, b) => (a.order === null) - (b.order === null) || +(a.order > b.order) || -(a.order < b.order));
+
+    return tabs;
 }
 
 function deleteTab() {
