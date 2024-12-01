@@ -1,7 +1,49 @@
 body {
-    width: 40rem;
+    width: 50rem;
 }
 
 .hidden{
     display: none;
 }
+
+.subheader {
+    background-color: var(--slds-g-color-neutral-base-95,#f3f3f3);
+    border-top: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
+    border-bottom: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
+    color: var(--slds-g-color-neutral-base-30, #444);
+    cursor: pointer;
+    font-weight: bold;
+    padding: .25rem 1.5rem;
+}
+.subheader::before {
+    content: "▼ ";
+    margin-left: -1em;
+}
+
+#settings-container.collapsed .subheader::before {
+    content: "▶︎ ";
+}
+#settings-container.collapsed .settings {
+    display: none;
+}
+.settings {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.setting.row {
+    align-items: center;
+    display: flex;
+    padding: .25rem 2.5rem;
+}
+.setting.row label {
+    flex-grow: 1;
+    font-weight: bold;
+}
+.setting.row input {flex-basis: 8rem}
+.setting.row:hover {background-color: rgb(243, 243, 243)}
+
+input.order {padding-right: 0}
+input[type="checkbox"]:hover {cursor: pointer}
+input[type="checkbox"]:focus {box-shadow: none}
