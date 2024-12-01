@@ -40,19 +40,6 @@ function loadSettings() {
         document.querySelector(settingsAppendElement).append(template.content);
     });
 }
-// function loadSettings() {
-//     const template = document.getElementById(settingsTemplate);
-
-//     chrome.storage.sync.get([storageKeySettings], function (items) {
-//         const settings = items[storageKeySettings];
-
-//         Object.keys(settingDefaults).forEach(setting => {
-//             template.content.querySelector(`.setting.${setting} .setting-input`).checked = settings?.[setting] ?? settingDefaults[setting];
-//         });
-
-//         document.querySelector(settingsAppendElement).append(template.content);
-//     });
-// }
 
 function loadTabs() {
     const template = document.getElementById(tabTemplate);
