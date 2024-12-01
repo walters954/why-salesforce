@@ -7,7 +7,7 @@ runOrSkip();
 
 function runOrSkip() {
     chrome.storage.sync.get([storageKeySettings], function (items) {
-        settings = items[storageKeySettings];
+        settings = items[storageKeySettings] || {};
         Object.defineProperty(settings, 'displayOnTop', { get() {return !isSetup || this.tabsOnTopInSetup;} });
 
         // console.log('SETTINGS: ', settings);
