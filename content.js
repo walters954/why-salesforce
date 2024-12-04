@@ -98,6 +98,7 @@ function delayLoadSetupTabs(count) {
             let styles = [`background-color:${settings.backgroundColor || 'white'}`,
                           'border-bottom:1px solid lightgray',
                           `color:${settings.fontColor || 'black'}`];
+            if (settings.extraUlStyles) {styles.push(settings.extraUlStyles);}
 
             return !settings.displayOnTop ? allTabs : `<ul class="slds-grid" style="${styles.join(';')}">${allTabs}</ul>`;
         }
