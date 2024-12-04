@@ -11,8 +11,10 @@ const settingsInfo       = {collapsed:        {type: 'hidden',   default: true},
                             showInSetup:      {type: 'checkbox', default: true,              label: 'Display in Setup'},
                             tabsOnTopInSetup: {type: 'checkbox', default: false,             label: 'Tabs on Top in Setup (vs beside Object Manager tab)'},
                             refreshAfterSave: {type: 'checkbox', default: true,              label: 'Refresh After Saving'},
-                            backgroundColor:  {type: 'text',     default: 'white',           label: 'Background Color', placeholder: 'CSS-compatible colors'},
-                            fontColor:        {type: 'text',     default: 'rgb(24, 24, 24)', label: 'Font Color',       placeholder: 'CSS-compatible colors'}};
+                            backgroundColor:  {type: 'text',     default: 'white',           label: 'Background Color',                    placeholder: 'CSS-compatible colors'},
+                            fontColor:        {type: 'text',     default: 'rgb(24, 24, 24)', label: 'Font Color',                          placeholder: 'CSS-compatible colors'},
+                            extraUlStyles:    {type: 'text',     secret: true,               label: 'Extra Styles For Tab Container (ul)', placeholder: 'border:none;font-weight:bold'}
+                        };
 
 loadSettings();
 loadTabs();
@@ -38,8 +40,8 @@ function loadSettings() {
             let settingHTML;
             const settingInfo = settingsInfo[settingName];
 
-            if (settingInfo.type == 'checkbox' || settingInfo.type == 'text') {
-                settingHTML = `<div class="setting row ${settingName}">
+            if (settingInfo.type != 'hidden') {
+                settingHTML = `<div class="setting row ${settingName} ${settingInfo.secret ? 'secret' : ''}">
                                    <label>${settingInfo.label}</label>
                                    <input type="${settingInfo.type}" name="${settingName}" class="slds-input ${settingInfo.type == 'checkbox' ? 'slds-checkbox' : ''}" ${settingInfo.placeholder ? 'placeholder="' + settingInfo.placeholder + '"' : ''}>
                                </div>`;
@@ -61,7 +63,7 @@ function loadSettings() {
                         settingsElement.querySelector(`.setting.${settingName} input`).checked = storedSettings?.[settingName] ?? settingInfo.default;
                         break;
                     case 'text':
-                        settingsElement.querySelector(`.setting.${settingName} input`).value = storedSettings?.[settingName] || settingInfo.default;
+                        settingsElement.querySelector(`.setting.${settingName} input`).value = storedSettings?.[settingName] || settingInfo.default || '';
                         break;
                 }
             });
@@ -95,6 +97,11 @@ function loadTabs() {
 function toggleSettingsCollapse() {
     const settingsContainer = document.getElementById('settings-container');
     settingsContainer.classList.toggle('collapsed');
+}
+
+function toggleSecretSettings() {
+    const settingsContainer = document.querySelector('#settings-container .settings');
+    settingsContainer.classList.toggle('show-secrets');
 }
 
 function addTab() {
@@ -209,6 +216,9 @@ saveButton.addEventListener("click", saveTab);
 
 const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
+
+const brandImage = document.querySelector("header img");
+brandImage.addEventListener("dblclick", toggleSecretSettings);
 
 // Initial check to set the state of the save button
 updateSaveButtonState();
