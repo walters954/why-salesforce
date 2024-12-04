@@ -41,8 +41,10 @@ body {
     flex-grow: 1;
     font-weight: bold;
 }
-.setting.row input {flex-basis: 8rem}
+.setting.row input {flex-basis: 10rem}
 .setting.row:hover {background-color: rgb(243, 243, 243)}
+.setting.row.secret {display: none}
+#settings-container .settings.show-secrets .setting.row.secret {display: inherit}
 
 input.order {padding-right: 0}
 input[type="checkbox"]:hover {cursor: pointer}
