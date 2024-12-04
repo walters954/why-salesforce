@@ -1,45 +1,72 @@
 "use strict";
 
-const SUCCESS_MESSAGE       = "Your changes were saved successfully";
-const tabTemplate           = "tr_template";
-const settingsTemplate      = "settings_template";
-const tabAppendElement      = "tbody.tabs";
-const settingsAppendElement = "div.settings";
-const storageKeySettings    = "sfmWhySF_settings";
-const storageKeyTabs        = "sfmWhySF_tabs";
-const settingDefaults       = {collapsed: {type: 'hidden', value: true},
-                               showInFront: {type: 'checkbox', value: false},
-                               showInSetup: {type: 'checkbox', value: true},
-                               tabsOnTopInSetup: {type: 'checkbox', value: false},
-                               refreshAfterSave: {type: 'checkbox', value: true},
-                               backgroundColor: {type: 'text', value: 'white'},
-                               fontColor: {type: 'text', value: 'rgb(24, 24, 24)'}};
+const SUCCESS_MESSAGE    = "Your changes were saved successfully";
+const tabTemplate        = "tr_template";
+const settingsSelector   = "#settings-container div.settings";
+const tabAppendElement   = "tbody.tabs";
+const storageKeySettings = "sfmWhySF_settings";
+const storageKeyTabs     = "sfmWhySF_tabs";
+const settingsInfo       = {collapsed:        {type: 'hidden',   default: true},
+                            showInFront:      {type: 'checkbox', default: false,             label: 'Display in Front End'},
+                            showInSetup:      {type: 'checkbox', default: true,              label: 'Display in Setup'},
+                            tabsOnTopInSetup: {type: 'checkbox', default: false,             label: 'Tabs on Top in Setup (vs beside Object Manager tab)'},
+                            refreshAfterSave: {type: 'checkbox', default: true,              label: 'Refresh After Saving'},
+                            backgroundColor:  {type: 'text',     default: 'white',           label: 'Background Color', placeholder: 'CSS-compatible colors'},
+                            fontColor:        {type: 'text',     default: 'rgb(24, 24, 24)', label: 'Font Color',       placeholder: 'CSS-compatible colors'}};
 
 loadSettings();
 loadTabs();
 
 function loadSettings() {
-    const template = document.getElementById(settingsTemplate);
+    const settingsElement = document.querySelector(settingsSelector);
 
-    chrome.storage.sync.get([storageKeySettings], function (items) {
-        const settings = items[storageKeySettings];
+    addSettingsElementsToPage(settingsElement);
 
-        if (settings?.collapsed ?? settingDefaults.collapsed.value) {toggleSettingsCollapse();}
+    applySettingsValues(settingsElement);
+}
+    function addSettingsElementsToPage(settingsElement) {
+        let settingsHTML = '';
 
-        Object.keys(settingDefaults).forEach(settingName => {
-            switch(settingDefaults[settingName].type) {
-                case 'checkbox':
-                    template.content.querySelector(`.setting.${settingName} input`).checked = settings?.[settingName] ?? settingDefaults[settingName].value;
-                    break;
-                case 'text':
-                    template.content.querySelector(`.setting.${settingName} input`).value = settings?.[settingName] || settingDefaults[settingName].value;
-                    break;
-            }
+        Object.keys(settingsInfo).forEach(settingName => {
+            let settingContent = settingsTemplate(settingName);
+            if (settingContent) {settingsHTML += settingContent;}
         });
 
-        document.querySelector(settingsAppendElement).append(template.content);
-    });
-}
+        settingsElement.innerHTML = settingsHTML;
+    }
+        function settingsTemplate(settingName) {
+            let settingHTML;
+            const settingInfo = settingsInfo[settingName];
+
+            if (settingInfo.type == 'checkbox' || settingInfo.type == 'text') {
+                settingHTML = `<div class="setting row ${settingName}">
+                                   <label>${settingInfo.label}</label>
+                                   <input type="${settingInfo.type}" name="${settingName}" class="slds-input ${settingInfo.type == 'checkbox' ? 'slds-checkbox' : ''}" ${settingInfo.placeholder ? 'placeholder="' + settingInfo.placeholder + '"' : ''}>
+                               </div>`;
+            }
+
+            return settingHTML;
+        }
+    function applySettingsValues(settingsElement) {
+        chrome.storage.sync.get([storageKeySettings], function (items) {
+            const storedSettings = items[storageKeySettings];
+
+            Object.keys(settingsInfo).forEach(settingName => {
+                let settingInfo = settingsInfo[settingName];
+
+                if (storedSettings?.collapsed ?? settingsInfo.collapsed.default) {toggleSettingsCollapse();}
+
+                switch(settingInfo.type) {
+                    case 'checkbox':
+                        settingsElement.querySelector(`.setting.${settingName} input`).checked = storedSettings?.[settingName] ?? settingInfo.default;
+                        break;
+                    case 'text':
+                        settingsElement.querySelector(`.setting.${settingName} input`).value = storedSettings?.[settingName] || settingInfo.default;
+                        break;
+                }
+            });
+        });
+    }
 
 function loadTabs() {
     const template = document.getElementById(tabTemplate);
@@ -91,8 +118,8 @@ function processSettings() {
     const settingsContainer = document.getElementById('settings-container');
     settings.collapsed = settingsContainer.classList.contains('collapsed');
 
-    Object.keys(settingDefaults).forEach(settingName => {
-        switch(settingDefaults[settingName].type) {
+    Object.keys(settingsInfo).forEach(settingName => {
+        switch(settingsInfo[settingName].type) {
             case 'checkbox':
                 settings[settingName] = document.querySelector(`.setting.${settingName} input`).checked;
                 break;
