@@ -53,10 +53,10 @@ function loadSettings() {
         chrome.storage.sync.get([storageKeySettings], function (items) {
             const storedSettings = items[storageKeySettings];
 
+            if (storedSettings?.collapsed ?? settingsInfo.collapsed.default) {toggleSettingsCollapse();}
+
             Object.keys(settingsInfo).forEach(settingName => {
                 let settingInfo = settingsInfo[settingName];
-
-                if (storedSettings?.collapsed ?? settingsInfo.collapsed.default) {toggleSettingsCollapse();}
 
                 switch(settingInfo.type) {
                     case 'checkbox':
