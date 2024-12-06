@@ -1,5 +1,7 @@
-# Again,Why Salesforce
-This extension allows users to create custom tabs in Setup for their most-used settings
+# Again, Why Salesforce
+This extension allows users to create custom tabs in Setup for their most-used settings.
+
+This is a fork of [Why Salesforce](https://www.github.com/walters954/why-salesforce).
 
 [Demo Video](https://youtu.be/BtlKRvac9ZQ)
 
@@ -25,4 +27,4 @@ This extension allows users to create custom tabs in Setup for their most-used s
 Contributors
 - [Warren Walters](https://www.linkedin.com/in/walters954/)
 - [Chris Rouse (Firefox port)](https://www.linkedin.com/in/chris-rouse/)
-- [Astisme](https://www.github.com/astisme/astisme)
+- [Astisme](https://www.github.com/astisme/)

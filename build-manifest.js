@@ -4,10 +4,7 @@ if(argc < 3){
     console.log(`Usage: ${process.argv[0]} ${process.argv[1]} (firefox || chrome || safari)`);
     return;
 }
-//const fs = require("fs-extra");
-//const fs = require("fs");
 
-//const manifest = fs.readJsonSync("template-manifest.json");
 const manifest = require("./template-manifest");
 
 const browser = process.argv[2];

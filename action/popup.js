@@ -30,12 +30,20 @@ function setStorage(tabs, check = true){
 }
 
 function cleanupUrl(url){
+    // remove org-specific url
+    const home = "https:\/\/.*\.lightning\.force\.com\/.*";
+    if(url.match(home))
+        url = url.slice(url.indexOf("lightning.force.com")+19)
+    
+    if(url.includes(setupLightning))
+        url = url.slice(url.indexOf(setupLightning)+setupLightning.length);// remove setup subdirectory
+    else if(url.includes("/lightning") || url.includes("/_ui/common"))
+        return url;// or do not remove anything if the page is not from setup
+
     if(url.startsWith("/"))
         url = url.slice(1);
     if(url.endsWith("/"))
         url = url.slice(0,url.length-1);
-    if(url.includes(setupLightning))
-        url = url.slice(url.indexOf(setupLightning)+setupLightning.length);
     
     return url;
 }

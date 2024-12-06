@@ -5,18 +5,12 @@ let closestTag;
 let dragSrcEl = null;
 
 function handleDragStart(e) {
-    /*dragSrcEl = e.target;
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/html", this.innerHTML);*/
     // Check if the dragged element is an icon (or any other specific element) within the row
     if (e.target.dataset.draggable === "true") {
         e.target.style.cursor = "grabbing";
         dragSrcEl = e.target.closest(closestTag); // Find the dragged row
-        //dragger = e.target;
         e.dataTransfer.effectAllowed = "move";
-        //e.dataTransfer.setData("text/html", this.innerHTML);
         e.dataTransfer.setData("text/html", dragSrcEl);
-        //document.body.classList.add('dragging');
     } else {
         // Prevent dragging if the dragged element is not the specified element
         e.preventDefault();
@@ -51,7 +45,7 @@ function handleDragEnd(e) {
 function handleDrop(e) {
     e.stopPropagation();
     e.preventDefault();
-    //document.body.classList.remove('dragging');
+
     const targetRow = e.target.parentNode; // Get the target row
 
     if (dragSrcEl != this && targetRow.tagName.toLowerCase() == closestTag) {
