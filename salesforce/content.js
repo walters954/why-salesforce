@@ -72,7 +72,7 @@ function initTabs(){
 }
 
 function generateFavouriteButton(){
-    return `<button aria-live="off" type="button" class="slds-button slds-button--neutral uiButton again-why-salesforce-button" aria-label="" data-aura-rendered-by="3:829;a" data-aura-class="uiButton"><span dir="ltr" class=" label bBody" data-aura-rendered-by="6:829;a">Save to Tab</span></button>`;
+    return `<button aria-live="off" type="button" class="slds-button slds-button--neutral uiButton again-why-salesforce-button" aria-label="" data-aura-rendered-by="3:829;a" data-aura-class="uiButton"><span dir="ltr" class=" label bBody" data-aura-rendered-by="6:829;a">⭐</span></button>`;
 }
 
 function saveFavourite(parent){
@@ -82,11 +82,19 @@ function saveFavourite(parent){
     setStorage(currentTabs);
 }
 
+function isOnSavedTabs(){
+    const loc = window.location.href.split("/lightning/setup/")[1];
+    const tabs = [];
+    const standardTabs = ["SetupOneHome/home", "ObjectManager/home"];
+    return standardTabs.includes(loc) || tabs.includes(loc);
+}
+
 function showFavouriteButton(count = 0){
     if (count > 5){
-        console.error('Why Salesforce - failed to find headers.');
+        console.error('Again, Why Salesforce - failed to find headers.');
         return;
     }
+    if(isOnSavedTabs()) return;
 
     // there's possibly 2 headers: one for Setup home and one for Object Manager
     const headers = Array.from(document.querySelectorAll("div.overflow.uiBlock > div.bRight"));
