@@ -72,7 +72,7 @@ function initTabs(){
 }
 
 function generateFavouriteButton(){
-    return `<button aria-live="off" type="button" class="slds-button slds-button--neutral uiButton again-why-salesforce-button" aria-label="" data-aura-rendered-by="3:829;a" data-aura-class="uiButton"><span dir="ltr" class=" label bBody" data-aura-rendered-by="6:829;a">Favourite this page</span></button>`;
+    return `<button aria-live="off" type="button" class="slds-button slds-button--neutral uiButton again-why-salesforce-button" aria-label="" data-aura-rendered-by="3:829;a" data-aura-class="uiButton"><span dir="ltr" class=" label bBody" data-aura-rendered-by="6:829;a">Save to Tab</span></button>`;
 }
 
 function saveFavourite(parent){
