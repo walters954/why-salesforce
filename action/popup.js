@@ -33,7 +33,7 @@ function arraysAreEqual(arr1, arr2) {
 }
 
 function setStorage(tabs, check = true){
-    if((check && !arraysAreEqual(tabs,knownTabs)) || !check)
+    if((check && !arraysAreEqual(tabs, knownTabs)) || !check)
        sendMessage({"what": "set", tabs}, afterSet); 
     knownTabs = tabs;
 }
@@ -80,40 +80,8 @@ function checkAddTab(inputObj){
 
 let focusedIndex = 0;
 
-/*function inputTitleListener(){
-    const currentObj = loggers[focusedIndex];
-    const titleElement = currentObj.title;
-    const value = titleElement.value;
-    const inputObj = currentObj.last_input;
-    const last_input = inputObj.title || "";
-    const delta = last_input.length - value.length;
-    if(delta < -2 || delta > 2){
-        //user has copied
-        console.log("copied title");
-    }
-    inputObj.title = value;
-    focusedIndex == (loggers.length - 1) && checkAddTab(inputObj); // if the user is on the last td
-}
-
-function inputUrlListener(){
-    const currentObj = loggers[focusedIndex];
-    const urlElement = currentObj.url;
-    const value = urlElement.value;
-    const inputObj = currentObj.last_input;
-    const last_input = inputObj.url || "";
-    const delta = last_input.length - value.length;
-    if(delta < -2 || delta > 2){
-        //user has copied
-        console.log("copied url");
-        urlElement.value = cleanupUrl(value);
-    }
-    inputObj.url = value;
-    focusedIndex == (loggers.length - 1) && checkAddTab(inputObj); // if the user is on the last td
-}*/
-
 function inputTitleUrlListener(type) {
     const currentObj = loggers[focusedIndex];
-    console.log(loggers,focusedIndex,currentObj);
     const element = currentObj[type];
     const value = element.value;
     const inputObj = currentObj.last_input;
@@ -136,9 +104,12 @@ function focusListener(e){
 function createElement(){
     const element = tabTemplate.content.firstElementChild.cloneNode(true);
     element.dataset.draggable = "false";
+    element.addEventListener("focus", event => {
+        event.preventDefault();
+        saveTabs();
+    });
     const deleteButton = element.querySelector("button.delete");
-    //deleteButton.addEventListener("click", deleteTab);
-    deleteButton.addEventListener("click", e => console.log(e));
+    deleteButton.addEventListener("click", deleteTab);
     deleteButton.disabled = true;
 
     function setInfoForDrag(element, listener){
@@ -183,7 +154,7 @@ function reloadRows(items){
     loadTabs(items);
 }
 
-function saveTabs(doReload = true){
+function findTabs(){
     const tabs = [];
     const tabElements = document.getElementsByClassName("tab");
     Array.from(tabElements).forEach(tab => {        
@@ -193,8 +164,13 @@ function saveTabs(doReload = true){
             tabs.push({tabTitle, url});
         }
     });
-    setStorage(tabs);
-    doReload && !arraysAreEqual(tabs,knownTabs) && reloadRows({tabs, key: "tabs"});
+    return tabs;
+}
+
+function saveTabs(doReload = true, tabs){
+    tabs = tabs != null ? tabs : findTabs();
+    setStorage(tabs, true);
+    doReload && reloadRows({tabs, key: "tabs"});
 }
 
 function importHandler(){
@@ -221,6 +197,10 @@ function exportHandler(){
     document.body.removeChild(link)
 }
 
+function emptyTabs(){
+    saveTabs(true, []);
+}
+
 // listen to possible updates from tableDragHandler
 window.addEventListener("message", e => {
     e.source == window && e.data.what === "order" && saveTabs();
@@ -228,4 +208,4 @@ window.addEventListener("message", e => {
 
 document.getElementById("import").addEventListener("click", importHandler);
 document.getElementById("export").addEventListener("click", exportHandler);
-document.addEventListener("click", saveTabs);
+document.getElementById("delete-all").addEventListener("click", emptyTabs);

@@ -16,9 +16,7 @@ async function getStorage(callback){
 function setStorage(tabs, callback){
     const set = {};
     set[whyKey] = tabs;
-    browserObj.storage.sync.set(set, function() {
-        callback(null);
-    });
+    browserObj.storage.sync.set(set, () => callback(null));
 }
 
 // need to use message in order to work in private windows
