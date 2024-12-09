@@ -147,18 +147,22 @@ function toggleFavouriteButton(button, isSaved){
 
 function isOnSavedTab(){
     const loc = cleanupUrl();
-    return currentTabs.filter(tabdef => tabdef.url.includes(loc)).length == 1;
+    return currentTabs.filter(tabdef => tabdef.url.includes(loc)).length >= 1;
 }
 
 function actionFavourite(parent){
-    toggleFavouriteButton(parent.querySelector(`#${buttonId}`));
     const url = cleanupUrl();
     if(isOnSavedTab()){
-        currentTabs.splice(0, currentTabs.length, ...currentTabs.filter(tabdef => tabdef.url != url));
+        const filteredTabs = currentTabs.filter(tabdef => {
+            return tabdef.url !== url
+        });
+        currentTabs.length = 0;
+        currentTabs.push(...filteredTabs);
     } else {
         const tabTitle = parent.querySelector(".breadcrumbDetail").innerText;
-        currentTabs.push({tabTitle, url: cleanupUrl()});
+        currentTabs.push({tabTitle, url});
     }
+    toggleFavouriteButton(parent.querySelector(`#${buttonId}`));
     setStorage(currentTabs);
 }
 
@@ -196,6 +200,7 @@ function init(items){
         rows.push(htmlEl.replace(`${prefix}`, replaceVector))
     }
     setupTabUl.insertAdjacentHTML('beforeend', rows.join(''));
+    currentTabs.length = 0;
     currentTabs.push(...rowObj);
     showFavouriteButton();
 }
