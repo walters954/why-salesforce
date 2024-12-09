@@ -11,7 +11,7 @@
                 "*://*.lightning.force.com/lightning/setup/*",
                 "*://*.my.salesforce-setup.com/lightning/setup/*"
             ],
-            "js": ["./salesforce/content.js", "./dragHandler.js", "./salesforce/import.js"],
+            "js": ["./dragHandler.js", "./salesforce/content.js", "./salesforce/import.js"],
             "run_at": "document_end"
         }
     ],
