@@ -23,7 +23,7 @@ function getStorage(callback){
 
 function afterSet(){
     reloadTabs();
-    showToast()
+    showToast(`"Again, Why Salesforce" tabs saved.`)
 }
 
 function setStorage(tabs){
@@ -56,13 +56,41 @@ function generateRowTemplate(row){
             </li>`;
 }
 
-function generateSldsToastMessage(){
-    return `<div id="${toastId}" class="toastContainer slds-notify_container slds-is-relative" data-aura-rendered-by="7381:0"><div role="alertdialog" aria-describedby="toastDescription7382:0" data-key="success" class="slds-theme--success slds-notify--toast slds-notify slds-notify--toast forceToastMessage" data-aura-rendered-by="7384:0" data-aura-class="forceToastMessage" aria-label="Success"><lightning-icon icon-name="utility:success" class="slds-icon-utility-success toastIcon slds-m-right--small slds-no-flex slds-align-top slds-icon_container" data-data-rendering-service-uid="1478" data-aura-rendered-by="7386:0"><span style="--sds-c-icon-color-background: var(--slds-c-icon-color-background, transparent)" part="boundary"><lightning-primitive-icon size="small" variant="inverse"><svg class="slds-icon slds-icon_small" focusable="false" data-key="success" aria-hidden="true" viewBox="0 0 520 520" part="icon"><g><path d="M260 20a240 240 0 100 480 240 240 0 100-480zm134 180L241 355c-6 6-16 6-22 0l-84-85c-6-6-6-16 0-22l22-22c6-6 16-6 22 0l44 45a10 10 0 0015 0l112-116c6-6 16-6 22 0l22 22c7 6 7 16 0 23z"></path></g></svg></lightning-primitive-icon><span class="slds-assistive-text">Success</span></span></lightning-icon><div class="toastContent slds-notify__content" data-aura-rendered-by="7387:0"><div class="slds-align-middle slds-hyphenate" data-aura-rendered-by="7388:0"><!--render facet: 7389:0--><div id="toastDescription7382:0" data-aura-rendered-by="7390:0"><span class="toastMessage slds-text-heading--small forceActionsText" data-aura-rendered-by="7395:0" data-aura-class="forceActionsText">"Again, Why Salesforce" tabs saved.</span></div></div></div><!--render facet: 7398:0--></div></div>`;
+function generateSldsToastMessage(message, isSuccess){
+    const toastType = isSuccess ? "success" : "error";
+    return `<div id="${toastId}" class="toastContainer slds-notify_container slds-is-relative" data-aura-rendered-by="7381:0">
+                <div role="alertdialog" aria-describedby="toastDescription7382:0" data-key="${toastType}" class="slds-theme--${toastType} slds-notify--toast slds-notify slds-notify--toast forceToastMessage" data-aura-rendered-by="7384:0" data-aura-class="forceToastMessage" aria-label="${toastType}">
+                    <lightning-icon icon-name="utility:${toastType}" class="slds-icon-utility-${toastType} toastIcon slds-m-right--small slds-no-flex slds-align-top slds-icon_container" data-data-rendering-service-uid="1478" data-aura-rendered-by="7386:0">
+                        <span style="--sds-c-icon-color-background: var(--slds-c-icon-color-background, transparent)" part="boundary">
+                            <lightning-primitive-icon size="small" variant="inverse">
+                                <svg class="slds-icon slds-icon_small" focusable="false" data-key="${toastType}" aria-hidden="true" viewBox="0 0 520 520" part="icon">
+                                    <g>
+                                        ${isSuccess ?
+                                        '<path d="M260 20a240 240 0 100 480 240 240 0 100-480zm134 180L241 355c-6 6-16 6-22 0l-84-85c-6-6-6-16 0-22l22-22c6-6 16-6 22 0l44 45a10 10 0 0015 0l112-116c6-6 16-6 22 0l22 22c7 6 7 16 0 23z"></path>' :
+                                        '<path d="M260 20C128 20 20 128 20 260s108 240 240 240 240-108 240-240S392 20 260 20zM80 260a180 180 0 01284-147L113 364a176 176 0 01-33-104zm180 180c-39 0-75-12-104-33l251-251a180 180 0 01-147 284z" lwc-1te30te6nf1=""></path>'
+                                        }
+                                    </g>
+                                </svg>
+                            </lightning-primitive-icon>
+                            <span class="slds-assistive-text">${toastType}</span>
+                        </span>
+                    </lightning-icon>
+                    <div class="toastContent slds-notify__content" data-aura-rendered-by="7387:0">
+                        <div class="slds-align-middle slds-hyphenate" data-aura-rendered-by="7388:0">
+                            <!--render facet: 7389:0-->
+                            <div id="toastDescription7382:0" data-aura-rendered-by="7390:0">
+                                <span class="toastMessage slds-text-heading--small forceActionsText" data-aura-rendered-by="7395:0" data-aura-class="forceActionsText">${message}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--render facet: 7398:0-->
+                </div>
+            </div>`
 }
 
-function showToast(){
+function showToast(message, isSuccess = true){
     const hanger = document.getElementsByClassName("oneConsoleTabset navexConsoleTabset")[0];
-    hanger.insertAdjacentHTML("beforeend", generateSldsToastMessage());
+    hanger.insertAdjacentHTML("beforeend", generateSldsToastMessage(message, isSuccess));
     setTimeout(() => {
         hanger.removeChild(document.getElementById(toastId));
     }, 4000);
