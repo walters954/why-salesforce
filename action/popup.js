@@ -1,5 +1,14 @@
 "use strict";
 
+// queries the currently active tab of the current active window
+chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+    if(tabs[0].url == null){ // is null if the extension cannot access the current tab
+        window.location.href = chrome.runtime.getURL("action/notSalesforceSetup.html");
+    } else {
+        getStorage(loadTabs);
+    }
+});
+
 const tabTemplate = document.getElementById("tr_template");
 const tabAppendElement = document.getElementById("tabs");
 
@@ -49,13 +58,14 @@ function cleanupUrl(url){
 }
 
 function deleteTab(){
+    console.log(this,this.closest(".tab"));
     this.closest(".tab").remove();
     saveTabs();
 }
 
 function addTab(){
      // enable current last child button
-    if(tabAppendElement.childElementCount >= 1){// if list is empty, there's nothing to disable
+    if(tabAppendElement.childElementCount >= 1){ // if list is empty, there's nothing to disable
       const deleteButton = tabAppendElement.querySelector("td:last-child button.delete");
       deleteButton.disabled = false;
     }
@@ -65,14 +75,12 @@ function addTab(){
 
 function checkAddTab(inputObj){
     //add a new tab if both fields are not empty
-    if(inputObj.title && inputObj.url){
-        addTab();
-    }
+    inputObj.title && inputObj.url && addTab();
 }
 
 let focusedIndex = 0;
 
-function inputTitleListener(){
+/*function inputTitleListener(){
     const currentObj = loggers[focusedIndex];
     const titleElement = currentObj.title;
     const value = titleElement.value;
@@ -84,8 +92,7 @@ function inputTitleListener(){
         console.log("copied title");
     }
     inputObj.title = value;
-    if(focusedIndex == loggers.length - 1)// if the user is on the last td
-       checkAddTab(inputObj);
+    focusedIndex == (loggers.length - 1) && checkAddTab(inputObj); // if the user is on the last td
 }
 
 function inputUrlListener(){
@@ -101,8 +108,24 @@ function inputUrlListener(){
         urlElement.value = cleanupUrl(value);
     }
     inputObj.url = value;
-    if(focusedIndex == loggers.length - 1)// if the user is on the last td
-        checkAddTab(inputObj);
+    focusedIndex == (loggers.length - 1) && checkAddTab(inputObj); // if the user is on the last td
+}*/
+
+function inputTitleUrlListener(type) {
+    const currentObj = loggers[focusedIndex];
+    console.log(loggers,focusedIndex,currentObj);
+    const element = currentObj[type];
+    const value = element.value;
+    const inputObj = currentObj.last_input;
+    const last_input = inputObj[type] || "";
+    const delta = last_input.length - value.length;
+
+    if((delta < -2 || delta > 2) && type === 'url'){
+        element.value = cleanupUrl(value);
+    }
+
+    inputObj[type] = value;
+    focusedIndex == (loggers.length - 1) && checkAddTab(inputObj); // if the user is on the last td
 }
 
 function focusListener(e){
@@ -114,20 +137,21 @@ function createElement(){
     const element = tabTemplate.content.firstElementChild.cloneNode(true);
     element.dataset.draggable = "false";
     const deleteButton = element.querySelector("button.delete");
-    deleteButton.addEventListener("click", deleteTab);
+    //deleteButton.addEventListener("click", deleteTab);
+    deleteButton.addEventListener("click", e => console.log(e));
     deleteButton.disabled = true;
 
-    const setInfoForDrag = (element, listener) => {
+    function setInfoForDrag(element, listener){
       element.addEventListener("input", listener);
       element.addEventListener("focus", focusListener);
       element.dataset.element_index = loggers.length;
     };
     const title = element.querySelector(".tabTitle");
-    setInfoForDrag(title, inputTitleListener);
+    setInfoForDrag(title, () => inputTitleUrlListener("title"));
     const url = element.querySelector(".url");
-    setInfoForDrag(url, inputUrlListener);
+    setInfoForDrag(url, () => inputTitleUrlListener("url"));
 
-    loggers.push({title, url, last_input: {}});
+    loggers.push({title, url, last_input: {}}); // set last_input as an empty object
     return element;
 }
 
@@ -148,7 +172,7 @@ function loadTabs(items){
         elements.push(element);
     }
     tabAppendElement.append(...elements);
-    tabAppendElement.append(createElement());// always leave a blank at the bottom
+    tabAppendElement.append(createElement()); // always leave a blank at the bottom
     knownTabs = rowObjs;
 }
 
@@ -170,8 +194,7 @@ function saveTabs(doReload = true){
         }
     });
     setStorage(tabs);
-    if(doReload && !arraysAreEqual(tabs,knownTabs))
-        reloadRows({tabs, key: "tabs"});
+    doReload && !arraysAreEqual(tabs,knownTabs) && reloadRows({tabs, key: "tabs"});
 }
 
 function importHandler(){
@@ -200,16 +223,9 @@ function exportHandler(){
 
 // listen to possible updates from tableDragHandler
 window.addEventListener("message", e => {
-    if (e.source != window) {
-        return;
-    }
-    const what = e.data.what;
-    if(what === "order")
-        saveTabs();
+    e.source == window && e.data.what === "order" && saveTabs();
 });
 
 document.getElementById("import").addEventListener("click", importHandler);
 document.getElementById("export").addEventListener("click", exportHandler);
 document.addEventListener("click", saveTabs);
-
-getStorage(loadTabs);

@@ -25,7 +25,7 @@ function setStorage(tabs, callback){
 browserObj.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const message = request.message;
     if(message == null || message.what == null){
-        console.error(`invalid message: ${message}`);
+        console.error({error: "Invalid message", message, request});
         sendResponse(null);
         return false;
     }
@@ -49,11 +49,11 @@ browserObj.runtime.onMessage.addListener((request, sender, sendResponse) => {
         };
         notify();
         sendResponse(null);
-        return false;// we won't call sendResponse
+        return false; // we won't call sendResponse
     }
-    captured = captured || message.what === "import"
+    captured = captured || message.what === "import";
     if(!captured)
-        console.error({"error": "Unknown message",message});
+        console.error({"error": "Unknown message", message, request});
 
-    return captured;// will call sendResponse asynchronously if true
+    return captured; // will call sendResponse asynchronously if true
 });
