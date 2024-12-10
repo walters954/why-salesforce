@@ -172,6 +172,11 @@ function showFavouriteButton(count = 0){
         return;
     }
 
+    // Do not add favourite button on Home and Object Manager
+    const standardTabs = ["SetupOneHome/home", "ObjectManager/home"];
+    if(standardTabs.includes(cleanupUrl())) 
+        return;
+
     // there's possibly 2 headers: one for Setup home and one for Object Manager
     const headers = Array.from(document.querySelectorAll("div.overflow.uiBlock > div.bRight"));
     if(headers == null || headers.length < 1){
