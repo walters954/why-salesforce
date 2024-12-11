@@ -183,12 +183,12 @@ function importHandler(){
 
 function exportHandler(){
     // Convert JSON string to Blob
-    const blob = new Blob([JSON.stringify(knownTabs, null, 4)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(knownTabs, null, 4)], { type: "application/json" });
 
     // Create a download link
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = 'again-why-salesforce.json';
+    link.download = "again-why-salesforce.json";
 
     // Append the link to the body and trigger the download
     document.body.appendChild(link);

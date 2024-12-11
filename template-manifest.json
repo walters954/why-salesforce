@@ -16,10 +16,13 @@
         }
     ],
     "icons": {
-        "16": "images/whysf16.png",
-        "32": "images/whysf32.png",
-        "48": "images/whysf48.png",
-        "128": "images/whysf128.png"
+        "16":   "assets/icons/awsf-16.png",
+        "32":   "assets/icons/awsf-32.png",
+        "64":   "assets/icons/awsf-64.png",
+        "128":  "assets/icons/awsf-128.png",
+        "256":  "assets/icons/awsf-256.png",
+        "512":  "assets/icons/awsf-512.png",
+        "1024": "assets/icons/awsf-1024.png"
     },
     "action": {
         "default_title": "Again, Why Salesforce",
