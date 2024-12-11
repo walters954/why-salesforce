@@ -58,7 +58,6 @@ function cleanupUrl(url){
 }
 
 function deleteTab(){
-    console.log(this,this.closest(".tab"));
     this.closest(".tab").remove();
     saveTabs();
 }
@@ -109,8 +108,7 @@ function createElement(){
         saveTabs();
     });*/
     const deleteButton = element.querySelector("button.delete");
-    //deleteButton.addEventListener("click", deleteTab);
-    deleteButton.addEventListener("click", () => {console.log('hol');deleteTab();});
+    deleteButton.addEventListener("click", deleteTab);
     deleteButton.disabled = true;
 
     function setInfoForDrag(element, listener){
@@ -137,6 +135,7 @@ function loadTabs(items){
         const element = createElement();
         element.querySelector(".tabTitle").value = tab.tabTitle;
         element.querySelector(".url").value = tab.url;
+        element.querySelector(".delete").disabled = false;
         const logger = loggers.pop();
         logger.last_input.title = tab.tabTitle;
         logger.last_input.url = tab.url;
