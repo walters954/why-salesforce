@@ -39,21 +39,24 @@ function setStorage(tabs, check = true){
 }
 
 function cleanupUrl(url){
+    if(url == null || url == "")
+        return "";
     // remove org-specific url
-    const home = "https:\/\/.*\.lightning\.force\.com\/.*";
+    const home = "https:\/\/.*\.my\.salesforce-setup\.com\/lightning\/setup\/.*"
     if(url.match(home))
-        url = url.slice(url.indexOf("lightning.force.com")+19)
-    
+        url = url.slice(url.indexOf(setupLightning))
+
     if(url.includes(setupLightning))
-        url = url.slice(url.indexOf(setupLightning)+setupLightning.length);// remove setup subdirectory
+        url = url.slice(url.indexOf(setupLightning)+setupLightning.length); // remove setup subdirectory
+    // do not remove anything if the page is not from setup
     else if(url.includes("/lightning") || url.includes("/_ui/common"))
-        return url;// or do not remove anything if the page is not from setup
+        return url;
 
     if(url.startsWith("/"))
         url = url.slice(1);
     if(url.endsWith("/"))
         url = url.slice(0,url.length-1);
-    
+
     return url;
 }
 
