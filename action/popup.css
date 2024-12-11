@@ -45,6 +45,7 @@ header {
         flex-shrink: 0;
         margin-right: 0.75rem;
         display: flex;
+        align-items: center;
 
         & > span {
             line-height: 1;
@@ -66,7 +67,6 @@ header {
           margin: 0;
           margin-left: 0.5rem;
           padding: 0;
-          display: flex;
           font-size: 1rem;
           font-weight: 700;
           line-height: 1.25;
@@ -76,6 +76,12 @@ header {
 
     & > div:last-child {
         flex: none;
+        display: flex;
+        align-items: center;
+
+        & > * {
+            cursor: pointer;
+        }
 
         & > button#export {
             color: #040F0F;
@@ -87,6 +93,10 @@ header {
             color: #FFFFFF;
             background-color: #0176D3;
             border-color: #0176D3;
+        }
+
+        & > img#delete-all {
+            height: 2rem;
         }
     }
 }
