@@ -1,8 +1,8 @@
 {
   "name": "again-why-salesforce",
   "scripts": {
-    "dev-firefox": "node build-manifest.js firefox",
-    "dev-chrome": "node build-manifest.js chrome",
-    "dev-safari": "node build-manifest.js safari"
+    "dev-firefox": "node manifest/build-manifest.js firefox",
+    "dev-chrome": "node manifest/build-manifest.js chrome",
+    "dev-safari": "node manifest/build-manifest.js safari"
   }
 }

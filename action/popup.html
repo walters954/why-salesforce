@@ -1,88 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="./popup.css"/>
-        <script src="./popup.js" type="module"></script>
-        <script src="../dragHandler.js" type="module"></script>
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./popup.css"/>
+    <link rel="stylesheet" href="./basic.css"/>
+    <script src="./popup.js" type="module"></script>
+    <script src="../dragHandler.js" type="module"></script>
+</head>
 
-    <body>
-        <article>
-            <header>
-              <div>
-                <a href="https://www.github.com/Astisme/again-why-salesforce">
-                    <span title="Again, Why Salesforce">
-                        <img src="../assets/icons/awsf-256.png"/>
-                        <span class="slds-assistive-text">Again, Why Salesforce</span>
-                    </span>
-                    <h2>
-                        Again, Why Salesforce
-                    </h2>
-                </a>
-              </div>
-              <div>
+<body>
+    <article>
+        <header>
+            <object data="./logo.html" type="text/html"></object>
+            <div>
                 <button id="export" title="Export all tabs">Export</button>
                 <button id="import" title="Import tabs from json file">Import</button>
-                <img id="delete-all" src="../assets/trash.svg" alt="Delete" title="Delete all tabs" />
-              </div>
-            </header>
-            <div>
-                <table id="sortable-table">
-                    <thead>
-                        <tr>
-                            <th scope="col">
-                                <div><!-- used for the svg --></div>
-                            </th>
-                            <th scope="col">
-                                <div title="Tab Label">Tab Label</div>
-                            </th>
-                            <th scope="col">
-                                <div title="Tab Url">Tab Url</div>
-                            </th>
-                            <th scope="col" style="width: 3.25rem">
-                                <div class="slds-assistive-text" title="Actions">Actions</div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabs">
-                    </tbody>
-                </table>
+                <img id="delete-all" src="../assets/trash.svg" alt="Delete all tabs" title="Delete all tabs" />
             </div>
-        </article>
+        </header>
+        <div>
+            <table id="sortable-table">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            <div><!-- used for the svg --></div>
+                        </th>
+                        <th scope="col">
+                            <div title="Tab Label">Tab Label</div>
+                        </th>
+                        <th scope="col">
+                            <div title="Tab Url">Tab Url</div>
+                        </th>
+                        <th scope="col" style="width: 3.25rem">
+                            <div class="slds-assistive-text" title="Actions">Actions</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="tabs">
+                </tbody>
+            </table>
+        </div>
+    </article>
 
-        <template id="tr_template">
-            <tr class="tab" draggable="true">
-                <td scope="row">
-                    <img src="./drag.svg" data-draggable="true"/>
-                </td>
-                <td data-label="Tab Label" scope="row">
-                    <div>
-                        <input
-                            type="text"
-                            name="tabTitle"
-                            class="tabTitle"
-                            placeholder="Flows"
-                        />
-                    </div>
-                </td>
-                <td data-label="Tab Url">
-                    <div>
-                        <input
-                        type="url"
-                        name="url"
-                        class="url"
-                        placeholder="Flows/home"
-                        />
-                    </div>
-                </td>
-                <td>
-                    <button class="delete">Delete</button>
-                </td>
-            </tr>
-        </template>
+    <template id="tr_template">
+        <tr class="tab" draggable="true">
+            <td scope="row">
+                <img src="../assets/drag.svg" data-draggable="true"/>
+            </td>
+            <td data-label="Tab Label" scope="row">
+                <div>
+                    <input type="text" name="tabTitle" class="tabTitle" placeholder="Flows" />
+                </div>
+            </td>
+            <td data-label="Tab Url">
+                <div>
+                    <input type="url" name="url" class="url" placeholder="Flows/home" />
+                </div>
+            </td>
+            <td>
+                <button class="delete">Delete</button>
+            </td>
+        </tr>
+    </template>
 
-    </body>
+</body>
 </html>

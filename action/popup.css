@@ -1,27 +1,5 @@
-*, :before, :after {
-    box-sizing: border-box;
-}
-
-html {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    line-height: 1.5;
-}
-
 body {
     width: 40rem;
-    padding: 0 !important;
-    margin: 0;
-    font-size: 0.8125rem;
-    background-color: transparent;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-
-    &:hover {
-        text-decoration: none;
-    }
 }
 
 article {
@@ -38,18 +16,6 @@ article {
 }
 
 header {
-    padding-top: 0.75rem;
-    padding-right: 1rem;
-    padding-bottom: 0;
-    padding-left: 1rem;
-    margin: 0 0 0.75rem;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    flex: 1;
-    min-width: 0;
-    
     & > div:first-child > a {
         flex-shrink: 0;
         margin-right: 0.75rem;
@@ -162,9 +128,6 @@ article > div:last-child {
                 &:not(:has(img, button)):hover {
                     transform: translateX(10px);
                 }
-                /*&:first-child {
-                    right: -1.5%;
-                }*/
 
                 & > img {
                     width: 1rem;
@@ -199,34 +162,6 @@ article > div:last-child {
     }
 }
 
-
-button {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    padding-top: 0;
-    padding-bottom: 0;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    background-clip: border-box;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 0.25rem;
-    line-height: 1.875rem;
-    text-decoration: none;
-    white-space: none;
-    user-select: none;
-    cursor: pointer;
-    text-transform: none;
-    overflow: visible;
-    font: inherit;
-    text-align: center;
-    justify-content: center;
-    margin-left: 0.25rem;
-    width: 4rem;
-    min-height: 2.3rem;
-}
-
 input {
     padding-top: 0;
     padding-right: 1rem;
@@ -241,30 +176,4 @@ input {
     background-color: #FFFFFF;
     display: inline-block;
     margin: 0;
-}
-
-.slds-assistive-text {
-    position: absolute !important;
-    margin: -1px !important;
-    border: 0 !important;
-    padding: 0 !important;
-    width: 1px !important;
-    height: 1px !important;
-    overflow: hidden !important;
-    clip: rect(0 0 0 0) !important;
-    text-transform: none !important;
-    white-space: nowrap !important;
-}
-.slds-assistive-text_focus:focus {
-    margin: inherit !important;
-    border: inherit !important;
-    padding: inherit !important;
-    width: auto !important;
-    height: auto !important;
-    overflow: visible !important;
-    clip: auto !important;
-}
-
-.highlight {
-    background-color: lightblue;
 }

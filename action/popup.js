@@ -2,8 +2,9 @@
 
 // queries the currently active tab of the current active window
 chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-    if(tabs[0].url == null){ // is null if the extension cannot access the current tab
-        window.location.href = chrome.runtime.getURL("action/notSalesforceSetup.html");
+    // is null if the extension cannot access the current tab
+    if(tabs[0].url == null || !tabs[0].url.match(".*\/lightning\/setup\/.*")){
+        window.location.href = chrome.runtime.getURL(`action/notSalesforceSetup.html${tabs[0].url != null ? "?url="+tabs[0].url : ""}`);
     } else {
         getStorage(loadTabs);
     }
