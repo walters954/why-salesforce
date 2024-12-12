@@ -12,6 +12,8 @@ const starId = `${prefix}-star`
 const slashedStarId = `${prefix}-slashed-star`
 const toastId = `${prefix}-toast`
 const importId = `${prefix}-import`
+let wasOnSavedTab = false;
+let isCurrentlyOnSavedTab = false;
 
 function sendMessage(message, callback){
     chrome.runtime.sendMessage({message, url: location.href}, callback);
@@ -145,14 +147,9 @@ function toggleFavouriteButton(button, isSaved){
     }
 }
 
-function isOnSavedTab(){
-    const loc = cleanupUrl();
-    return currentTabs.filter(tabdef => tabdef.url.includes(loc)).length >= 1;
-}
-
 function actionFavourite(parent){
     const url = cleanupUrl();
-    if(isOnSavedTab()){
+    if(isCurrentlyOnSavedTab){
         const filteredTabs = currentTabs.filter(tabdef => {
             return tabdef.url !== url
         });
@@ -189,7 +186,7 @@ function showFavouriteButton(count = 0){
             continue;
         header.insertAdjacentHTML("beforeend", generateFavouriteButton());
         const button = header.querySelector(`#${buttonId}`);
-        toggleFavouriteButton(button, isOnSavedTab()); // init correctly
+        toggleFavouriteButton(button, isCurrentlyOnSavedTab); // init correctly
         button.addEventListener("click", () => actionFavourite(header.parentNode));
     }
 }
@@ -201,13 +198,29 @@ function init(items){
     const rows = [];
     for (const row of rowObj) {
         const htmlEl = generateRowTemplate(row);
-        const replaceVector = `${prefix} ${href === cleanupUrl(row.url) ? "slds-is-active" : ""}`;
+        const replaceVector = `${prefix} ${href === cleanupUrl(row.url) ? "slds-is-active" : ""}`; // Highlight the tab related to the current page
         rows.push(htmlEl.replace(`${prefix}`, replaceVector))
     }
     setupTabUl.insertAdjacentHTML('beforeend', rows.join(''));
     currentTabs.length = 0;
     currentTabs.push(...rowObj);
     showFavouriteButton();
+}
+
+function isOnSavedTab() {
+    const loc = cleanupUrl();
+    wasOnSavedTab = isCurrentlyOnSavedTab;
+    isCurrentlyOnSavedTab = currentTabs.some(tabdef => tabdef.url.includes(loc));
+    return isCurrentlyOnSavedTab;
+}
+
+function onHrefUpdate() {
+    const newRef = window.location.href;
+    if(newRef === href)
+        return;
+    href = newRef;
+    if(isOnSavedTab() || wasOnSavedTab) reloadTabs();
+    else showFavouriteButton();
 }
 
 function delayLoadSetupTabs(count = 0) {
@@ -219,15 +232,22 @@ function delayLoadSetupTabs(count = 0) {
     setupTabUl = document.getElementsByClassName("tabBarItems slds-grid")[0];
     if(setupTabUl == null){
         setTimeout(() => delayLoadSetupTabs(count + 1), 500);
-    } else getStorage(init);
+    } else {
+        // Start observing changes to the DOM to then check for URL change
+        // when URL changes, show the favourite button
+        new MutationObserver(() => setTimeout(onHrefUpdate, 500))
+            .observe(document.querySelector(".tabsetBody"), { childList: true, subtree: true });
+        // initialize
+        getStorage(init);
+    }
 }
 
 function reloadTabs(){
-    getStorage(init);
     while(setupTabUl.childElementCount > 3){ // hidden li + Home + Object Manager
         setupTabUl.removeChild(setupTabUl.lastChild);
         currentTabs.pop();
     }
+    getStorage(init);
 }
 
 function generateSldsImport(){
@@ -275,16 +295,6 @@ function reorderTabs(){
     });
     setStorage(tabs);
 }
-
-// listen for href change to update the tabs does not work with popstate or hashchange
-// either we poll every so ofter or we listen to click in the setup link list, in the object list, in the object settings, ...
-setInterval(() => {
-    const newRef = window.location.href;
-    if(newRef === href)
-        return;
-    href = newRef;
-    reloadTabs();
-}, 10000);// 10s should not bother too much and still be reactive enough
 
 // listen from saves from the action page
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
