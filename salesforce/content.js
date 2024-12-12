@@ -312,4 +312,8 @@ window.addEventListener("message", e => {
         importer(e.data);
 });
 
-delayLoadSetupTabs();
+// queries the currently active tab of the current active window
+// this prevents showing the tabs when not in a setup page (like Sales or Service Console)
+if(href.includes(setupLightning)){
+    delayLoadSetupTabs(); 
+}
