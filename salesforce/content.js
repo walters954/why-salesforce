@@ -12,8 +12,8 @@ const starId = `${prefix}-star`
 const slashedStarId = `${prefix}-slashed-star`
 const toastId = `${prefix}-toast`
 const importId = `${prefix}-import`
-let wasOnSavedTab = false;
-let isCurrentlyOnSavedTab = false;
+let wasOnSavedTab;
+let isCurrentlyOnSavedTab;
 
 function sendMessage(message, callback){
     chrome.runtime.sendMessage({message, url: location.href}, callback);
@@ -180,6 +180,10 @@ function showFavouriteButton(count = 0){
         setTimeout(() => showFavouriteButton(count + 1), 500);
         return;
     }
+
+    // ensure we have clean data
+    if(wasOnSavedTab == null && isCurrentlyOnSavedTab == null)
+        isOnSavedTab()
 
     for(const header of headers){
         if(header.querySelector(`#${buttonId}`) != null) // already inserted my button
