@@ -12,6 +12,7 @@ const starId = `${prefix}-star`
 const slashedStarId = `${prefix}-slashed-star`
 const toastId = `${prefix}-toast`
 const importId = `${prefix}-import`
+const closeModalId = `${prefix}-closeModal`
 let wasOnSavedTab;
 let isCurrentlyOnSavedTab;
 let fromHrefUpdate;
@@ -272,6 +273,14 @@ function generateSldsImport(){
                 <div style="position: absolute; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.5); z-index: 2;top:0;left:0;pointer-events: all;"></div>
                 <!-- main content div -->
                 <div style="position: absolute;background-color: lightgoldenrodyellow;top: 2rem;width: 18rem;height: 8rem;display: flex;align-items: center;justify-content: center;text-align: center;border: 1px solid lightskyblue;border-radius: 1rem;flex-direction: column;box-shadow: 1px 2px 3px black;z-index: 3;">
+                    <!-- X button -->
+                    <button 
+                        id="${closeModalId}"
+                        style="position: absolute;top: 0rem;right: 0rem;width: 1.5rem;height: 1.5rem;background: lightskyblue;border: 1px solid black;color: black;font-size: 1.2rem;cursor: pointer;border-radius: 50%;display: flex;align-items: center;justify-content: center; line-height: 1;">
+                        <span style="transform: translateY(-2px) translateX(1px);">
+                            &times;
+                        </span>
+                    </button>
                     <h4 style="font-weight: revert;font-size: initial;margin-bottom: 0.6rem;">Again, Why Salesforce: Import</h4>
                     <input accept=".json" class="slds-file-selector__input slds-assistive-text" type="file" id="input-file-166" multiple="" name="fileInput" part="input" aria-labelledby="form-label-166 file-selector-label-166">
                     <label class="slds-file-selector__body" id="file-selector-label-166" data-file-selector-label="" for="input-file-166" aria-hidden="true">
@@ -292,6 +301,7 @@ function generateSldsImport(){
 
 function showFileImport(){
     setupTabUl.insertAdjacentHTML("beforeend", generateSldsImport());
+    document.getElementById(closeModalId).addEventListener("click", () => document.getElementById(importId).remove());
 }
 
 function importer(message){
