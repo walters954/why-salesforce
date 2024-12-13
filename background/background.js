@@ -41,6 +41,7 @@ browserObj.runtime.onMessage.addListener((request, sender, sendResponse) => {
             browserObj.tabs.query({ active: true, currentWindow: true }, function(tabs) {
                 if(tabs && tabs[0])
                     browserObj.tabs.sendMessage(tabs[0].id, message);
+                    //browserObj.tabs.sendMessage({}, message);
                 else if(count < 5)
                     setTimeout(() => notify(count + 1), 500);
             });
@@ -49,7 +50,7 @@ browserObj.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse(null);
         return false; // we won't call sendResponse
     }
-    captured = captured || message.what === "import";
+    captured = captured || ["import", "saved", "add"].includes(message.what);
     if(!captured)
         console.error({"error": "Unknown message", message, request});
 

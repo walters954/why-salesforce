@@ -22,11 +22,11 @@ function sendMessage(message, callback){
 }
 
 function getStorage(callback){
-    sendMessage({"what": "get"}, callback);
+    sendMessage({what: "get"}, callback);
 }
 
 function afterSet(){
-    sendMessage({"what": "saved"});
+    sendMessage({what: "saved"});
 }
 
 function arraysAreEqual(arr1, arr2) {
@@ -35,7 +35,7 @@ function arraysAreEqual(arr1, arr2) {
 
 function setStorage(tabs, check = true){
     if((check && !arraysAreEqual(tabs, knownTabs)) || !check)
-       sendMessage({"what": "set", tabs}, afterSet); 
+       sendMessage({what: "set", tabs}, afterSet); 
     knownTabs = tabs;
 }
 
@@ -179,8 +179,8 @@ function saveTabs(doReload = true, tabs){
 
 function importHandler(){
     //window.open('import.html', 'File Input Popup', 'width=300,height=200');
-    const message = {"what": "add"}; 
-    chrome.runtime.sendMessage({message, url: location.href});
+    //const message = {what: "add"}; 
+    chrome.runtime.sendMessage({what: "add", url: location.href});
     window.close();
 }
 

@@ -63,7 +63,7 @@ function handleDrop(e) {
         }
 
         e.target.style.cursor = "grab";
-        window.postMessage({"what": "order"}, "*");
+        window.postMessage({what: "order"}, "*");
     }
     return false;
 }
@@ -81,9 +81,8 @@ function setup(){
     ul = document.getElementsByClassName("tabBarItems slds-grid")[0];
     container = table || ul;
     closestTag = table != null ? "tr" : "li";
-    if(container != null)
-        createListeners();
+    if(container != null) createListeners();
     else setTimeout(() => setup(), 500);
 }
 
-setup()
+setup();

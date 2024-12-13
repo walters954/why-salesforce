@@ -14,13 +14,18 @@ const toastId = `${prefix}-toast`
 const importId = `${prefix}-import`
 let wasOnSavedTab;
 let isCurrentlyOnSavedTab;
+let fromHrefUpdate;
 
 function sendMessage(message, callback){
     chrome.runtime.sendMessage({message, url: location.href}, callback);
 }
 
 function getStorage(callback){
-    sendMessage({"what": "get"}, callback);
+    sendMessage({what: "get"}, callback);
+}
+
+function removeFavouriteButton(){
+    document.getElementById(buttonId)?.remove();
 }
 
 function afterSet(){
@@ -29,7 +34,7 @@ function afterSet(){
 }
 
 function setStorage(tabs){
-    sendMessage({"what": "set", tabs}, afterSet);
+    sendMessage({what: "set", tabs}, afterSet);
 }
 
 function cleanupUrl(url = href, nochange = null){
@@ -208,10 +213,16 @@ function init(items){
     setupTabUl.insertAdjacentHTML('beforeend', rows.join(''));
     currentTabs.length = 0;
     currentTabs.push(...rowObj);
+    isOnSavedTab();
     showFavouriteButton();
 }
 
-function isOnSavedTab() {
+function isOnSavedTab(isFromHrefUpdate = false) {
+    if(fromHrefUpdate && !isFromHrefUpdate){
+        fromHrefUpdate = false;
+        return;
+    }
+    fromHrefUpdate = isFromHrefUpdate;
     const loc = cleanupUrl();
     wasOnSavedTab = isCurrentlyOnSavedTab;
     isCurrentlyOnSavedTab = currentTabs.some(tabdef => tabdef.url.includes(loc));
@@ -223,7 +234,7 @@ function onHrefUpdate() {
     if(newRef === href)
         return;
     href = newRef;
-    if(isOnSavedTab() || wasOnSavedTab) reloadTabs();
+    if(isOnSavedTab(true) || wasOnSavedTab) reloadTabs();
     else showFavouriteButton();
 }
 
@@ -324,6 +335,7 @@ window.addEventListener("message", e => {
         reorderTabs();
     else if(what === "import")
         importer(e.data);
+    //else if(what === "saved")
 });
 
 // queries the currently active tab of the current active window

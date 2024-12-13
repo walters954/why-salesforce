@@ -12,7 +12,7 @@ function listenToFileUpload(){
         reader.onload = function(e) {
             const contents = e.target.result;
             const imported = JSON.parse(contents);
-            const message = {"what": "import", imported}; 
+            const message = {what: "import", imported}; 
             window.postMessage(message, "*");
         };
 
