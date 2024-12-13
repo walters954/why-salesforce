@@ -179,8 +179,8 @@ function saveTabs(doReload = true, tabs){
 
 function importHandler(){
     //window.open('import.html', 'File Input Popup', 'width=300,height=200');
-    //const message = {what: "add"}; 
-    chrome.runtime.sendMessage({what: "add", url: location.href});
+    const message = {what: "add"}; 
+    chrome.runtime.sendMessage({message, url: location.href});
     window.close();
 }
 
