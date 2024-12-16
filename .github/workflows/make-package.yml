@@ -1,0 +1,103 @@
+name: Build and Package
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Define file name
+        run: |
+          echo "AWSF=awsf" >> $GITHUB_ENV
+          echo "CHROME=${{ env.AWSF }}-chrome" >> $GITHUB_ENV
+          echo "FIREFOX=${{ env.AWSF }}-firefox" >> $GITHUB_ENV
+          echo "SAFARI=${{ env.AWSF }}-safari" >> $GITHUB_ENV
+
+      - name: Setup repo
+        uses: actions/checkout@v4
+
+      - name: Extract current version
+        id: get_version
+        run: echo "VERSION=$(grep -oP '"version":\s*"\K[0-9.]+' manifest/template-manifest.json)" >> $GITHUB_ENV
+
+      - name: Create versioned directory
+        run: mkdir -p dist/v${{ env.VERSION }}
+
+  chrome:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Make Chrome Manifest
+        run: deno run dev-chrome
+
+      - name: Zip Chrome extension
+        run: zip -r dist/${{ env.CHROME }}-v${{ env.VERSION }}.zip * -x "*.git*" -x "node_modules/*"
+
+      - name: Upload Chrome artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.CHROME }}-v${{ env.VERSION }}
+          path: dist/${{ env.CHROME }}-v${{ env.VERSION }}.zip
+
+  firefox:
+    runs-on: ubuntu-latest
+    needs: chrome
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Make Firefox Manifest
+        run: deno run dev-firefox
+
+      - name: Zip Firefox extension
+        run: zip -r dist/${{ env.FIREFOX }}-v${{ env.VERSION }}.zip * -x "*.git*" -x "node_modules/*"
+
+      - name: Upload Firefox artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.FIREFOX }}-v${{ env.VERSION }}
+          path: dist/${{ env.FIREFOX }}-v${{ env.VERSION }}.zip
+
+  safari:
+    runs-on: ubuntu-latest
+    needs: firefox
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Make Safari Manifest
+        run: deno run dev-safari
+
+      - name: Zip Safari extension
+        run: zip -r dist/${{ env.SAFARI }}-v${{ env.VERSION }}.zip * -x "*.git*" -x "node_modules/*"
+
+      - name: Upload Safari artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.SAFARI }}-v${{ env.VERSION }}
+          path: dist/${{ env.SAFARI }}-v${{ env.VERSION }}.zip
