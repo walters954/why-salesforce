@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "Again, Why Salesforce",
-	"version": "1.3",
+	"version": "1.4.0",
 	"permissions": ["storage"],
 	"description": "Easily set favourite tabs in Setup.",
 	"homepage_url": "https://github.com/astisme/again-why-salesforce",
