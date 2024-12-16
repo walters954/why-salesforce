@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   setup:
@@ -43,8 +43,8 @@ jobs:
 
       - name: Push versioned directory
         run: |
-          git config user.email = "auto@mated.com"
-          git config user.name "Automated User"
+          git config user.name "github-actions"
+          git config user.email = "github-actions@github.com"
           git add dist
           git commit -m "Created new directory"
           git push
