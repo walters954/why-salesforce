@@ -22,16 +22,16 @@ jobs:
         id: def_file_name
         run: |
           echo "AWSF=awsf" >> $GITHUB_ENV
-          echo "CHROME=${{ env.AWSF }}-chrome" >> $GITHUB_OUTPUT
-          echo "FIREFOX=${{ env.AWSF }}-firefox" >> $GITHUB_OUTPUT
-          echo "SAFARI=${{ env.AWSF }}-safari" >> $GITHUB_OUTPUT
+          echo "chrome=${{ env.AWSF }}-chrome" >> $GITHUB_OUTPUT
+          echo "firefox=${{ env.AWSF }}-firefox" >> $GITHUB_OUTPUT
+          echo "safari=${{ env.AWSF }}-safari" >> $GITHUB_OUTPUT
 
       - name: Setup repo
         uses: actions/checkout@v4
 
       - name: Extract current version
         id: get_version
-        run: echo "VERSION=$(grep -oP '"version":\s*"\K[0-9.]+' manifest/template-manifest.json)" >> $GITHUB_OUTPUT
+        run: echo "version=$(grep -oP '"version":\s*"\K[0-9.]+' manifest/template-manifest.json)" >> $GITHUB_OUTPUT
 
       - name: Create versioned directory
         run: mkdir -p dist/v$version
