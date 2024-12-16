@@ -48,6 +48,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email = "github-actions@github.com"
           git branch new-version-${{ env.VERSION }}
+          git switch new-version-${{ env.VERSION }}
           git add dist
           git commit -m "Created new directory"
           git push
