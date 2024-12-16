@@ -90,8 +90,7 @@ jobs:
         run: deno run dev-chrome
 
       - name: Zip Chrome extension
-        run: |
-          zip -r $DIRECTORY/$CHROME_VERSION.zip action assets background salesforce *.js LICENCE.txt manifest.json -x "*/README.md"
+        run: zip -r $DIRECTORY/$CHROME_VERSION.zip action assets background salesforce *.js LICENSE.txt README.md manifest.json -x "*/README.md"
 
       - name: Upload Chrome artifact
         uses: actions/upload-artifact@v3
@@ -133,8 +132,7 @@ jobs:
         run: deno run dev-firefox
 
       - name: Zip Firefox extension
-        run: zip -r $DIRECTORY/$FIREFOX_VERSION.zip * -x "*.git*" -x "node_modules/*" -x "dist/*" -x "manifest/*" -x "images/*" -x "*/README.md" -x "package.json"
-
+        run: zip -r $DIRECTORY/$CHROME_VERSION.zip action assets background salesforce *.js LICENSE.txt README.md manifest.json -x "*/README.md"
 
       - name: Upload Firefox artifact
         uses: actions/upload-artifact@v3
@@ -176,9 +174,7 @@ jobs:
         run: deno run dev-safari
 
       - name: Zip Safari extension
-        run: zip -r $DIRECTORY/$SAFARI_VERSION.zip * -x "*.git*" -x "node_modules/*" -x "dist/*" -x "manifest/*" -x "images/*" -x "*/README.md" -x "package.json"
-
-
+        run: zip -r $DIRECTORY/$CHROME_VERSION.zip action assets background salesforce *.js LICENSE.txt README.md manifest.json -x "*/README.md"
 
       - name: Upload Safari artifact
         uses: actions/upload-artifact@v3
