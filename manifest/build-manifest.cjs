@@ -1,10 +1,4 @@
 "use strict";
-const argc = process.argv.length;
-if(argc < 3){
-    console.log(`Usage: ${process.argv[0]} ${process.argv[1]} (firefox || chrome || safari)`);
-    return;
-}
-
 const manifest = require("./template-manifest");
 
 const browser = process.argv[2];
@@ -22,6 +16,7 @@ else if (browser === "safari") {
     delete manifest.browser_specific_settings;
 }
 else {
+    console.log(`Usage: ${process.argv[0]} ${process.argv[1]} (firefox || chrome || safari)`);
     throw new Error(`Unknown browser: ${browser}`);
 }
 
