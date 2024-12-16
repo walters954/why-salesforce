@@ -15,6 +15,7 @@ jobs:
       CHROME_VERSION: ${{ steps.def_file_name.outputs.CHROME_VERSION }}
       FIREFOX_VERSION: ${{ steps.def_file_name.outputs.FIREFOX_VERSION }}
       SAFARI_VERSION: ${{ steps.def_file_name.outputs.SAFARI_VERSION }}
+      BRANCH_NAME: ${{ steps.push_dir.outputs.BRANCH_NAME }}
     steps:
       - name: Define prefix
         run: echo "AWSF=awsf" >> $GITHUB_ENV
@@ -44,6 +45,7 @@ jobs:
           echo "DIST=$DIST" >> $GITHUB_OUTPUT
 
       - name: Push versioned directory
+        id: push_dir
         run: |
           git config user.name "github-actions"
           git config user.email = "github-actions@github.com"
@@ -54,6 +56,7 @@ jobs:
           git add dist
           git commit -m "Created new directory"
           git push --set-upstream origin $BRANCH_NAME
+          echo "BRANCH_NAME=$BRANCH_NAME" >> GITHUB_OUTPUT
 
       - name: Define file names with version
         id: def_file_name
@@ -69,12 +72,15 @@ jobs:
       DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
       VERSION: ${{ needs.setup.outputs.VERSION }}
       CHROME_VERSION: ${{ needs.setup.outputs.CHROME_VERSION }}
+      BRANCH_NAME: ${{ needs.setup.outputs.BRANCH_NAME }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Switch to version branch
-        run: git switch new-version-$VERSION
+        run: |
+          git fetch $BRANCH_NAME
+          git switch $BRANCH_NAME
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
@@ -108,12 +114,15 @@ jobs:
       DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
       VERSION: ${{ needs.setup.outputs.VERSION }}
       FIREFOX_VERSION: ${{ needs.setup.outputs.FIREFOX_VERSION }}
+      BRANCH_NAME: ${{ needs.setup.outputs.BRANCH_NAME }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Switch to version branch
-        run: git switch new-version-$VERSION
+        run: |
+          git fetch $BRANCH_NAME
+          git switch $BRANCH_NAME
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
@@ -147,12 +156,15 @@ jobs:
       DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
       VERSION: ${{ needs.setup.outputs.VERSION }}
       SAFARI_VERSION: ${{ needs.setup.outputs.SAFARI_VERSION }}
+      BRANCH_NAME: ${{ needs.setup.outputs.BRANCH_NAME }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Switch to version branch
-        run: git switch new-version-$VERSION
+        run: |
+          git fetch $BRANCH_NAME
+          git switch $BRANCH_NAME
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
