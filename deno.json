@@ -1,0 +1,21 @@
+{
+  "fmt": {
+    "useTabs": true,
+    "indentWidth": 4,
+    "semiColons": true,
+    "singleQuote": false,
+    "proseWrap": "preserve"
+  },
+  "tasks": {
+        "test": "deno test -A",
+        "fmt": "deno fmt --check --ignore=*.md --ignore=*/*.md",
+        "lint": "deno lint",
+        "dev-firefox": "node manifest/build-manifest.cjs firefox",
+        "dev-chrome": "node manifest/build-manifest.cjs chrome",
+        "dev-safari": "node manifest/build-manifest.cjs safari"
+  },
+  "imports": {
+    "/": "./",
+    "./": "./"
+  }
+}
