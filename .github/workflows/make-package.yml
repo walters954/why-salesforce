@@ -38,7 +38,14 @@ jobs:
         run: |
           DIST=dist/v${{ env.VERSION }}
           mkdir -p $DIST
+          touch $DIST/.gitkeep
           echo "DIST=$DIST" >> $GITHUB_OUTPUT
+
+      - name: Push versioned directory
+        run: |
+          git add dist
+          git commit -m "Created new directory"
+          git push
 
       - name: Define file names with version
         id: def_file_name
