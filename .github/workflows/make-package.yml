@@ -108,7 +108,7 @@ jobs:
 
   firefox:
     runs-on: ubuntu-latest
-    needs: chrome
+    needs: [setup, chrome]
     env:
       DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
       VERSION: ${{ needs.setup.outputs.VERSION }}
