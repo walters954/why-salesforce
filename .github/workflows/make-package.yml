@@ -222,4 +222,4 @@ jobs:
           git push
 
       - name: Create Pull Request
-        run: gh pr create --base main --head new-version-$VERSION --title "New Version Zips" --body "This pull request contains the zip files for the version $VERSION."
+        run: gh pr create --base main --head new-version-$VERSION --title "[v$VERSION] New Version Zips" --body "This pull request contains the zip files for the version $VERSION."
