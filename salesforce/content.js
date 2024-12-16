@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-window
 "use strict";
 
 let setupTabUl; // This is on Salesforce Setup
@@ -23,10 +24,6 @@ function sendMessage(message, callback) {
 
 function getStorage(callback) {
 	sendMessage({ what: "get" }, callback);
-}
-
-function removeFavouriteButton() {
-	document.getElementById(buttonId)?.remove();
 }
 
 function afterSet() {
@@ -357,7 +354,7 @@ function reorderTabs() {
 }
 
 // listen from saves from the action page
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (message, _, sendResponse) {
 	if (message == null || message.what == null) {
 		return;
 	}
@@ -371,7 +368,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 });
 
 // listen to possible updates from tableDragHandler
-window.addEventListener("message", (e) => {
+addEventListener("message", (e) => {
 	if (e.source != window) {
 		return;
 	}

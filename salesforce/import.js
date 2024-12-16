@@ -14,7 +14,7 @@ function listenToFileUpload() {
 			const contents = e.target.result;
 			const imported = JSON.parse(contents);
 			const message = { what: "import", imported };
-			window.postMessage(message, "*");
+			postMessage(message, "*");
 		};
 
 		reader.readAsText(file);
@@ -52,7 +52,7 @@ function listenToFileUpload() {
 }
 
 // listen from saves from the action page
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (message, _, sendResponse) {
 	if (message == null || message.what == null) {
 		return;
 	}

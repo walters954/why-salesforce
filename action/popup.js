@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-window
 "use strict";
 
 // queries the currently active tab of the current active window
@@ -193,10 +194,9 @@ function saveTabs(doReload = true, tabs) {
 }
 
 function importHandler() {
-	//window.open('import.html', 'File Input Popup', 'width=300,height=200');
 	const message = { what: "add" };
 	chrome.runtime.sendMessage({ message, url: location.href });
-	window.close();
+	close();
 }
 
 function exportHandler() {
@@ -223,7 +223,7 @@ function emptyTabs() {
 }
 
 // listen to possible updates from tableDragHandler
-window.addEventListener("message", (e) => {
+addEventListener("message", (e) => {
 	e.source == window && e.data.what === "order" && saveTabs();
 });
 

@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-window
 const page = new URLSearchParams(window.location.search).get("url");
 const textEl = document.querySelector("h3");
 let text;

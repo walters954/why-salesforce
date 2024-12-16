@@ -7,7 +7,7 @@ function addKey(items, callback) {
 	callback(items);
 }
 
-async function getStorage(callback) {
+function getStorage(callback) {
 	browserObj.storage.sync.get([whyKey], (items) => {
 		addKey(items, callback);
 	});
@@ -20,7 +20,7 @@ function setStorage(tabs, callback) {
 }
 
 // need to use message in order to work in private windows
-browserObj.runtime.onMessage.addListener((request, sender, sendResponse) => {
+browserObj.runtime.onMessage.addListener((request, _, sendResponse) => {
 	const message = request.message;
 	if (message == null || message.what == null) {
 		console.error({ error: "Invalid message", message, request });

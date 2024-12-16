@@ -36,10 +36,10 @@ function handleDragOver(e) {
 	return false;
 }
 
-function handleDrag(e) {
+function handleDrag(_) {
 }
 
-function handleDragEnd(e) {
+function handleDragEnd(_) {
 }
 
 function handleDrop(e) {
@@ -63,7 +63,7 @@ function handleDrop(e) {
 		}
 
 		e.target.style.cursor = "grab";
-		window.postMessage({ what: "order" }, "*");
+		postMessage({ what: "order" }, "*");
 	}
 	return false;
 }

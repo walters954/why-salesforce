@@ -1,5 +1,7 @@
 "use strict";
-const manifest = require("./template-manifest");
+import process from "node:process";
+import manifest from "./template-manifest.json" assert { type: "json" };
+import { writeFileSync } from "fs";
 
 const browser = process.argv[2];
 if (browser === "firefox") {
@@ -17,5 +19,4 @@ if (browser === "firefox") {
 	throw new Error(`Unknown browser: ${browser}`);
 }
 
-const fs = require("fs");
-fs.writeFileSync("manifest.json", JSON.stringify(manifest, null, 4));
+writeFileSync("manifest.json", JSON.stringify(manifest, null, 4));

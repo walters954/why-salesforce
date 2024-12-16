@@ -10,9 +10,9 @@
 		"test": "deno test -A",
 		"fmt": "deno fmt --check --ignore=*.md --ignore=*/*.md",
 		"lint": "deno lint",
-		"dev-firefox": "node manifest/build-manifest.cjs firefox",
-		"dev-chrome": "node manifest/build-manifest.cjs chrome",
-		"dev-safari": "node manifest/build-manifest.cjs safari"
+		"dev-firefox": "node manifest/build-manifest.mjs firefox",
+		"dev-chrome": "node manifest/build-manifest.mjs chrome",
+		"dev-safari": "node manifest/build-manifest.mjs safari"
 	},
 	"imports": {
 		"/": "./",
