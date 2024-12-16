@@ -1,179 +1,178 @@
 body {
-    width: 40rem;
+	width: 40rem;
 }
 
 article {
-    position: relative;
-    padding: 0;
-    background-color: #FFFFFF;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #C9C9C9;
-    border-radius: 0.25rem;
-    background-clip: padding-box;
-    box-shadow: 0 2px 2px 0 #0000000F; /*rgba(0,0,0,0.1)*/
-    display: block;
+	position: relative;
+	padding: 0;
+	background-color: #ffffff;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #c9c9c9;
+	border-radius: 0.25rem;
+	background-clip: padding-box;
+	box-shadow: 0 2px 2px 0 #0000000f; /*rgba(0,0,0,0.1)*/
+	display: block;
 }
 
 header {
-    & > div:first-child > a {
-        flex-shrink: 0;
-        margin-right: 0.75rem;
-        display: flex;
-        align-items: center;
+	& > div:first-child > a {
+		flex-shrink: 0;
+		margin-right: 0.75rem;
+		display: flex;
+		align-items: center;
 
-        & > span {
-            line-height: 1;
-            display: inline-block;
-            border-radius: 0.25rem;
+		& > span {
+			line-height: 1;
+			display: inline-block;
+			border-radius: 0.25rem;
 
-            & > img {
-                max-width: 100%;
-                height: 32px;
-                vertical-align: middle;
-                border: 0;
-            }
-        }
-      
-        & > h2 {
-          margin-bottom: 0;
-          flex: 1;
-          min-width: 0;
-          margin: 0;
-          margin-left: 0.5rem;
-          padding: 0;
-          font-size: 1rem;
-          font-weight: 700;
-          line-height: 1.25;
-        }
-    } 
+			& > img {
+				max-width: 100%;
+				height: 32px;
+				vertical-align: middle;
+				border: 0;
+			}
+		}
 
+		& > h2 {
+			margin-bottom: 0;
+			flex: 1;
+			min-width: 0;
+			margin: 0;
+			margin-left: 0.5rem;
+			padding: 0;
+			font-size: 1rem;
+			font-weight: 700;
+			line-height: 1.25;
+		}
+	}
 
-    & > div:last-child {
-        flex: none;
-        display: flex;
-        align-items: center;
+	& > div:last-child {
+		flex: none;
+		display: flex;
+		align-items: center;
 
-        & > * {
-            cursor: pointer;
-        }
+		& > * {
+			cursor: pointer;
+		}
 
-        & > button#export {
-            color: #040F0F;
-            background-color: #5FB49C;
-            border-color: #5FB49C;
-        }
+		& > button#export {
+			color: #040f0f;
+			background-color: #5fb49c;
+			border-color: #5fb49c;
+		}
 
-        & > button#import {
-            color: #FFFFFF;
-            background-color: #0176D3;
-            border-color: #0176D3;
-        }
+		& > button#import {
+			color: #ffffff;
+			background-color: #0176d3;
+			border-color: #0176d3;
+		}
 
-        & > img#delete-all {
-            height: 2rem;
-        }
-    }
+		& > img#delete-all {
+			height: 2rem;
+		}
+	}
 }
 
 article > div:last-child {
-    padding: 0 !important;
-    margin-top: 0.75rem;
-    margin-bottom: 0.75rem;
+	padding: 0 !important;
+	margin-top: 0.75rem;
+	margin-bottom: 0.75rem;
 
-    & > table {
-        border-collapse: separate;
-        border-top: 1px solid #E5E5E5;
-        border-bottom: 1px solid #E5E5E5;
-        background-color: #FFFFFF;
-        font-size: inherit;
-        width: 100%;
-        border-spacing: 0;
+	& > table {
+		border-collapse: separate;
+		border-top: 1px solid #e5e5e5;
+		border-bottom: 1px solid #e5e5e5;
+		background-color: #ffffff;
+		font-size: inherit;
+		width: 100%;
+		border-spacing: 0;
 
-        & > thead {
-            & th {
-                padding: 0.25rem 1rem;
-                background-color: #F3F3F3;
-                color: #444444;
-                font-weight: 700;
-                line-height: normal;
-                white-space: nowrap;
-                position: relative;
-                text-align: left;
-            }
+		& > thead {
+			& th {
+				padding: 0.25rem 1rem;
+				background-color: #f3f3f3;
+				color: #444444;
+				font-weight: 700;
+				line-height: normal;
+				white-space: nowrap;
+				position: relative;
+				text-align: left;
+			}
 
-            & th:first-child {
-                padding: 0;
-                width: 1rem;
-            }
+			& th:first-child {
+				padding: 0;
+				width: 1rem;
+			}
 
-            & th:last-child {
-                padding-right: 1.5rem;
-            }
-        }
+			& th:last-child {
+				padding-right: 1.5rem;
+			}
+		}
 
-        & > tbody#tabs > tr.tab {
-            counter-increment: row-number;
+		& > tbody#tabs > tr.tab {
+			counter-increment: row-number;
 
-            & > td {
-                padding: 0.25rem 0.5rem;
-                padding-left: 1rem;
-                border-top: 1px solid #E5E5E5;
-                white-space: nowrap;
-                position: relative;
-                text-align: left;
-                transition: all 0.3s ease-in-out;
-                transform: translateX(0); /* Initially no translation */
+			& > td {
+				padding: 0.25rem 0.5rem;
+				padding-left: 1rem;
+				border-top: 1px solid #e5e5e5;
+				white-space: nowrap;
+				position: relative;
+				text-align: left;
+				transition: all 0.3s ease-in-out;
+				transform: translateX(0); /* Initially no translation */
 
-                &:not(:has(img, button)):hover {
-                    transform: translateX(10px);
-                }
+				&:not(:has(img, button)):hover {
+					transform: translateX(10px);
+				}
 
-                & > img {
-                    width: 1rem;
-                    height: 1rem;
-                    cursor: grab;
-                }
-                
-                & > div {
-                    clear: left;
-                    position: relative;
-                }
+				& > img {
+					width: 1rem;
+					height: 1rem;
+					cursor: grab;
+				}
 
-                & > button.delete {
-                    color: #FFFFFF;
-                    background-color: #BA0517;
-                    border-color: #BA0517;
-                }
-            }
-        }
+				& > div {
+					clear: left;
+					position: relative;
+				}
 
-        & > tbody#tabs > tr.tab:last-child {
-            & button.delete {
-                color: #333333;
-                background-color: #C9C9C9;
-                border-color: #C9C9C9;
-            }
+				& > button.delete {
+					color: #ffffff;
+					background-color: #ba0517;
+					border-color: #ba0517;
+				}
+			}
+		}
 
-            & :is(:not(input), button, img) {
-                cursor: not-allowed !important;
-            }
-        }
-    }
+		& > tbody#tabs > tr.tab:last-child {
+			& button.delete {
+				color: #333333;
+				background-color: #c9c9c9;
+				border-color: #c9c9c9;
+			}
+
+			& :is(:not(input), button, img) {
+				cursor: not-allowed !important;
+			}
+		}
+	}
 }
 
 input {
-    padding-top: 0;
-    padding-right: 1rem;
-    padding-bottom: 0;
-    padding-left: 0.75rem;
-    width: 100%;
-    min-height: calc(1.875rem + 2px);
-    font: inherit;
-    line-height: 1.875rem;
-    border: 1px solid #C9C9C9;
-    border-radius: 0.25rem;
-    background-color: #FFFFFF;
-    display: inline-block;
-    margin: 0;
+	padding-top: 0;
+	padding-right: 1rem;
+	padding-bottom: 0;
+	padding-left: 0.75rem;
+	width: 100%;
+	min-height: calc(1.875rem + 2px);
+	font: inherit;
+	line-height: 1.875rem;
+	border: 1px solid #c9c9c9;
+	border-radius: 0.25rem;
+	background-color: #ffffff;
+	display: inline-block;
+	margin: 0;
 }

@@ -1,30 +1,30 @@
 name: Test Extension
 
 on:
-  pull_request:
-    branches: ["main"]
+    pull_request:
+        branches: ["main"]
 
 permissions:
-  contents: read
+    contents: read
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+    test:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Setup repo
-        uses: actions/checkout@v4
+        steps:
+            - name: Setup repo
+              uses: actions/checkout@v4
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
+            - name: Setup Deno
+              uses: denoland/setup-deno@v2
+              with:
+                  deno-version: v2.x
 
-      - name: Verify formatting
-        run: deno task fmt
+            - name: Verify formatting
+              run: deno task fmt
 
-      - name: Run linter
-        run: deno task lint
+            - name: Run linter
+              run: deno task lint
 
-      - name: Run tests
-        run: deno task test
+            - name: Run tests
+              run: deno task test

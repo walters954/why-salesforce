@@ -1,225 +1,225 @@
 name: Build and Package
 
 on:
-  workflow_dispatch
+    workflow_dispatch
 
 permissions:
-  contents: write
-  pull-requests: write
+    contents: write
+    pull-requests: write
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    outputs:
-      DIRECTORY: ${{ steps.make_dir.outputs.DIST }}
-      VERSION: ${{ steps.get_version.outputs.VERSION }}
-      CHROME_VERSION: ${{ steps.def_file_name.outputs.CHROME_VERSION }}
-      FIREFOX_VERSION: ${{ steps.def_file_name.outputs.FIREFOX_VERSION }}
-      SAFARI_VERSION: ${{ steps.def_file_name.outputs.SAFARI_VERSION }}
-      BRANCH_NAME: ${{ steps.push_dir.outputs.BRANCH_NAME }}
-    steps:
-      - name: Define prefix
-        run: echo "AWSF=awsf" >> $GITHUB_ENV
+    setup:
+        runs-on: ubuntu-latest
+        outputs:
+            DIRECTORY: ${{ steps.make_dir.outputs.DIST }}
+            VERSION: ${{ steps.get_version.outputs.VERSION }}
+            CHROME_VERSION: ${{ steps.def_file_name.outputs.CHROME_VERSION }}
+            FIREFOX_VERSION: ${{ steps.def_file_name.outputs.FIREFOX_VERSION }}
+            SAFARI_VERSION: ${{ steps.def_file_name.outputs.SAFARI_VERSION }}
+            BRANCH_NAME: ${{ steps.push_dir.outputs.BRANCH_NAME }}
+        steps:
+            - name: Define prefix
+              run: echo "AWSF=awsf" >> $GITHUB_ENV
 
-      - name: Define file names no version
-        run: |
-          echo "CHROME=${{ env.AWSF }}-chrome" >> $GITHUB_ENV
-          echo "FIREFOX=${{ env.AWSF }}-firefox" >> $GITHUB_ENV
-          echo "SAFARI=${{ env.AWSF }}-safari" >> $GITHUB_ENV
+            - name: Define file names no version
+              run: |
+                  echo "CHROME=${{ env.AWSF }}-chrome" >> $GITHUB_ENV
+                  echo "FIREFOX=${{ env.AWSF }}-firefox" >> $GITHUB_ENV
+                  echo "SAFARI=${{ env.AWSF }}-safari" >> $GITHUB_ENV
 
-      - name: Setup repo
-        uses: actions/checkout@v4
+            - name: Setup repo
+              uses: actions/checkout@v4
 
-      - name: Extract current version
-        id: get_version
-        run: |
-         VERSION=$(grep -oP '"version":\s*"\K[0-9.]+' manifest/template-manifest.json)
-         echo "VERSION=$VERSION" >> $GITHUB_ENV
-         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+            - name: Extract current version
+              id: get_version
+              run: |
+                  VERSION=$(grep -oP '"version":\s*"\K[0-9.]+' manifest/template-manifest.json)
+                  echo "VERSION=$VERSION" >> $GITHUB_ENV
+                  echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Create versioned directory
-        id: make_dir
-        run: |
-          DIST=dist/v${{ env.VERSION }}
-          mkdir -p $DIST
-          touch $DIST/.gitkeep
-          echo "DIST=$DIST" >> $GITHUB_OUTPUT
+            - name: Create versioned directory
+              id: make_dir
+              run: |
+                  DIST=dist/v${{ env.VERSION }}
+                  mkdir -p $DIST
+                  touch $DIST/.gitkeep
+                  echo "DIST=$DIST" >> $GITHUB_OUTPUT
 
-      - name: Push versioned directory
-        id: push_dir
-        run: |
-          git config user.name "github-actions"
-          git config user.email = "github-actions@github.com"
-          BRANCH_NAME="new-version-${{ env.VERSION }}"
-          git branch $BRANCH_NAME
-          git switch $BRANCH_NAME
-          git add dist
-          git commit -m "Created new directory"
-          git push --set-upstream origin $BRANCH_NAME
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
+            - name: Push versioned directory
+              id: push_dir
+              run: |
+                  git config user.name "github-actions"
+                  git config user.email = "github-actions@github.com"
+                  BRANCH_NAME="new-version-${{ env.VERSION }}"
+                  git branch $BRANCH_NAME
+                  git switch $BRANCH_NAME
+                  git add dist
+                  git commit -m "Created new directory"
+                  git push --set-upstream origin $BRANCH_NAME
+                  echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
-      - name: Define file names with version
-        id: def_file_name
-        run: |
-          echo "CHROME_VERSION=${{ env.CHROME }}-v${{ env.VERSION }}" >> $GITHUB_OUTPUT
-          echo "FIREFOX_VERSION=${{ env.FIREFOX }}-v${{ env.VERSION }}" >> $GITHUB_OUTPUT
-          echo "SAFARI_VERSION=${{ env.SAFARI }}-v${{ env.VERSION }}" >> $GITHUB_OUTPUT
+            - name: Define file names with version
+              id: def_file_name
+              run: |
+                  echo "CHROME_VERSION=${{ env.CHROME }}-v${{ env.VERSION }}" >> $GITHUB_OUTPUT
+                  echo "FIREFOX_VERSION=${{ env.FIREFOX }}-v${{ env.VERSION }}" >> $GITHUB_OUTPUT
+                  echo "SAFARI_VERSION=${{ env.SAFARI }}-v${{ env.VERSION }}" >> $GITHUB_OUTPUT
 
-  chrome:
-    runs-on: ubuntu-latest
-    needs: setup
-    env:
-      DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
-      VERSION: ${{ needs.setup.outputs.VERSION }}
-      CHROME_VERSION: ${{ needs.setup.outputs.CHROME_VERSION }}
-      BRANCH_NAME: ${{ needs.setup.outputs.BRANCH_NAME }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    chrome:
+        runs-on: ubuntu-latest
+        needs: setup
+        env:
+            DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
+            VERSION: ${{ needs.setup.outputs.VERSION }}
+            CHROME_VERSION: ${{ needs.setup.outputs.CHROME_VERSION }}
+            BRANCH_NAME: ${{ needs.setup.outputs.BRANCH_NAME }}
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
 
-      - name: Switch to version branch
-        run: |
-          git fetch origin "$BRANCH_NAME"
-          git switch $BRANCH_NAME
+            - name: Switch to version branch
+              run: |
+                  git fetch origin "$BRANCH_NAME"
+                  git switch $BRANCH_NAME
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
+            - name: Setup Deno
+              uses: denoland/setup-deno@v2
+              with:
+                  deno-version: v2.x
 
-      - name: Make Chrome Manifest
-        run: deno run dev-chrome
+            - name: Make Chrome Manifest
+              run: deno run dev-chrome
 
-      - name: Zip Chrome extension
-        run: zip -r $DIRECTORY/$CHROME_VERSION.zip action assets background salesforce *.js LICENSE.txt README.md manifest.json -x "*/README.md"
+            - name: Zip Chrome extension
+              run: zip -r $DIRECTORY/$CHROME_VERSION.zip action assets background salesforce *.js LICENSE.txt README.md manifest.json -x "*/README.md"
 
-      - name: Upload Chrome artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: $CHROME_VERSION
-          path: $DIRECTORY/$CHROME_VERSION.zip
+            - name: Upload Chrome artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: $CHROME_VERSION
+                  path: $DIRECTORY/$CHROME_VERSION.zip
 
-      - name: Push Chrome artifact
-        run: |
-          git config user.name "github-actions"
-          git config user.email = "github-actions@github.com"
-          git add dist
-          git commit -m "Chrome v$VERSION"
-          git push
+            - name: Push Chrome artifact
+              run: |
+                  git config user.name "github-actions"
+                  git config user.email = "github-actions@github.com"
+                  git add dist
+                  git commit -m "Chrome v$VERSION"
+                  git push
 
-  firefox:
-    runs-on: ubuntu-latest
-    needs: [setup, chrome]
-    env:
-      DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
-      VERSION: ${{ needs.setup.outputs.VERSION }}
-      FIREFOX_VERSION: ${{ needs.setup.outputs.FIREFOX_VERSION }}
-      BRANCH_NAME: ${{ needs.setup.outputs.BRANCH_NAME }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    firefox:
+        runs-on: ubuntu-latest
+        needs: [setup, chrome]
+        env:
+            DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
+            VERSION: ${{ needs.setup.outputs.VERSION }}
+            FIREFOX_VERSION: ${{ needs.setup.outputs.FIREFOX_VERSION }}
+            BRANCH_NAME: ${{ needs.setup.outputs.BRANCH_NAME }}
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
 
-      - name: Switch to version branch
-        run: |
-          git fetch origin "$BRANCH_NAME"
-          git switch $BRANCH_NAME
+            - name: Switch to version branch
+              run: |
+                  git fetch origin "$BRANCH_NAME"
+                  git switch $BRANCH_NAME
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
+            - name: Setup Deno
+              uses: denoland/setup-deno@v2
+              with:
+                  deno-version: v2.x
 
-      - name: Make Firefox Manifest
-        run: deno run dev-firefox
+            - name: Make Firefox Manifest
+              run: deno run dev-firefox
 
-      - name: Zip Firefox extension
-        run: zip -r $DIRECTORY/$FIREFOX_VERSION.zip action assets background salesforce *.js LICENSE.txt README.md manifest.json -x "*/README.md"
+            - name: Zip Firefox extension
+              run: zip -r $DIRECTORY/$FIREFOX_VERSION.zip action assets background salesforce *.js LICENSE.txt README.md manifest.json -x "*/README.md"
 
-      - name: Upload Firefox artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: $FIREFOX_VERSION
-          path: $DIRECTORY/$FIREFOX_VERSION.zip
+            - name: Upload Firefox artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: $FIREFOX_VERSION
+                  path: $DIRECTORY/$FIREFOX_VERSION.zip
 
-      - name: Push Firefox artifact
-        run: |
-          git config user.name "github-actions"
-          git config user.email = "github-actions@github.com"
-          git add dist
-          git commit -m "Firefox v$VERSION"
-          git push
+            - name: Push Firefox artifact
+              run: |
+                  git config user.name "github-actions"
+                  git config user.email = "github-actions@github.com"
+                  git add dist
+                  git commit -m "Firefox v$VERSION"
+                  git push
 
-  safari:
-    runs-on: ubuntu-latest
-    needs: [setup, firefox]
-    env:
-      DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
-      VERSION: ${{ needs.setup.outputs.VERSION }}
-      SAFARI_VERSION: ${{ needs.setup.outputs.SAFARI_VERSION }}
-      BRANCH_NAME: ${{ needs.setup.outputs.BRANCH_NAME }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    safari:
+        runs-on: ubuntu-latest
+        needs: [setup, firefox]
+        env:
+            DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
+            VERSION: ${{ needs.setup.outputs.VERSION }}
+            SAFARI_VERSION: ${{ needs.setup.outputs.SAFARI_VERSION }}
+            BRANCH_NAME: ${{ needs.setup.outputs.BRANCH_NAME }}
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
 
-      - name: Switch to version branch
-        run: |
-          git fetch origin "$BRANCH_NAME"
-          git switch $BRANCH_NAME
+            - name: Switch to version branch
+              run: |
+                  git fetch origin "$BRANCH_NAME"
+                  git switch $BRANCH_NAME
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
+            - name: Setup Deno
+              uses: denoland/setup-deno@v2
+              with:
+                  deno-version: v2.x
 
-      - name: Make Safari Manifest
-        run: deno run dev-safari
+            - name: Make Safari Manifest
+              run: deno run dev-safari
 
-      - name: Zip Safari extension
-        run: zip -r $DIRECTORY/$SAFARI_VERSION.zip action assets background salesforce *.js LICENSE.txt README.md manifest.json -x "*/README.md"
+            - name: Zip Safari extension
+              run: zip -r $DIRECTORY/$SAFARI_VERSION.zip action assets background salesforce *.js LICENSE.txt README.md manifest.json -x "*/README.md"
 
-      - name: Upload Safari artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: $SAFARI_VERSION
-          path: $DIRECTORY/$SAFARI_VERSION.zip
+            - name: Upload Safari artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: $SAFARI_VERSION
+                  path: $DIRECTORY/$SAFARI_VERSION.zip
 
-      - name: Push Safari artifact
-        run: |
-          git config user.name "github-actions"
-          git config user.email = "github-actions@github.com"
-          git add dist
-          git commit -m "Safari v$VERSION"
-          git push
+            - name: Push Safari artifact
+              run: |
+                  git config user.name "github-actions"
+                  git config user.email = "github-actions@github.com"
+                  git add dist
+                  git commit -m "Safari v$VERSION"
+                  git push
 
-  create-pr:
-    runs-on: ubuntu-latest
-    needs: [setup, safari]
-    env:
-      VERSION: ${{ needs.setup.outputs.VERSION }}
-      DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
-      BRANCH_NAME: ${{ needs.setup.outputs.BRANCH_NAME }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    create-pr:
+        runs-on: ubuntu-latest
+        needs: [setup, safari]
+        env:
+            VERSION: ${{ needs.setup.outputs.VERSION }}
+            DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
+            BRANCH_NAME: ${{ needs.setup.outputs.BRANCH_NAME }}
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
 
-      - name: Set up GitHub CLI
-        run: |
-          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /usr/share/keyrings/githubcli-archive-keyring.gpg >/dev/null
-          sudo apt update
-          sudo apt install gh
+            - name: Set up GitHub CLI
+              run: |
+                  curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /usr/share/keyrings/githubcli-archive-keyring.gpg >/dev/null
+                  sudo apt update
+                  sudo apt install gh
 
-      - name: Authenticate GitHub CLI
-        run: echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+            - name: Authenticate GitHub CLI
+              run: echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
 
-      - name: Switch to version branch
-        run: |
-          git fetch origin "$BRANCH_NAME"
-          git switch $BRANCH_NAME
-          git config user.name "github-actions"
-          git config user.email = "github-actions@github.com"
-          git rm $DIRECTORY/.gitkeep
-          git commit -m "Removed gitkeep"
-          git push
+            - name: Switch to version branch
+              run: |
+                  git fetch origin "$BRANCH_NAME"
+                  git switch $BRANCH_NAME
+                  git config user.name "github-actions"
+                  git config user.email = "github-actions@github.com"
+                  git rm $DIRECTORY/.gitkeep
+                  git commit -m "Removed gitkeep"
+                  git push
 
-      - name: Create Pull Request
-        run: gh pr create --base main --head new-version-$VERSION --title "[v$VERSION] New Version Zips" --body "This pull request contains the zip files for the version $VERSION."
+            - name: Create Pull Request
+              run: gh pr create --base main --head new-version-$VERSION --title "[v$VERSION] New Version Zips" --body "This pull request contains the zip files for the version $VERSION."

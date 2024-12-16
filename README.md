@@ -1,4 +1,5 @@
 # Again, Why Salesforce
+
 This extension allows users to create custom tabs in Setup for their most-used settings.
 
 This is a fork of [Why Salesforce](https://www.github.com/walters954/why-salesforce).
@@ -8,12 +9,13 @@ This is a fork of [Why Salesforce](https://www.github.com/walters954/why-salesfo
 [Install on Chrome Web Store](https://chrome.google.com/webstore/detail/why-salesforce/ghakkjfjpnhpggbkfkeplbefkipfoaod)
 
 ### Roadmap
+
 - [x] Ability to customize tab
-    - [x] Salesforce SLDS
-    - [x] Feedback on save and delete #3
-    - [x] Update tabs onSave without refresh 
-    - [x] Disable save button if tabs list empty
-    - [x] Reordering of tabs #5
+  - [x] Salesforce SLDS
+  - [x] Feedback on save and delete #3
+  - [x] Update tabs onSave without refresh
+  - [x] Disable save button if tabs list empty
+  - [x] Reordering of tabs #5
 - [x] Remove SLDS files
 - [ ] Dark mode for flows
 - [ ] Org specific tab customization
@@ -25,6 +27,7 @@ This is a fork of [Why Salesforce](https://www.github.com/walters954/why-salesfo
 - [x] Import & Export tabs
 
 Contributors
+
 - [Warren Walters](https://www.linkedin.com/in/walters954/)
 - [Chris Rouse (Firefox port)](https://www.linkedin.com/in/chris-rouse/)
 - [Astisme](https://www.github.com/astisme/)
