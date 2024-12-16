@@ -35,7 +35,6 @@ jobs:
 
       - name: Create versioned directory
         run: |
-          mkdir -p dist/v$VERSION
           mkdir -p dist/v${{ version }}
           mkdir -p dist/v${{ VERSION }}
   test:
@@ -44,7 +43,6 @@ jobs:
     steps:
       - name: echo variables
         run: |
-          echo $VERSION
           echo ${{version}}
           echo ${{VERSION}}
           echo $chrome
