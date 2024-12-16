@@ -18,10 +18,12 @@ jobs:
       SAFARI: ${{ steps.def_file_name.outputs.SAFARI }}
       VERSION: ${{ steps.get_version.outputs.VERSION }}
     steps:
+      - name: Define prefix
+        run: echo "AWSF=awsf" >> $GITHUB_ENV
+
       - name: Define file name
         id: def_file_name
         run: |
-          echo "AWSF=awsf" >> $GITHUB_ENV
           echo "CHROME=${{ env.AWSF }}-chrome" >> $GITHUB_OUTPUT
           echo "FIREFOX=${{ env.AWSF }}-firefox" >> $GITHUB_OUTPUT
           echo "SAFARI=${{ env.AWSF }}-safari" >> $GITHUB_OUTPUT
