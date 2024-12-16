@@ -34,7 +34,7 @@ jobs:
         run: echo "VERSION=$(grep -oP '"version":\s*"\K[0-9.]+' manifest/template-manifest.json)" >> $GITHUB_OUTPUT
 
       - name: Create versioned directory
-        run: mkdir -p dist/v$VERSION
+        run: mkdir -p dist/v$version
 
   chrome:
     runs-on: ubuntu-latest
@@ -52,13 +52,13 @@ jobs:
         run: deno run dev-chrome
 
       - name: Zip Chrome extension
-        run: zip -r dist/$CHROME-v$VERSION.zip * -x "*.git*" -x "node_modules/*"
+        run: zip -r dist/$chrome-v$version.zip * -x "*.git*" -x "node_modules/*"
 
       - name: Upload Chrome artifact
         uses: actions/upload-artifact@v3
         with:
-          name: $CHROME-v$VERSION
-          path: dist/$CHROME-v$VERSION.zip
+          name: $chrome-v$version
+          path: dist/$chrome-v$version.zip
 
   firefox:
     runs-on: ubuntu-latest
@@ -76,13 +76,13 @@ jobs:
         run: deno run dev-firefox
 
       - name: Zip Firefox extension
-        run: zip -r dist/$FIREFOX-v$VERSION.zip * -x "*.git*" -x "node_modules/*"
+        run: zip -r dist/$firefox-v$version.zip * -x "*.git*" -x "node_modules/*"
 
       - name: Upload Firefox artifact
         uses: actions/upload-artifact@v3
         with:
-          name: $FIREFOX-v$VERSION
-          path: dist/$FIREFOX-v$VERSION.zip
+          name: $firefox-v$version
+          path: dist/$firefox-v$version.zip
 
   safari:
     runs-on: ubuntu-latest
@@ -100,10 +100,10 @@ jobs:
         run: deno run dev-safari
 
       - name: Zip Safari extension
-        run: zip -r dist/$SAFARI-v$VERSION.zip * -x "*.git*" -x "node_modules/*"
+        run: zip -r dist/$safari-v$version.zip * -x "*.git*" -x "node_modules/*"
 
       - name: Upload Safari artifact
         uses: actions/upload-artifact@v3
         with:
-          name: $SAFARI-v$VERSION
-          path: dist/$SAFARI-v$VERSION.zip
+          name: $safari-v$version
+          path: dist/$safari-v$version.zip
