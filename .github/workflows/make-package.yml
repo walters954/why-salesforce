@@ -90,7 +90,8 @@ jobs:
         run: deno run dev-chrome
 
       - name: Zip Chrome extension
-        run: zip -r $DIRECTORY/$CHROME_VERSION.zip * -x "*.git*" -x "node_modules/*" -x "dist"
+        run: zip -r $DIRECTORY/$CHROME_VERSION.zip * -x "*.git*" -x "node_modules/*" -x "dist/*" -x "manifest/*" -x "images/*" -x "*/README.md" -x "package.json"
+
 
       - name: Upload Chrome artifact
         uses: actions/upload-artifact@v3
@@ -132,7 +133,8 @@ jobs:
         run: deno run dev-firefox
 
       - name: Zip Firefox extension
-        run: zip -r $DIRECTORY/$FIREFOX_VERSION.zip * -x "*.git*" -x "node_modules/*" -x "dist"
+        run: zip -r $DIRECTORY/$FIREFOX_VERSION.zip * -x "*.git*" -x "node_modules/*" -x "dist/*" -x "manifest/*" -x "images/*" -x "*/README.md" -x "package.json"
+
 
       - name: Upload Firefox artifact
         uses: actions/upload-artifact@v3
@@ -174,7 +176,9 @@ jobs:
         run: deno run dev-safari
 
       - name: Zip Safari extension
-        run: zip -r $DIRECTORY/$SAFARI_VERSION.zip * -x "*.git*" -x "node_modules/*" -x "dist"
+        run: zip -r $DIRECTORY/$SAFARI_VERSION.zip * -x "*.git*" -x "node_modules/*" -x "dist/*" -x "manifest/*" -x "images/*" -x "*/README.md" -x "package.json"
+
+
 
       - name: Upload Safari artifact
         uses: actions/upload-artifact@v3
