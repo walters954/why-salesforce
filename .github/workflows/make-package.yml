@@ -196,6 +196,7 @@ jobs:
     env:
       VERSION: ${{ needs.setup.outputs.VERSION }}
       DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
+      BRANCH_NAME: ${{ needs.setup.outputs.BRANCH_NAME }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -207,12 +208,12 @@ jobs:
           sudo apt install gh
 
       - name: Authenticate GitHub CLI
-        #run: gh auth login --with-token < ${{ secrets.GITHUB_TOKEN }}
         run: echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
 
       - name: Switch to version branch
         run: |
-          git switch new-version-$VERSION
+          git fetch origin "$BRANCH_NAME"
+          git switch $BRANCH_NAME
           git config user.name "github-actions"
           git config user.email = "github-actions@github.com"
           git rm $DIRECTORY/.gitkeep
