@@ -50,13 +50,12 @@ jobs:
           git config user.name "github-actions"
           git config user.email = "github-actions@github.com"
           BRANCH_NAME="new-version-${{ env.VERSION }}"
-          echo $BRANCH_NAME
           git branch $BRANCH_NAME
           git switch $BRANCH_NAME
           git add dist
           git commit -m "Created new directory"
           git push --set-upstream origin $BRANCH_NAME
-          echo "BRANCH_NAME=$BRANCH_NAME" >> GITHUB_OUTPUT
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
       - name: Define file names with version
         id: def_file_name
@@ -196,6 +195,7 @@ jobs:
     needs: safari
     env:
       VERSION: ${{ needs.setup.outputs.VERSION }}
+      DIRECTORY: ${{ needs.setup.outputs.DIRECTORY }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -210,7 +210,13 @@ jobs:
         run: gh auth login --with-token < ${{ secrets.GITHUB_TOKEN }}
 
       - name: Switch to version branch
-        run: git switch new-version-$VERSION
+        run: |
+          git switch new-version-$VERSION
+          git config user.name "github-actions"
+          git config user.email = "github-actions@github.com"
+          git rm $DIRECTORY/.gitkeep
+          git commit -m "Removed gitkeep"
+          git push
 
       - name: Create Pull Request
         run: gh pr create --base main --head new-version-$VERSION --title "New Version Zips" --body "This pull request contains the zip files for the version $VERSION."
