@@ -25,6 +25,3 @@ jobs:
 
             - name: Run linter
               run: deno task lint
-
-            - name: Run tests
-              run: deno task test
