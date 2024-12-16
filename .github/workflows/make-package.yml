@@ -31,15 +31,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Extract current version
-        run: |
-          VERSION=$(grep -oP '"version":\s*"\K[0-9.]+' manifest/template-manifest.json)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+        run: echo "VERSION=$(grep -oP '"version":\s*"\K[0-9.]+' manifest/template-manifest.json)" >> $GITHUB_ENV
 
       - name: Create versioned directory
         id: make_dir
         run: |
-          echo "DIST=dist/v${{ env.VERSION }}" >> $GITHUB_OUTPUT
+          DIST=dist/v${{ env.VERSION }}
           mkdir -p $DIST
+          echo "DIST=$DIST" >> $GITHUB_OUTPUT
 
       - name: Define file names with version
         id: def_file_name
