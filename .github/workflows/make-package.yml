@@ -43,6 +43,7 @@ jobs:
       - env:
           VERSION: ${{ needs.setup.outputs.VERSION }}
           CHROME: ${{ needs.setup.outputs.CHROME }}
+        run: echo "Creating $CHROME-v$VERSION"
 
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -71,6 +72,7 @@ jobs:
       - env:
           VERSION: ${{ needs.setup.outputs.VERSION }}
           FIREFOX: ${{ needs.setup.outputs.FIREFOX }}
+        run: echo "Creating $FIREFOX-v$VERSION"
 
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -99,6 +101,7 @@ jobs:
       - env:
           VERSION: ${{ needs.setup.outputs.VERSION }}
           SAFARI: ${{ needs.setup.outputs.SAFARI }}
+        run: echo "Creating $SAFARI-v$VERSION"
 
       - name: Checkout repository
         uses: actions/checkout@v3
