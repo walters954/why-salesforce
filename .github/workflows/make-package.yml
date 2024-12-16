@@ -22,19 +22,19 @@ jobs:
         id: def_file_name
         run: |
           echo "AWSF=awsf" >> $GITHUB_ENV
-          echo "chrome=${{ env.AWSF }}-chrome" >> $GITHUB_OUTPUT
-          echo "firefox=${{ env.AWSF }}-firefox" >> $GITHUB_OUTPUT
-          echo "safari=${{ env.AWSF }}-safari" >> $GITHUB_OUTPUT
+          echo "CHROME=${{ env.AWSF }}-chrome" >> $GITHUB_OUTPUT
+          echo "FIREFOX=${{ env.AWSF }}-firefox" >> $GITHUB_OUTPUT
+          echo "SAFARI=${{ env.AWSF }}-safari" >> $GITHUB_OUTPUT
 
       - name: Setup repo
         uses: actions/checkout@v4
 
       - name: Extract current version
         id: get_version
-        run: echo "version=$(grep -oP '"version":\s*"\K[0-9.]+' manifest/template-manifest.json)" >> $GITHUB_OUTPUT
+        run: echo "VERSION=$(grep -oP '"version":\s*"\K[0-9.]+' manifest/template-manifest.json)" >> $GITHUB_OUTPUT
 
       - name: Create versioned directory
-        run: mkdir -p dist/v${{ version }}
+        run: mkdir -p dist/v${{ VERSION }}
 
   chrome:
     runs-on: ubuntu-latest
@@ -52,13 +52,13 @@ jobs:
         run: deno run dev-chrome
 
       - name: Zip Chrome extension
-        run: zip -r dist/${{ chrome }}-v${{ version }}.zip * -x "*.git*" -x "node_modules/*"
+        run: zip -r dist/$CHROME-v$VERSION.zip * -x "*.git*" -x "node_modules/*"
 
       - name: Upload Chrome artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ chrome }}-v${{ version }}
-          path: dist/${{ chrome }}-v${{ version }}.zip
+          name: $CHROME-v$VERSION
+          path: dist/$CHROME-v$VERSION.zip
 
   firefox:
     runs-on: ubuntu-latest
@@ -76,13 +76,13 @@ jobs:
         run: deno run dev-firefox
 
       - name: Zip Firefox extension
-        run: zip -r dist/${{ firefox }}-v${{ version }}.zip * -x "*.git*" -x "node_modules/*"
+        run: zip -r dist/$FIREFOX-v$VERSION.zip * -x "*.git*" -x "node_modules/*"
 
       - name: Upload Firefox artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ firefox }}-v${{ version }}
-          path: dist/${{ firefox }}-v${{ version }}.zip
+          name: $FIREFOX-v$VERSION
+          path: dist/$FIREFOX-v$VERSION.zip
 
   safari:
     runs-on: ubuntu-latest
@@ -100,10 +100,10 @@ jobs:
         run: deno run dev-safari
 
       - name: Zip Safari extension
-        run: zip -r dist/${{ safari }}-v${{ version }}.zip * -x "*.git*" -x "node_modules/*"
+        run: zip -r dist/$SAFARI-v$VERSION.zip * -x "*.git*" -x "node_modules/*"
 
       - name: Upload Safari artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ safari }}-v${{ version }}
-          path: dist/${{ safari }}-v${{ version }}.zip
+          name: $SAFARI-v$VERSION
+          path: dist/$SAFARI-v$VERSION.zip
