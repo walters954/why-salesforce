@@ -31,20 +31,21 @@ jobs:
 
       - name: Extract current version
         id: get_version
-        run: echo "VERSION=$(grep -oP '"version":\s*"\K[0-9.]+' manifest/template-manifest.json)" >> $GITHUB_OUTPUT
+        run: |
+          VERSION=$(grep -oP '"version":\s*"\K[0-9.]+' manifest/template-manifest.json)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Create versioned directory
-        run: mkdir -p dist/v${{ needs.setup.outputs.VERSION }}
+        run: mkdir -p dist/v${{ env.VERSION }}
 
   chrome:
     runs-on: ubuntu-latest
     needs: setup
+    env:
+      VERSION: ${{ needs.setup.outputs.VERSION }}
+      CHROME: ${{ needs.setup.outputs.CHROME }}
     steps:
-      - env:
-          VERSION: ${{ needs.setup.outputs.VERSION }}
-          CHROME: ${{ needs.setup.outputs.CHROME }}
-        run: echo "Creating $CHROME-v$VERSION"
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -68,12 +69,10 @@ jobs:
   firefox:
     runs-on: ubuntu-latest
     needs: chrome
+    env:
+      VERSION: ${{ needs.setup.outputs.VERSION }}
+      FIREFOX: ${{ needs.setup.outputs.FIREFOX }}
     steps:
-      - env:
-          VERSION: ${{ needs.setup.outputs.VERSION }}
-          FIREFOX: ${{ needs.setup.outputs.FIREFOX }}
-        run: echo "Creating $FIREFOX-v$VERSION"
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -97,12 +96,10 @@ jobs:
   safari:
     runs-on: ubuntu-latest
     needs: firefox
+    env:
+      VERSION: ${{ needs.setup.outputs.VERSION }}
+      SAFARI: ${{ needs.setup.outputs.SAFARI }}
     steps:
-      - env:
-          VERSION: ${{ needs.setup.outputs.VERSION }}
-          SAFARI: ${{ needs.setup.outputs.SAFARI }}
-        run: echo "Creating $SAFARI-v$VERSION"
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
