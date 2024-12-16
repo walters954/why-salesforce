@@ -35,7 +35,6 @@ jobs:
 
       - name: Create versioned directory
         run: |
-          mkdir -p dist/v$version
           mkdir -p dist/v$VERSION
           mkdir -p dist/v${{ version }}
           mkdir -p dist/v${{ VERSION }}
@@ -45,7 +44,6 @@ jobs:
     steps:
       - name: echo variables
         run: |
-          echo $version
           echo $VERSION
           echo ${{version}}
           echo ${{VERSION}}
