@@ -78,7 +78,7 @@ jobs:
 
       - name: Switch to version branch
         run: |
-          git fetch $BRANCH_NAME
+          git fetch origin "$BRANCH_NAME"
           git switch $BRANCH_NAME
 
       - name: Setup Deno
@@ -120,7 +120,7 @@ jobs:
 
       - name: Switch to version branch
         run: |
-          git fetch $BRANCH_NAME
+          git fetch origin "$BRANCH_NAME"
           git switch $BRANCH_NAME
 
       - name: Setup Deno
@@ -162,7 +162,7 @@ jobs:
 
       - name: Switch to version branch
         run: |
-          git fetch $BRANCH_NAME
+          git fetch origin "$BRANCH_NAME"
           git switch $BRANCH_NAME
 
       - name: Setup Deno
