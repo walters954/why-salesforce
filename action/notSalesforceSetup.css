@@ -12,7 +12,7 @@ body > div {
 		font-weight: normal;
 	}
 
-	& > button {
+	& > a {
 		width: 10rem;
 	}
 }

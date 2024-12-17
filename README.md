@@ -1,4 +1,21 @@
+<a href="https://github.com/Astisme/again-why-salesforce">
+  <img src="https://github.com/Astisme/again-why-salesforce/blob/main/assets/icons/awsf-128.png?raw=true" align="right" title="Well hello there!" />
+</a>
+
 # Again, Why Salesforce
+
+![Release version](https://img.shields.io/github/manifest-json/v/Astisme/again-why-salesforce?filename=manifest%2Ftemplate-manifest.json&label=Version)
+![Last commit](https://img.shields.io/github/last-commit/Astisme/again-why-salesforce?labelColor=black&color=white)
+![License](https://img.shields.io/github/license/astisme/again-why-salesforce)
+![Code size](https://img.shields.io/github/languages/code-size/astisme/again-why-salesforce)
+<!--
+![Chrome users](https://img.shields.io/chrome-web-store/users/:storeId)
+![Chrome stars](https://img.shields.io/chrome-web-store/stars/:storeId)
+![Firefox users](https://img.shields.io/amo/users/:addonId)
+![Firefox stars](https://img.shields.io/amo/stars/:addonId)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/astisme/again-why-salesforce)
+![GitHub stars](https://img.shields.io/github/stars/astisme/again-why-salesforce)
+-->
 
 This extension allows users to create custom tabs in Setup for their most-used settings.
 

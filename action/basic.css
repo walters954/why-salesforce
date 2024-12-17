@@ -51,6 +51,7 @@ a {
 	}
 }
 
+a.button,
 button {
 	position: relative;
 	display: inline-flex;
@@ -96,5 +97,5 @@ button {
 }
 
 .hidden {
-	display: none;
+	display: none !important;
 }

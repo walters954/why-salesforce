@@ -2,7 +2,7 @@ body {
 	width: 40rem;
 }
 
-article {
+div#top {
 	position: relative;
 	padding: 0;
 	background-color: #ffffff;
@@ -75,7 +75,7 @@ header {
 	}
 }
 
-article > div:last-child {
+div#top > div:last-child {
 	padding: 0 !important;
 	margin-top: 0.75rem;
 	margin-bottom: 0.75rem;
