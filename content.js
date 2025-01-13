@@ -1,8 +1,13 @@
 const storageKey = "sfmWhySF";
 
+{
+	const script = document.createElement("script");
+	script.src = chrome.runtime.getURL("lightning-navigation.js");
+	(document.head || document.documentElement).appendChild(script);
+}
+
 function init(setupTabUl) {
     if (setupTabUl) {
-        let rows = [];
         chrome.storage.sync.get([storageKey], function (items) {
             let rowObj = items[storageKey] || [];
             if (rowObj.length === 0) {
@@ -12,14 +17,10 @@ function init(setupTabUl) {
 
             for (const rowId in rowObj) {
                 let row = rowObj[rowId];
-                rows.push(
+                setupTabUl.appendChild(
                     generateRowTemplate(row.tabTitle, row.url, row.openInNewTab)
                 );
             }
-            setupTabUl.insertAdjacentHTML("beforeend", rows.join(""));
-
-            // Add click event listeners after rows are inserted
-            addClickEventListeners();
         });
     }
 }
@@ -49,12 +50,31 @@ setTimeout(function () {
 }, 3000);
 
 function generateRowTemplate(tabTitle, url, openInNewTab) {
+    const li = document.createElement('li');
+    li.setAttribute('role', 'presentation');
+    li.className = 'oneConsoleTabItem tabItem slds-context-bar__item borderRight navexConsoleTabItem';
+    li.setAttribute('data-aura-class', 'navexConsoleTabItem');
+    li.setAttribute('data-url', url);
+
     const target = openInNewTab ? "_blank" : "_self";
-    return `<li role="presentation" class="oneConsoleTabItem tabItem slds-context-bar__item borderRight navexConsoleTabItem" data-aura-class="navexConsoleTabItem" data-url="${url}">
-            <a role="tab" tabindex="-1" title="${tabTitle}" aria-selected="false" href="${url}" target="${target}" class="tabHeader slds-context-bar__label-action">
-                <span class="title slds-truncate">${tabTitle}</span>
-            </a>
-        </li>`;
+    const a = document.createElement('a');
+    a.setAttribute('role', 'tab');
+    a.setAttribute('tabindex', '-1');
+    a.setAttribute('title', tabTitle);
+    a.setAttribute('aria-selected', 'false');
+    a.setAttribute('href', url);
+    a.setAttribute('target', target);
+    a.classList.add('tabHeader','slds-context-bar__label-action');
+    // add click event listener on creation
+    a.addEventListener("click", handleLightningLinkClick);
+
+    const span = document.createElement('span');
+    span.classList.add('title','slds-truncate');
+    span.textContent = tabTitle;
+
+    a.appendChild(span);
+    li.appendChild(a);
+    return li;
 }
 
 function initTabs() {
@@ -78,21 +98,23 @@ function initTabs() {
     return tabs;
 }
 
-function addClickEventListeners() {
-    chrome.storage.sync.get([storageKey], function (items) {
-        const rowObj = items[storageKey] || [];
-        for (const rowId in rowObj) {
-            let tab = rowObj[rowId];
-            document
-                .querySelectorAll(`a[href="${tab.url}"]`)
-                .forEach((link) => {
-                    link.addEventListener("click", function (event) {
-                        if (tab.openInNewTab) {
-                            event.preventDefault();
-                            window.open(tab.url, "_blank");
-                        }
-                    });
-                });
-        }
-    });
+/**
+ * Handles the redirection to another Salesforce page without requiring a full reload.
+ *
+ * @param {Event} e - the click event
+ */
+function handleLightningLinkClick(e) {
+	e.preventDefault(); // Prevent the default link behavior (href navigation)
+	const url = e.currentTarget.href;
+	const target = e.currentTarget.target;
+	if (target === "_blank") {
+		open(url, target);
+	} else {
+		postMessage({
+			what: "lightningNavigation",
+			navigationType: "url",
+			url,
+			fallbackURL: url,
+		}, "*");
+	}
 }
