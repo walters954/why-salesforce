@@ -68,6 +68,11 @@ function setBrowserStorage(tabs) {
     chrome.storage.sync.set({ sfmWhySF: tabs }, function () {
         setMessage("success", SUCCESS_MESSAGE);
     });
+
+    // Refresh the Salesforce page to show the change.
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.reload(tabs[0].id);
+    });
 }
 
 function setMessage(type, message) {
