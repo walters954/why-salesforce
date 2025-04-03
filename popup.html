@@ -23,7 +23,9 @@
                         <span>Why Salesforce</span>
                     </h2>
                 </div>
-                <div class="slds-no-flex">
+                <div class="slds-no-flex header-buttons">
+                    <button class="tab-mover up slds-button slds-button_brand" style="transform: scale(1, -1)">⇩</button>
+                    <button class="tab-mover down slds-button slds-button_brand">⇩</button>
                     <button class="save slds-button slds-button_brand">Save</button>
                     <button class="add slds-button slds-button_neutral">Add</button>
                 </div>
@@ -42,16 +44,19 @@
             <table class="slds-table slds-table_cell-buffer slds-table_bordered">
                 <thead>
                     <tr>
-                        <th scope="col">
+                        <th scope="col" style="width: 1px">
+                            <div title="Reorder">Reorder</div>
+                        </th>
+                        <th scope="col" style="width: 13rem">
                             <div title="Tab Name">Tab Name</div>
                         </th>
                         <th scope="col">
                             <div title="Tab Url">Tab Url</div>
                         </th>
-                        <th scope="col" style="width: 3.25rem">
+                        <th scope="col" style="width: 4rem">
                             <div title="Open in New Tab">New Tab</div>
                         </th>
-                        <th scope="col" style="width: 3.25rem">
+                        <th scope="col" style="width: 6rem">
                             <div class="slds-assistive-text" title="Actions">Actions</div>
                         </th>
                     </tr>
@@ -65,6 +70,11 @@
 
     <template id="tr_template">
         <tr class="tab">
+            <td data-label="Reorder">
+                <div class="slds-form-element__control">
+                    <input type="radio" name="reorder">
+                </div>
+            </td>
             <td data-label="Tab Name" scope="row">
                 <div class="slds-form-element__control">
                     <input type="text" name="tabTitle" class="tabTitle slds-input" placeholder="Flow">
