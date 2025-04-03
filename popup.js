@@ -21,6 +21,7 @@ function loadTabs() {
             element
                 .querySelector(".delete")
                 .addEventListener("click", deleteTab);
+            addRadioListener(element);
             elements.add(element);
         }
         document.querySelector(tabAppendElement).append(...elements);
@@ -32,6 +33,7 @@ function addTab() {
     const template = document.getElementById(tabTemplate);
     const element = template.content.firstElementChild.cloneNode(true);
     element.querySelector(".delete").addEventListener("click", deleteTab);
+    addRadioListener(element);
     document.querySelector(tabAppendElement).append(element);
     updateSaveButtonState();
     clearMessage();
@@ -60,8 +62,52 @@ function processTabs() {
 function deleteTab() {
     this.closest(".tab").remove();
     saveTab();
+    handleTabMoverButtonVisibility(); // If the selected tab was deleted, the tab-mover buttons should disappear.
     updateSaveButtonState();
 }
+
+function handleRadioSelected(event) {
+    document.querySelector(".tab.selected")?.classList.remove("selected"); // Removes "selected" class from a previously selected tab
+    this.closest(".tab").classList.add("selected"); // Adds "selected" class to newly selected tab
+    
+    handleTabMoverButtonVisibility();
+}
+function handleTabMoverButtonVisibility() {
+    let selectedTab = document.querySelector(".tab.selected");
+
+    let headerButtonContainer = document.querySelector(".header-buttons");
+    if (selectedTab) { headerButtonContainer.classList.add("radio-selected"); }
+    else             { headerButtonContainer.classList.remove("radio-selected"); }
+}
+
+function moveTabUp() {
+    let tabData = getTabData();
+    if (tabData.previous) { swapTabs(tabData.previous, tabData.selected); }
+}
+function moveTabDown() {
+    let tabData = getTabData();
+    if (tabData.next) { swapTabs(tabData.selected, tabData.next); }
+}
+    function getTabData() {
+        let tabData = { all: document.getElementsByClassName('tab') };
+        
+        let selectedRadio = document.querySelector('input[type="radio"]:checked');
+        tabData.selected  = selectedRadio?.closest(".tab");
+
+        let selectedIsFirst = tabData.selected == tabData.all[0];
+        let selectedIsLast  = tabData.selected == tabData.all[tabData.length - 1];
+        
+        tabData.previous = selectedIsFirst ? null : tabData.selected?.previousSibling;
+        tabData.next     = selectedIsLast  ? null : tabData.selected?.nextSibling;
+
+        return tabData;
+    }
+    function swapTabs(tab1, tab2) {
+        const afterTab2 = tab2.nextElementSibling;
+        const parent    = tab2.parentNode;
+        tab1.replaceWith(tab2);
+        parent.insertBefore(tab1, afterTab2);
+    }
 
 function setBrowserStorage(tabs) {
     // Save it using the Chrome extension storage API.
@@ -95,6 +141,16 @@ function updateSaveButtonState() {
     const tabElements = document.getElementsByClassName("tab");
     saveButton.disabled = tabElements.length === 0;
 }
+
+function addRadioListener(tab) {
+    tab.querySelector("input[type='radio']")?.addEventListener("change", handleRadioSelected);
+}
+
+const upButton = document.querySelector(".header-buttons .tab-mover.up");
+upButton.addEventListener("click", moveTabUp);
+
+const downButton = document.querySelector(".header-buttons .tab-mover.down");
+downButton.addEventListener("click", moveTabDown);
 
 const saveButton = document.querySelector(".save");
 saveButton.addEventListener("click", saveTab);
