@@ -18,9 +18,6 @@ function loadTabs() {
             element.querySelector(".url").value = tab.url;
             element.querySelector(".openInNewTab").checked =
                 tab.openInNewTab || false;
-            element
-                .querySelector(".delete")
-                .addEventListener("click", deleteTab);
             addRadioListener(element);
             elements.add(element);
         }
@@ -32,7 +29,6 @@ function loadTabs() {
 function addTab() {
     const template = document.getElementById(tabTemplate);
     const element = template.content.firstElementChild.cloneNode(true);
-    element.querySelector(".delete").addEventListener("click", deleteTab);
     addRadioListener(element);
     document.querySelector(tabAppendElement).append(element);
     updateSaveButtonState();
@@ -60,10 +56,14 @@ function processTabs() {
 }
 
 function deleteTab() {
-    this.closest(".tab").remove();
-    saveTab();
-    handleTabMoverButtonVisibility(); // If the selected tab was deleted, the tab-mover buttons should disappear.
-    updateSaveButtonState();
+    let selectedTab = document.querySelector(".tab.selected");
+
+    if (selectedTab) {
+        selectedTab.remove();
+        saveTab();
+        handleTabMoverButtonVisibility(); // If the selected tab was deleted, the tab-action buttons should disappear.
+        updateSaveButtonState();
+    }
 }
 
 function handleRadioSelected(event) {
@@ -146,11 +146,14 @@ function addRadioListener(tab) {
     tab.querySelector("input[type='radio']")?.addEventListener("change", handleRadioSelected);
 }
 
-const upButton = document.querySelector(".header-buttons .tab-mover.up");
+const upButton = document.querySelector(".header-buttons .tab-action.up");
 upButton.addEventListener("click", moveTabUp);
 
-const downButton = document.querySelector(".header-buttons .tab-mover.down");
+const downButton = document.querySelector(".header-buttons .tab-action.down");
 downButton.addEventListener("click", moveTabDown);
+
+const deleteButton = document.querySelector(".header-buttons .delete");
+deleteButton.addEventListener("click", deleteTab);
 
 const saveButton = document.querySelector(".save");
 saveButton.addEventListener("click", saveTab);
