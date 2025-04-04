@@ -1,20 +1,25 @@
 body {
-    width: 50rem;
+    width: 45rem;
 }
 
 .hidden{
     display: none;
 }
 
-.header-buttons .tab-mover {
+.header-buttons .tab-action {
     display: none;
     font-weight: bold;
 }
-.header-buttons.radio-selected .tab-mover {
+.header-buttons.radio-selected .tab-action {
     display: unset;
 }
-.header-buttons .tab-mover.down {
-    margin-right: 15rem;
+.header-buttons .tab-action.down {
+    margin-right: 2rem;
+}
+.header-buttons .delete {
+    height: 32px;
+    margin-right: 9rem;
+    vertical-align: bottom;
 }
 
 tr.tab.selected {
