@@ -19,7 +19,7 @@ function init(setupTabUl) {
             setupTabUl.insertAdjacentHTML("beforeend", rows.join(""));
 
             // Add click event listeners after rows are inserted
-            addClickEventListeners();
+            addClickEventListeners(rowObj);
         });
     }
 }
@@ -78,21 +78,16 @@ function initTabs() {
     return tabs;
 }
 
-function addClickEventListeners() {
-    chrome.storage.sync.get([storageKey], function (items) {
-        const rowObj = items[storageKey] || [];
-        for (const rowId in rowObj) {
-            let tab = rowObj[rowId];
-            document
-                .querySelectorAll(`a[href="${tab.url}"]`)
-                .forEach((link) => {
-                    link.addEventListener("click", function (event) {
-                        if (tab.openInNewTab) {
-                            event.preventDefault();
-                            window.open(tab.url, "_blank");
-                        }
-                    });
-                });
-        }
-    });
+function addClickEventListeners(tabs) {
+    for (const rowId in tabs) {
+        let tab = tabs[rowId];
+        document.querySelectorAll(`a[href="${tab.url}"]`).forEach((link) => {
+            link.addEventListener("click", function (event) {
+                if (tab.openInNewTab) {
+                    event.preventDefault();
+                    window.open(tab.url, "_blank");
+                }
+            });
+        });
+    }
 }
