@@ -23,7 +23,18 @@
                         <span>Why Salesforce</span>
                     </h2>
                 </div>
-                <div class="slds-no-flex">
+                <div class="slds-no-flex header-buttons">
+                    <button class="tab-action up slds-button slds-button_brand" style="transform: scale(1, -1)">⇩</button>
+                    <button class="tab-action down slds-button slds-button_brand">⇩</button>
+
+                    <button class="tab-action delete slds-button slds-button_destructive">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="-5 0 60 60" fill="#fff">
+                            <path
+                                d="M45.5 10H33V6a4 4 0 0 0-4-4h-6a4 4 0 0 0-4 4v4H6.5c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h39c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM23 7c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v3h-6zm18.5 13h-31c-.8 0-1.5.7-1.5 1.5V45a5 5 0 0 0 5 5h24a5 5 0 0 0 5-5V21.5c0-.8-.7-1.5-1.5-1.5zM23 42c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1zm10 0c0 .6-.4 1-1 1h-2c-.6 0-1-.4-1-1V28c0-.6.4-1 1-1h2c.6 0 1 .4 1 1z">
+                            </path>
+                        </svg>
+                    </button>
+
                     <button class="save slds-button slds-button_brand">Save</button>
                     <button class="add slds-button slds-button_neutral">Add</button>
                 </div>
@@ -42,17 +53,17 @@
             <table class="slds-table slds-table_cell-buffer slds-table_bordered">
                 <thead>
                     <tr>
-                        <th scope="col">
+                        <th scope="col" style="width: 1px">
+                            <div title="Reorder">Reorder</div>
+                        </th>
+                        <th scope="col" style="width: 13rem">
                             <div title="Tab Name">Tab Name</div>
                         </th>
                         <th scope="col">
                             <div title="Tab Url">Tab Url</div>
                         </th>
-                        <th scope="col" style="width: 3.25rem">
+                        <th scope="col" style="width: 4rem">
                             <div title="Open in New Tab">New Tab</div>
-                        </th>
-                        <th scope="col" style="width: 3.25rem">
-                            <div class="slds-assistive-text" title="Actions">Actions</div>
                         </th>
                     </tr>
                 </thead>
@@ -65,6 +76,11 @@
 
     <template id="tr_template">
         <tr class="tab">
+            <td data-label="Reorder">
+                <div class="slds-form-element__control">
+                    <input type="radio" name="reorder">
+                </div>
+            </td>
             <td data-label="Tab Name" scope="row">
                 <div class="slds-form-element__control">
                     <input type="text" name="tabTitle" class="tabTitle slds-input" placeholder="Flow">
@@ -79,9 +95,6 @@
                 <div class="slds-form-element__control">
                     <input type="checkbox" name="openInNewTab" class="openInNewTab slds-checkbox">
                 </div>
-            </td>
-            <td>
-                <button class="delete slds-button slds-button_destructive">Delete</button>
             </td>
         </tr>
     </template>
