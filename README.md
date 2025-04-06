@@ -12,7 +12,7 @@ This extension allows users to create custom tabs in Setup for their most-used s
     -   [x] Feedback on save and delete
     -   [ ] Update tabs onSave without refresh
     -   [x] Disable save button if tabs list empty
-    -   [ ] Reorder tabs
+    -   [x] Reorder tabs
 -   [x] Minify SLDS files
 -   [ ] Dark mode for flows
 -   [ ] Org specific tab customization
