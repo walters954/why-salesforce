@@ -34,3 +34,9 @@ input[type="radio"] {
     top: 2px;
     transform: scale(2);
 }
+
+  input.slds-checkbox {
+    height: 2rem;
+    width: 2rem;
+    margin: 0 auto;
+}
