@@ -69,55 +69,85 @@ function deleteTab() {
 function handleRadioSelected(event) {
     document.querySelector(".tab.selected")?.classList.remove("selected"); // Removes "selected" class from a previously selected tab
     this.closest(".tab").classList.add("selected"); // Adds "selected" class to newly selected tab
-    
+
     handleTabMoverButtonVisibility();
 }
 function handleTabMoverButtonVisibility() {
     let selectedTab = document.querySelector(".tab.selected");
 
     let headerButtonContainer = document.querySelector(".header-buttons");
-    if (selectedTab) { headerButtonContainer.classList.add("radio-selected"); }
-    else             { headerButtonContainer.classList.remove("radio-selected"); }
+    if (selectedTab) {
+        headerButtonContainer.classList.add("radio-selected");
+    } else {
+        headerButtonContainer.classList.remove("radio-selected");
+    }
 }
 
 function moveTabUp() {
     let tabData = getTabData();
-    if (tabData.previous) { swapTabs(tabData.previous, tabData.selected); }
+    if (tabData.previous) {
+        swapTabs(tabData.previous, tabData.selected);
+    }
 }
 function moveTabDown() {
     let tabData = getTabData();
-    if (tabData.next) { swapTabs(tabData.selected, tabData.next); }
+    if (tabData.next) {
+        swapTabs(tabData.selected, tabData.next);
+    }
 }
-    function getTabData() {
-        let tabData = { all: document.getElementsByClassName('tab') };
-        
-        let selectedRadio = document.querySelector('input[type="radio"]:checked');
-        tabData.selected  = selectedRadio?.closest(".tab");
+function getTabData() {
+    let tabData = { all: document.getElementsByClassName("tab") };
 
-        let selectedIsFirst = tabData.selected == tabData.all[0];
-        let selectedIsLast  = tabData.selected == tabData.all[tabData.length - 1];
-        
-        tabData.previous = selectedIsFirst ? null : tabData.selected?.previousSibling;
-        tabData.next     = selectedIsLast  ? null : tabData.selected?.nextSibling;
+    let selectedRadio = document.querySelector('input[type="radio"]:checked');
+    tabData.selected = selectedRadio?.closest(".tab");
 
-        return tabData;
-    }
-    function swapTabs(tab1, tab2) {
-        const afterTab2 = tab2.nextElementSibling;
-        const parent    = tab2.parentNode;
-        tab1.replaceWith(tab2);
-        parent.insertBefore(tab1, afterTab2);
-    }
+    let selectedIsFirst = tabData.selected == tabData.all[0];
+    let selectedIsLast = tabData.selected == tabData.all[tabData.length - 1];
+
+    tabData.previous = selectedIsFirst
+        ? null
+        : tabData.selected?.previousSibling;
+    tabData.next = selectedIsLast ? null : tabData.selected?.nextSibling;
+
+    return tabData;
+}
+function swapTabs(tab1, tab2) {
+    const afterTab2 = tab2.nextElementSibling;
+    const parent = tab2.parentNode;
+    tab1.replaceWith(tab2);
+    parent.insertBefore(tab1, afterTab2);
+}
 
 function setBrowserStorage(tabs) {
     // Save it using the Chrome extension storage API.
     chrome.storage.sync.set({ sfmWhySF: tabs }, function () {
         setMessage("success", SUCCESS_MESSAGE);
-    });
 
-    // Refresh the Salesforce page to show the change.
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.reload(tabs[0].id);
+        // Instead of reloading the page, send a message to refresh tabs
+        chrome.tabs.query(
+            { active: true, currentWindow: true },
+            function (queryTabs) {
+                // Add error handling for undefined tabs or url
+                if (queryTabs && queryTabs.length > 0 && queryTabs[0].url) {
+                    const url = queryTabs[0].url;
+                    if (
+                        url.includes("lightning.force.com/lightning/setup") ||
+                        url.includes("salesforce-setup.com/lightning/setup")
+                    ) {
+                        chrome.tabs.sendMessage(
+                            queryTabs[0].id,
+                            { action: "refresh_tabs" },
+                            function (response) {
+                                // Optional: could handle response or error cases
+                                console.log("Tab refresh requested", response);
+                            }
+                        );
+                    }
+                } else {
+                    console.log("No valid tab found or URL not accessible");
+                }
+            }
+        );
     });
 }
 
@@ -148,7 +178,10 @@ function updateSaveButtonState() {
 }
 
 function addRadioListener(tab) {
-    tab.querySelector("input[type='radio']")?.addEventListener("change", handleRadioSelected);
+    tab.querySelector("input[type='radio']")?.addEventListener(
+        "change",
+        handleRadioSelected
+    );
 }
 
 const upButton = document.querySelector(".header-buttons .tab-action.up");

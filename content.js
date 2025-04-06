@@ -91,3 +91,30 @@ function addClickEventListeners(tabs) {
         });
     }
 }
+
+// Listen for messages from the popup
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    if (message.action === "refresh_tabs") {
+        refreshTabs();
+        sendResponse({ success: true });
+    }
+    return true; // Keep the message channel open for async response
+});
+
+// Function to refresh tabs without page reload
+function refreshTabs() {
+    const setupTabUl = document.getElementsByClassName(
+        "tabBarItems slds-grid"
+    )[0];
+
+    if (setupTabUl) {
+        // Remove all custom tabs (identify them by data-aura-class="navexConsoleTabItem")
+        const customTabs = setupTabUl.querySelectorAll(
+            'li[data-aura-class="navexConsoleTabItem"]'
+        );
+        customTabs.forEach((tab) => tab.remove());
+
+        // Re-initialize tabs
+        init(setupTabUl);
+    }
+}
