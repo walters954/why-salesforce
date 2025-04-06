@@ -95,8 +95,7 @@ function moveTabDown() {
         tabData.selected  = selectedRadio?.closest(".tab");
 
         let selectedIsFirst = tabData.selected == tabData.all[0];
-        let selectedIsLast  = tabData.selected == tabData.all[tabData.length - 1];
-        
+        let selectedIsLast  = tabData.selected == tabData.all[tabData.all.length - 1];
         tabData.previous = selectedIsFirst ? null : tabData.selected?.previousSibling;
         tabData.next     = selectedIsLast  ? null : tabData.selected?.nextSibling;
 
