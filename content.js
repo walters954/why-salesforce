@@ -50,7 +50,7 @@ setTimeout(function () {
 
 function generateRowTemplate(tabTitle, url, openInNewTab) {
     const target = openInNewTab ? "_blank" : "_self";
-    return `<li role="presentation" class="oneConsoleTabItem tabItem slds-context-bar__item borderRight navexConsoleTabItem" data-aura-class="navexConsoleTabItem" data-url="${url}">
+    return `<li role="presentation" class="oneConsoleTabItem tabItem slds-context-bar__item borderRight navexConsoleTabItem why-sf-custom-tab" data-aura-class="navexConsoleTabItem" data-url="${url}">
             <a role="tab" tabindex="-1" title="${tabTitle}" aria-selected="false" href="${url}" target="${target}" class="tabHeader slds-context-bar__label-action">
                 <span class="title slds-truncate">${tabTitle}</span>
             </a>
@@ -118,10 +118,8 @@ function refreshTabs(tabsData) {
     )[0];
 
     if (setupTabUl) {
-        // Remove all existing custom tabs
-        const customTabs = setupTabUl.querySelectorAll(
-            'li[data-aura-class="navexConsoleTabItem"]'
-        );
+        // Remove only the custom tabs added by this extension
+        const customTabs = setupTabUl.querySelectorAll(".why-sf-custom-tab");
         customTabs.forEach((tab) => tab.remove());
 
         // Generate and append new tab elements from the received data
