@@ -120,31 +120,46 @@ function swapTabs(tab1, tab2) {
 
 function setBrowserStorage(tabs) {
     // Save it using the Chrome extension storage API.
-    chrome.storage.sync.set({ sfmWhySF: tabs }, function () {
+    chrome.storage.sync.set({ [storageKey]: tabs }, function () {
+        // Check for errors during storage set
+        if (chrome.runtime.lastError) {
+            console.error("Error setting storage:", chrome.runtime.lastError);
+            setMessage("error", "Failed to save changes."); // Provide feedback
+            return;
+        }
+
         setMessage("success", SUCCESS_MESSAGE);
 
-        // Instead of reloading the page, send a message to refresh tabs
+        // Instead of reloading, send a message with the new tabs data
         chrome.tabs.query(
             { active: true, currentWindow: true },
             function (queryTabs) {
-                // Add error handling for undefined tabs or url
-                if (queryTabs && queryTabs.length > 0 && queryTabs[0].url) {
-                    const url = queryTabs[0].url;
-                    if (
-                        url.includes("lightning.force.com/lightning/setup") ||
-                        url.includes("salesforce-setup.com/lightning/setup")
-                    ) {
-                        chrome.tabs.sendMessage(
-                            queryTabs[0].id,
-                            { action: "refresh_tabs" },
-                            function (response) {
-                                // Optional: could handle response or error cases
-                                console.log("Tab refresh requested", response);
+                if (queryTabs && queryTabs.length > 0 && queryTabs[0].id) {
+                    // No need to check URL here, content script matches ensure it only runs on the correct pages
+                    chrome.tabs.sendMessage(
+                        queryTabs[0].id,
+                        { action: "refresh_tabs", tabs: tabs }, // Send the tabs data
+                        function (response) {
+                            if (chrome.runtime.lastError) {
+                                console.log(
+                                    "Could not send refresh message:",
+                                    chrome.runtime.lastError.message
+                                );
+                            } else if (response && response.success) {
+                                console.log(
+                                    "Tab refresh message sent and acknowledged."
+                                );
+                            } else {
+                                console.log(
+                                    "Tab refresh message sent, but no/failed response."
+                                );
                             }
-                        );
-                    }
+                        }
+                    );
                 } else {
-                    console.log("No valid tab found or URL not accessible");
+                    console.log(
+                        "No active tab found to send refresh message to."
+                    );
                 }
             }
         );

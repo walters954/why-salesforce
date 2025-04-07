@@ -94,27 +94,50 @@ function addClickEventListeners(tabs) {
 
 // Listen for messages from the popup
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    if (message.action === "refresh_tabs") {
-        refreshTabs();
+    // Check if the message contains the action and the necessary tabs data
+    if (message.action === "refresh_tabs" && Array.isArray(message.tabs)) {
+        console.log("Received refresh_tabs message with data:", message.tabs);
+        refreshTabs(message.tabs); // Pass the received tabs data
         sendResponse({ success: true });
+    } else if (message.action === "refresh_tabs") {
+        // Handle cases where tabs data might be missing (optional logging)
+        console.warn("Received refresh_tabs message but missing tabs data.");
+        sendResponse({ success: false, error: "Missing tabs data" });
     }
-    return true; // Keep the message channel open for async response
+    // Return true to indicate you wish to send a response asynchronously
+    // (although in this specific case, sendResponse is called synchronously)
+    return true;
 });
 
-// Function to refresh tabs without page reload
-function refreshTabs() {
+// Function to refresh tabs without page reload, using provided data
+function refreshTabs(tabsData) {
     const setupTabUl = document.getElementsByClassName(
         "tabBarItems slds-grid"
     )[0];
 
     if (setupTabUl) {
-        // Remove all custom tabs (identify them by data-aura-class="navexConsoleTabItem")
+        console.log("Refreshing tabs UI...");
+        // Remove all existing custom tabs
         const customTabs = setupTabUl.querySelectorAll(
             'li[data-aura-class="navexConsoleTabItem"]'
         );
         customTabs.forEach((tab) => tab.remove());
+        console.log("Removed existing custom tabs.");
 
-        // Re-initialize tabs
-        init(setupTabUl);
+        // Generate and append new tab elements from the received data
+        let rows = [];
+        for (const tab of tabsData) {
+            rows.push(
+                generateRowTemplate(tab.tabTitle, tab.url, tab.openInNewTab)
+            );
+        }
+        setupTabUl.insertAdjacentHTML("beforeend", rows.join(""));
+        console.log("Added new tab HTML.");
+
+        // Re-add click listeners for the new tabs
+        addClickEventListeners(tabsData);
+        console.log("Re-added click listeners.");
+    } else {
+        console.warn("Could not find setupTabUl element to refresh tabs.");
     }
 }
