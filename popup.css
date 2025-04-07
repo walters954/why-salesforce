@@ -1,7 +1,42 @@
 body {
-    width: 40rem;
+    width: 45rem;
 }
 
-.hidden{
+.hidden {
     display: none;
+}
+
+.header-buttons .tab-action {
+    display: none;
+    font-weight: bold;
+}
+.header-buttons.radio-selected .tab-action {
+    display: unset;
+}
+.header-buttons .tab-action.down {
+    margin-right: 2rem;
+}
+.header-buttons .delete {
+    height: 32px;
+    margin-right: 9rem;
+    vertical-align: bottom;
+}
+
+tr.tab.selected {
+    background-color: lightgray;
+}
+td[data-label="Reorder"] {
+    text-align: center;
+}
+
+input[type="radio"] {
+    position: relative;
+    top: 2px;
+    transform: scale(2);
+}
+
+input.slds-checkbox {
+    height: 2rem;
+    width: 2rem;
+    margin: 0 auto;
 }

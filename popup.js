@@ -10,7 +10,7 @@ function loadTabs() {
     const elements = new Set();
 
     browser.storage.sync.get([storageKey], function (items) {
-        const rowObj = items[storageKey];
+        const rowObj = items[storageKey] || []; // Default to empty array if not found
         for (const rowId in rowObj) {
             let tab = rowObj[rowId];
             const element = template.content.firstElementChild.cloneNode(true);
@@ -18,9 +18,7 @@ function loadTabs() {
             element.querySelector(".url").value = tab.url;
             element.querySelector(".openInNewTab").checked =
                 tab.openInNewTab || false;
-            element
-                .querySelector(".delete")
-                .addEventListener("click", deleteTab);
+            addRadioListener(element); // Add listener for radio button selection
             elements.add(element);
         }
         document.querySelector(tabAppendElement).append(...elements);
@@ -31,7 +29,7 @@ function loadTabs() {
 function addTab() {
     const template = document.getElementById(tabTemplate);
     const element = template.content.firstElementChild.cloneNode(true);
-    element.querySelector(".delete").addEventListener("click", deleteTab);
+    addRadioListener(element); // Add listener for radio button selection
     document.querySelector(tabAppendElement).append(element);
     updateSaveButtonState();
     clearMessage();
@@ -58,16 +56,132 @@ function processTabs() {
 }
 
 function deleteTab() {
-    this.closest(".tab").remove();
-    saveTab();
-    updateSaveButtonState();
+    let selectedTab = document.querySelector(".tab.selected");
+
+    if (selectedTab) {
+        selectedTab.remove();
+        saveTab();
+        handleTabMoverButtonVisibility(); // If the selected tab was deleted, the tab-action buttons should disappear.
+        updateSaveButtonState();
+    }
+}
+
+function handleRadioSelected(event) {
+    document.querySelector(".tab.selected")?.classList.remove("selected"); // Removes "selected" class from a previously selected tab
+    this.closest(".tab").classList.add("selected"); // Adds "selected" class to newly selected tab
+
+    handleTabMoverButtonVisibility();
+}
+
+function handleTabMoverButtonVisibility() {
+    let selectedTab = document.querySelector(".tab.selected");
+
+    let headerButtonContainer = document.querySelector(".header-buttons");
+    if (selectedTab) {
+        headerButtonContainer.classList.add("radio-selected");
+    } else {
+        headerButtonContainer.classList.remove("radio-selected");
+    }
+}
+
+function moveTabUp() {
+    let tabData = getTabData();
+    if (tabData.previous) {
+        swapTabs(tabData.previous, tabData.selected);
+        saveTab(); // Save order change
+    }
+}
+
+function moveTabDown() {
+    let tabData = getTabData();
+    if (tabData.next) {
+        swapTabs(tabData.selected, tabData.next);
+        saveTab(); // Save order change
+    }
+}
+
+function getTabData() {
+    let tabData = { all: document.getElementsByClassName("tab") }; // Use getElementsByClassName for live collection
+
+    let selectedRadio = document.querySelector('input[type="radio"]:checked');
+    tabData.selected = selectedRadio?.closest(".tab");
+
+    // Need to iterate through the live collection to find previous/next siblings reliably
+    tabData.previous = null;
+    tabData.next = null;
+    for (let i = 0; i < tabData.all.length; i++) {
+        if (tabData.all[i] === tabData.selected) {
+            if (i > 0) {
+                tabData.previous = tabData.all[i - 1];
+            }
+            if (i < tabData.all.length - 1) {
+                tabData.next = tabData.all[i + 1];
+            }
+            break;
+        }
+    }
+
+    return tabData;
+}
+
+function swapTabs(tab1, tab2) {
+    const parent = tab1.parentNode;
+    const afterTab2 = tab2.nextElementSibling; // Get element after tab2 *before* moving tab1
+
+    // Move tab1 before tab2
+    parent.insertBefore(tab1, tab2);
+    // Move tab2 to where tab1 was (before afterTab2)
+    parent.insertBefore(tab2, afterTab2);
+}
+
+function addRadioListener(tab) {
+    // Assuming radio button has class 'select-tab'
+    tab.querySelector("input[type='radio']")?.addEventListener(
+        "change",
+        handleRadioSelected
+    );
 }
 
 function setBrowserStorage(tabs) {
-    // Save it using the Chrome extension storage API.
-    browser.storage.sync.set({ sfmWhySF: tabs }, function () {
-        setMessage("success", SUCCESS_MESSAGE);
-    });
+    browser.storage.sync
+        .set({ [storageKey]: tabs })
+        .then(() => {
+            setMessage("success", SUCCESS_MESSAGE);
+
+            // Send message to content script to refresh tabs
+            return browser.tabs.query({ active: true, currentWindow: true });
+        })
+        .then((queryTabs) => {
+            if (queryTabs && queryTabs.length > 0 && queryTabs[0].id) {
+                return browser.tabs.sendMessage(queryTabs[0].id, {
+                    action: "refresh_tabs",
+                    tabs: tabs, // Send the updated tabs data
+                });
+            } else {
+                // No active tab found, throw an error or handle appropriately
+                console.log("No active tab found to send refresh message to.");
+                // Optionally return a resolved promise to avoid breaking the chain if this isn't critical
+                return Promise.resolve();
+            }
+        })
+        .then((response) => {
+            // Check if response exists and has success property
+            if (response && response.success) {
+                console.log("Tab refresh message sent and acknowledged.");
+            } else {
+                // Handle cases where response is undefined (e.g., no content script receiver) or unsuccessful
+                console.log(
+                    "Tab refresh message sent, but no/failed response or no receiver."
+                );
+            }
+        })
+        .catch((error) => {
+            console.error(
+                "Error during storage set or message sending:",
+                error
+            );
+            setMessage("error", `Failed to save changes: ${error.message}`);
+        });
 }
 
 function setMessage(type, message) {
@@ -75,6 +189,8 @@ function setMessage(type, message) {
     messageDiv.classList.remove("hidden");
 
     const messageType = document.querySelector("#message-type");
+    // Ensure previous type classes are removed before adding the new one
+    messageType.className = "slds-notify slds-notify_alert"; // Reset classes
     messageType.classList.add(`slds-theme_${type}`);
 
     const messageBody = document.querySelector("#message-body");
@@ -88,6 +204,9 @@ function setMessage(type, message) {
 function clearMessage() {
     const messageDiv = document.querySelector("#message");
     messageDiv.classList.add("hidden");
+    // Also reset message type classes
+    const messageType = document.querySelector("#message-type");
+    messageType.className = "slds-notify slds-notify_alert";
 }
 
 function updateSaveButtonState() {
@@ -96,11 +215,20 @@ function updateSaveButtonState() {
     saveButton.disabled = tabElements.length === 0;
 }
 
+const upButton = document.querySelector(".header-buttons .tab-action.up");
+upButton?.addEventListener("click", moveTabUp); // Use optional chaining in case elements don't exist
+
+const downButton = document.querySelector(".header-buttons .tab-action.down");
+downButton?.addEventListener("click", moveTabDown);
+
+const headerDeleteButton = document.querySelector(".header-buttons .delete");
+headerDeleteButton?.addEventListener("click", deleteTab);
+
 const saveButton = document.querySelector(".save");
 saveButton.addEventListener("click", saveTab);
 
 const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
 
-// Initial check to set the state of the save button
 updateSaveButtonState();
+handleTabMoverButtonVisibility();
