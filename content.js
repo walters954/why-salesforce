@@ -31,7 +31,7 @@ function delayLoadSetupTabs(count) {
     count++;
 
     if (count > 5) {
-        console.log("Why Salesforce - failed to find setup tab.");
+        console.error("Why Salesforce - failed to find setup tab.");
         return;
     }
 
@@ -96,7 +96,6 @@ function addClickEventListeners(tabs) {
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // Check if the message contains the action and the necessary tabs data
     if (message.action === "refresh_tabs" && Array.isArray(message.tabs)) {
-        console.log("Received refresh_tabs message with data:", message.tabs);
         refreshTabs(message.tabs); // Pass the received tabs data
         sendResponse({ success: true });
     } else if (message.action === "refresh_tabs") {
@@ -116,13 +115,11 @@ function refreshTabs(tabsData) {
     )[0];
 
     if (setupTabUl) {
-        console.log("Refreshing tabs UI...");
         // Remove all existing custom tabs
         const customTabs = setupTabUl.querySelectorAll(
             'li[data-aura-class="navexConsoleTabItem"]'
         );
         customTabs.forEach((tab) => tab.remove());
-        console.log("Removed existing custom tabs.");
 
         // Generate and append new tab elements from the received data
         let rows = [];
@@ -132,11 +129,9 @@ function refreshTabs(tabsData) {
             );
         }
         setupTabUl.insertAdjacentHTML("beforeend", rows.join(""));
-        console.log("Added new tab HTML.");
 
         // Re-add click listeners for the new tabs
         addClickEventListeners(tabsData);
-        console.log("Re-added click listeners.");
     } else {
         console.warn("Could not find setupTabUl element to refresh tabs.");
     }
