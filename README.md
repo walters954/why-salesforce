@@ -7,6 +7,7 @@ This extension allows users to create custom tabs in Setup for their most-used s
 [Install on Chrome Web Store](https://chrome.google.com/webstore/detail/why-salesforce/ghakkjfjpnhpggbkfkeplbefkipfoaod)
 
 ### Roadmap
+
 -   [x] Ability to customize tab
     -   [x] Salesforce SLDS
     -   [x] Feedback on save and delete
@@ -28,3 +29,4 @@ Contributors
 -   [Jennifer Olson](https://www.linkedin.com/in/olsonjenn05/)
 -   [Jono Hill](https://github.com/Jono-Hills)
 -   [Jonathan Valoto](https://www.linkedin.com/in/jonathan-valoto/)
+-   [Alon Waisman](https://www.linkedin.com/in/alonwaisman/)
