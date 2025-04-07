@@ -5,6 +5,10 @@
     "permissions": ["storage"],
     "description": "Stuff that Salesforce should have added already... Adding flow and user tabs into setup.",
     "homepage_url": "https://github.com/walters954/why-salesforce/tree/firefox",
+    "host_permissions": [
+        "*://*.lightning.force.com/lightning/setup/*",
+        "*://*.salesforce-setup.com/lightning/setup/*"
+    ],
     "content_scripts": [
         {
             "js": ["content.js"],
@@ -12,7 +16,7 @@
                 "*://*.lightning.force.com/lightning/setup/*",
                 "*://*.salesforce-setup.com/lightning/setup/*"
             ],
-            "run_at": "document_end"
+            "run_at": "document_idle"
         }
     ],
     "icons": {

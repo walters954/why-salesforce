@@ -87,7 +87,7 @@ function handleTabMoverButtonVisibility() {
 function moveTabUp() {
     let tabData = getTabData();
     if (tabData.previous) {
-        swapTabs(tabData.previous, tabData.selected);
+        tabData.previous.before(tabData.selected);
         saveTab(); // Save order change
     }
 }
@@ -95,43 +95,24 @@ function moveTabUp() {
 function moveTabDown() {
     let tabData = getTabData();
     if (tabData.next) {
-        swapTabs(tabData.selected, tabData.next);
+        tabData.next.after(tabData.selected);
         saveTab(); // Save order change
     }
 }
 
 function getTabData() {
-    let tabData = { all: document.getElementsByClassName("tab") }; // Use getElementsByClassName for live collection
+    const selectedRadio = document.querySelector('input[type="radio"]:checked');
+    const selectedTab = selectedRadio?.closest(".tab"); // The <tr> element
 
-    let selectedRadio = document.querySelector('input[type="radio"]:checked');
-    tabData.selected = selectedRadio?.closest(".tab");
-
-    // Need to iterate through the live collection to find previous/next siblings reliably
-    tabData.previous = null;
-    tabData.next = null;
-    for (let i = 0; i < tabData.all.length; i++) {
-        if (tabData.all[i] === tabData.selected) {
-            if (i > 0) {
-                tabData.previous = tabData.all[i - 1];
-            }
-            if (i < tabData.all.length - 1) {
-                tabData.next = tabData.all[i + 1];
-            }
-            break;
-        }
+    if (!selectedTab) {
+        return { selected: null, previous: null, next: null };
     }
 
-    return tabData;
-}
-
-function swapTabs(tab1, tab2) {
-    const parent = tab1.parentNode;
-    const afterTab2 = tab2.nextElementSibling; // Get element after tab2 *before* moving tab1
-
-    // Move tab1 before tab2
-    parent.insertBefore(tab1, tab2);
-    // Move tab2 to where tab1 was (before afterTab2)
-    parent.insertBefore(tab2, afterTab2);
+    return {
+        selected: selectedTab,
+        previous: selectedTab.previousElementSibling, // Gets the previous <tr> sibling
+        next: selectedTab.nextElementSibling, // Gets the next <tr> sibling
+    };
 }
 
 function addRadioListener(tab) {
