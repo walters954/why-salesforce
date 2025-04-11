@@ -11,9 +11,9 @@ This extension allows users to create custom tabs in Setup for their most-used s
 -   [x] Ability to customize tab
     -   [x] Salesforce SLDS
     -   [x] Feedback on save and delete
-    -   [ ] Update tabs onSave without refresh
+    -   [x] Update tabs onSave without refresh
     -   [x] Disable save button if tabs list empty
-    -   [ ] Reorder tabs
+    -   [x] Reorder tabs
 -   [x] Minify SLDS files
 -   [ ] Dark mode for flows
 -   [ ] Org specific tab customization
@@ -21,6 +21,7 @@ This extension allows users to create custom tabs in Setup for their most-used s
 -   [x] Open full urls in new tab
 -   [ ] Better solutions for waiting until Salesforce setup is completely loaded
 -   [ ] Utils class for templates or other shared code
+-   [ ] Setting cog by as setup tab for easy access
 
 Contributors
 
