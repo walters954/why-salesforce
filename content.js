@@ -1,150 +1,115 @@
-const storageKey = "sfmWhySF";
+// content.js  –  fast-load version (single file)
+const STORAGE_KEY       = "sfmWhySF";
+const TAB_BAR_SELECTOR  = ".tabBarItems.slds-grid";
 
-function init(setupTabUl) {
-    if (setupTabUl) {
-        chrome.storage.sync.get([storageKey], function (items) {
-            let rowObj = items[storageKey] || [];
-            if (rowObj.length === 0) {
-                //Did not find data inside browser storage
-                rowObj = initTabs();
-            }
+/* ---------- tiny helpers ---------- */
+const sleep  = (ms) => new Promise(r => setTimeout(r, ms));
+const q      = (sel, ctx=document) => ctx.querySelector(sel);
+const qAll   = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+const getSyn = (key) =>
+  new Promise(res => chrome.storage.sync.get([key], v => res(v[key] || [])));
 
-            for (const rowId in rowObj) {
-                let row = rowObj[rowId];
-                setupTabUl.appendChild(
-                    generateRowTemplate(row.tabTitle, row.url, row.openInNewTab)
-                );
-            }
+/* ---------- entry point ---------- */
+(async function bootstrap() {
+  // grab stored tabs right away
+  const tabs = await (async () => {
+    const rows = await getSyn(STORAGE_KEY);
+    return rows.length ? rows : initDefaultTabs();
+  })();
 
-            // Add click event listeners after rows are inserted
-            addClickEventListeners(rowObj);
-        });
-    }
-}
+  // wait for the Salesforce tab bar, then inject
+  const tabBar = await waitForTabBar();
+  renderTabs(tabBar, tabs);
+})();
 
-function delayLoadSetupTabs(count) {
-    const setupTabUl = document.getElementsByClassName(
-        "tabBarItems slds-grid"
-    )[0];
-    count++;
-
-    if (count > 5) {
-        console.error("Why Salesforce - failed to find setup tab.");
-        return;
-    }
-
-    if (!setupTabUl) {
-        setTimeout(function () {
-            delayLoadSetupTabs(count);
-        }, 3000); // Fixed to pass count correctly
-    } else {
-        init(setupTabUl);
-    }
-}
-
-setTimeout(function () {
-    delayLoadSetupTabs(0);
-}, 3000);
-
-function generateRowTemplate(tabTitle, url, openInNewTab) {
-    const li = document.createElement("li");
-    li.setAttribute("role", "presentation");
-    li.className =
-        "oneConsoleTabItem tabItem slds-context-bar__item borderRight navexConsoleTabItem why-sf-custom-tab";
-    li.setAttribute("data-aura-class", "navexConsoleTabItem");
-    li.setAttribute("data-url", url);
-
-    const target = openInNewTab ? "_blank" : "_self";
-    const a = document.createElement("a");
-    a.setAttribute("role", "tab");
-    a.setAttribute("tabindex", "-1");
-    a.setAttribute("title", tabTitle);
-    a.setAttribute("aria-selected", "false");
-    a.setAttribute("href", url);
-    a.setAttribute("target", target);
-    a.classList.add("tabHeader", "slds-context-bar__label-action");
-
-    const span = document.createElement("span");
-    span.classList.add("title", "slds-truncate");
-    span.textContent = tabTitle;
-
-    a.appendChild(span);
-    li.appendChild(a);
-    return li;
-}
-
-function initTabs() {
-    let tabs = [
-        { tabTitle: "Home", url: "/lightning/page/home", openInNewTab: false },
-        {
-            tabTitle: "Flow",
-            url: "/lightning/setup/Flows/home",
-            openInNewTab: true,
-        },
-        {
-            tabTitle: "User",
-            url: "/lightning/setup/ManageUsers/home",
-            openInNewTab: false,
-        },
-    ];
-
-    chrome.storage.sync.set({ sfmWhySF: tabs }, function () {
-        //TODO combine with popup.js with background service
+/* ---------- DOM waiting ---------- */
+function waitForTabBar() {
+  return new Promise((resolve) => {
+    // 1. MutationObserver – fires as soon as the UL appears
+    const obs = new MutationObserver(() => {
+      const el = q(TAB_BAR_SELECTOR);
+      if (el) { obs.disconnect(); resolve(el); }
     });
-    return tabs;
+    obs.observe(document.documentElement, { childList: true, subtree: true });
+
+    // 2. Fallback – 100 ms polling for up to 5 s
+    (async () => {
+      for (let i = 0; i < 50; i++) {
+        const el = q(TAB_BAR_SELECTOR);
+        if (el) { obs.disconnect(); return resolve(el); }
+        await sleep(100);
+      }
+      console.error("Why Salesforce – tab bar not found.");
+    })();
+  });
 }
 
-function addClickEventListeners(tabs) {
-    for (const rowId in tabs) {
-        let tab = tabs[rowId];
-        document.querySelectorAll(`a[href="${tab.url}"]`).forEach((link) => {
-            link.addEventListener("click", function (event) {
-                if (tab.openInNewTab) {
-                    event.preventDefault();
-                    window.open(tab.url, "_blank");
-                }
-            });
-        });
+/* ---------- rendering ---------- */
+function renderTabs(ul, tabs) {
+  // remove any old custom tabs
+  qAll(".why-sf-custom-tab", ul).forEach(li => li.remove());
+
+  // build fragment to minimise reflows
+  const frag = document.createDocumentFragment();
+  tabs.forEach(t => frag.appendChild(makeTabLI(t)));
+  ul.appendChild(frag);
+
+  // delegated click handler (added once)
+  ul.addEventListener("click", (e) => {
+    const a = e.target.closest("a[data-url]");
+    if (!a) return;
+    const tab = tabs.find(t => t.url === a.dataset.url);
+    if (tab?.openInNewTab) {
+      e.preventDefault();
+      window.open(tab.url, "_blank");
     }
+  }, { capture: true, once: true });
 }
 
-// Listen for messages from the popup
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    // Check if the message contains the action and the necessary tabs data
-    if (message.action === "refresh_tabs" && Array.isArray(message.tabs)) {
-        refreshTabs(message.tabs); // Pass the received tabs data
-        sendResponse({ success: true });
-    } else if (message.action === "refresh_tabs") {
-        // Handle cases where tabs data might be missing (optional logging)
-        console.warn("Received refresh_tabs message but missing tabs data.");
-        sendResponse({ success: false, error: "Missing tabs data" });
-    }
-    // Return true to indicate you wish to send a response asynchronously
-    // (although in this specific case, sendResponse is called synchronously)
-    return true;
+function makeTabLI({ tabTitle, url, openInNewTab }) {
+  const li = document.createElement("li");
+  li.className =
+    "oneConsoleTabItem tabItem slds-context-bar__item borderRight " +
+    "navexConsoleTabItem why-sf-custom-tab";
+  li.setAttribute("role", "presentation");
+
+  const a  = document.createElement("a");
+  a.href   = url;
+  a.target = openInNewTab ? "_blank" : "_self";
+  a.title  = tabTitle;
+  a.setAttribute("role", "tab");
+  a.setAttribute("aria-selected", "false");
+  a.className = "tabHeader slds-context-bar__label-action";
+  a.dataset.url = url;
+
+  const span = document.createElement("span");
+  span.className = "title slds-truncate";
+  span.textContent = tabTitle;
+
+  a.appendChild(span);
+  li.appendChild(a);
+  return li;
+}
+
+/* ---------- defaults & helpers ---------- */
+function initDefaultTabs() {
+  const defaultTabs = [
+    { tabTitle: "Home", url: "/lightning/page/home",              openInNewTab: false },
+    { tabTitle: "Flow", url: "/lightning/setup/Flows/home",       openInNewTab: true  },
+    { tabTitle: "User", url: "/lightning/setup/ManageUsers/home", openInNewTab: false },
+  ];
+  chrome.storage.sync.set({ [STORAGE_KEY]: defaultTabs });
+  return defaultTabs;
+}
+
+/* ---------- message from popup ---------- */
+chrome.runtime.onMessage.addListener((msg, _, sendResponse) => {
+  if (msg.action === "refresh_tabs" && Array.isArray(msg.tabs)) {
+    const ul = q(TAB_BAR_SELECTOR);
+    ul && renderTabs(ul, msg.tabs);
+    sendResponse({ success: true });
+  } else {
+    sendResponse({ success: false, error: "Missing or invalid data" });
+  }
+  return true;
 });
-
-// Function to refresh tabs without page reload, using provided data
-function refreshTabs(tabsData) {
-    const setupTabUl = document.getElementsByClassName(
-        "tabBarItems slds-grid"
-    )[0];
-
-    if (setupTabUl) {
-        // Remove all existing custom tabs
-        const customTabs = setupTabUl.querySelectorAll(".why-sf-custom-tab");
-        customTabs.forEach((tab) => tab.remove());
-
-        // Generate and append new tab elements from the received data
-        for (const tab of tabsData) {
-            setupTabUl.appendChild(
-                generateRowTemplate(tab.tabTitle, tab.url, tab.openInNewTab)
-            );
-        }
-
-        // Re-add click listeners for the new tabs
-        addClickEventListeners(tabsData);
-    } else {
-        console.warn("Could not find setupTabUl element to refresh tabs.");
-    }
-}
