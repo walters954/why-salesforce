@@ -11,7 +11,7 @@
                 "*://*.lightning.force.com/lightning/setup/*",
                 "*://*.salesforce-setup.com/lightning/setup/*"
             ],
-            "run_at": "document_end"
+            "run_at": "document_start"
         }
     ],
     "icons": {
