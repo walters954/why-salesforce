@@ -5,25 +5,28 @@ const SUCCESS_MESSAGE = "Your changes were saved successfully";
 const storageKey = "sfmWhySF";
 loadTabs();
 
-function loadTabs() {
+function getSavedTabsFromStorage(){
+  return chrome.storage.sync.get([storageKey]);
+}
+
+async function loadTabs() {
     const template = document.getElementById(tabTemplate);
     const elements = new Set();
 
-    chrome.storage.sync.get([storageKey], function (items) {
-        const rowObj = items?.[storageKey] ?? [];
-        for (const rowId in rowObj) {
-            let tab = rowObj[rowId];
-            const element = template.content.firstElementChild.cloneNode(true);
-            element.querySelector(".tabTitle").value = tab.tabTitle;
-            element.querySelector(".url").value = tab.url;
-            element.querySelector(".openInNewTab").checked =
-                tab.openInNewTab || false;
-            addRadioListener(element);
-            elements.add(element);
-        }
-        document.querySelector(tabAppendElement).append(...elements);
-        updateSaveButtonState();
-    });
+    const items = await getSavedTabsFromStorage();
+    const rowObj = items?.[storageKey] ?? [];
+    for (const rowId in rowObj) {
+        let tab = rowObj[rowId];
+        const element = template.content.firstElementChild.cloneNode(true);
+        element.querySelector(".tabTitle").value = tab.tabTitle;
+        element.querySelector(".url").value = tab.url;
+        element.querySelector(".openInNewTab").checked =
+            tab.openInNewTab || false;
+        addRadioListener(element);
+        elements.add(element);
+    }
+    document.querySelector(tabAppendElement).append(...elements);
+    updateSaveButtonState();
 }
 
 function addTab() {
@@ -215,23 +218,18 @@ const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
 
 /**
- * Initiates a download of a JSON file with the given content and filename.
- *
- * @param {Object} message - Message containing the data for download.
- * @param {string} message.payload - The JSON string content to download.
- * @param {string} [message.filename="why-salesforce.json"] - The filename for the download.
+ * Finds all valid Tabs in the popup and saves them as a JSON object to the user's pc
  */
-function launchDownload({
-  payload,
-  filename = "why-salesforce.json"
-} = {}) {
+function exportTabs(){
+  const validTabs = processTabs();
+  const jsonTabs = JSON.stringify({ tabs: validTabs });
 	// Create a Blob & object URL
-	const blob = new Blob([payload], { type: "application/json" });
+	const blob = new Blob([jsonTabs], { type: "application/json" });
 	const url = URL.createObjectURL(blob);
 	// Build <a> and "click" it
 	const a = document.createElement("a");
 	a.href = url;
-	a.download = filename;
+	a.download = "why-salesforce.json";
 	document.body.appendChild(a);
 	a.click();
 	// Cleanup
@@ -239,23 +237,48 @@ function launchDownload({
 	URL.revokeObjectURL(url);
 }
 
-/**
- * Finds all valid Tabs in the popup and saves them as a JSON object to the user's pc
- */
-function exportTabs(){
-  const validTabs = processTabs();
-  const jsonTabs = JSON.stringify({ tabs: validTabs });
-  launchDownload({ payload: jsonTabs });
-}
-
 const exportButton = document.querySelector(".export");
 exportButton.addEventListener("click", exportTabs);
 
-function importTabs(){
+/**
+ * Reads and processes JSON files using modern Promise-based API.
+ *
+ * @param {Event} event - The event triggered by the file input
+ * @returns {Promise<void>}
+ */
+async function importTabs(event) {
+  event.preventDefault();
+  const file = event.target.files[0];
+  if (file.type !== "application/json") {
+    setMessage("error", "The file you chose is not supported.");
+    return
+  }
+  const jsonString = await file.text();
+  const tabArray = JSON.parse(jsonString)?.tabs ?? [];
+  // accept only valid tabs
+  const importTabs = tabArray
+    .filter(tab => 
+      tab.tabTitle != null &&
+      tab.url != null &&
+      tab.openInNewTab != null
+    );
+  if(importTabs.length === 0){
+    setMessage("error", "The file you chose does not contain valid tabs.");
+    return
+  }
+  const alreadySavedTabsObj = await getSavedTabsFromStorage();
+  const alreadySavedTabs = alreadySavedTabsObj?.[storageKey] ?? [];
+  // append the newly imported tabs
+  alreadySavedTabs.push(...importTabs);
+  setBrowserStorage(alreadySavedTabs);
+  // reset the table
+  document.querySelector(tabAppendElement).innerHTML = null;
+  // reload the tabs
+  loadTabs();
 }
 
 const importButton = document.querySelector(".import");
-importButton.addEventListener("click", importTabs);
+importButton.addEventListener("change", importTabs);
 
 // Initial check to set the state of the save button
 updateSaveButtonState();
