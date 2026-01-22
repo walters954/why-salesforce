@@ -3,7 +3,7 @@ const storageKey = "sfmWhySF";
 function init(setupTabUl) {
     if (setupTabUl) {
         chrome.storage.sync.get([storageKey], function (items) {
-            let rowObj = items[storageKey] || [];
+            let rowObj = items?.[storageKey] ?? [];
             if (rowObj.length === 0) {
                 //Did not find data inside browser storage
                 rowObj = initTabs();
@@ -88,7 +88,7 @@ function initTabs() {
         },
     ];
 
-    chrome.storage.sync.set({ sfmWhySF: tabs }, function () {
+    chrome.storage.sync.set({ [storageKey]: tabs }, function () {
         //TODO combine with popup.js with background service
     });
     return tabs;

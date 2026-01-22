@@ -10,7 +10,7 @@ function loadTabs() {
     const elements = new Set();
 
     chrome.storage.sync.get([storageKey], function (items) {
-        const rowObj = items[storageKey] || [];
+        const rowObj = items?.[storageKey] ?? [];
         for (const rowId in rowObj) {
             let tab = rowObj[rowId];
             const element = template.content.firstElementChild.cloneNode(true);
@@ -213,6 +213,49 @@ saveButton.addEventListener("click", saveTab);
 
 const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
+
+/**
+ * Initiates a download of a JSON file with the given content and filename.
+ *
+ * @param {Object} message - Message containing the data for download.
+ * @param {string} message.payload - The JSON string content to download.
+ * @param {string} [message.filename="why-salesforce.json"] - The filename for the download.
+ */
+function launchDownload({
+  payload,
+  filename = "why-salesforce.json"
+} = {}) {
+	// Create a Blob & object URL
+	const blob = new Blob([payload], { type: "application/json" });
+	const url = URL.createObjectURL(blob);
+	// Build <a> and "click" it
+	const a = document.createElement("a");
+	a.href = url;
+	a.download = filename;
+	document.body.appendChild(a);
+	a.click();
+	// Cleanup
+	a.remove();
+	URL.revokeObjectURL(url);
+}
+
+/**
+ * Finds all valid Tabs in the popup and saves them as a JSON object to the user's pc
+ */
+function exportTabs(){
+  const validTabs = processTabs();
+  const jsonTabs = JSON.stringify({ tabs: validTabs });
+  launchDownload({ payload: jsonTabs });
+}
+
+const exportButton = document.querySelector(".export");
+exportButton.addEventListener("click", exportTabs);
+
+function importTabs(){
+}
+
+const importButton = document.querySelector(".import");
+importButton.addEventListener("click", importTabs);
 
 // Initial check to set the state of the save button
 updateSaveButtonState();
