@@ -5,25 +5,28 @@ const SUCCESS_MESSAGE = "Your changes were saved successfully";
 const storageKey = "sfmWhySF";
 loadTabs();
 
-function loadTabs() {
+function getSavedTabsFromStorage() {
+    return browser.storage.sync.get([storageKey]);
+}
+
+async function loadTabs() {
     const template = document.getElementById(tabTemplate);
     const elements = new Set();
 
-    browser.storage.sync.get([storageKey], function (items) {
-        const rowObj = items[storageKey] || []; // Default to empty array if not found
-        for (const rowId in rowObj) {
-            let tab = rowObj[rowId];
-            const element = template.content.firstElementChild.cloneNode(true);
-            element.querySelector(".tabTitle").value = tab.tabTitle;
-            element.querySelector(".url").value = tab.url;
-            element.querySelector(".openInNewTab").checked =
-                tab.openInNewTab || false;
-            addRadioListener(element); // Add listener for radio button selection
-            elements.add(element);
-        }
-        document.querySelector(tabAppendElement).append(...elements);
-        updateSaveButtonState();
-    });
+    const items = await getSavedTabsFromStorage();
+    const rowObj = items?.[storageKey] ?? [];
+    for (const rowId in rowObj) {
+        let tab = rowObj[rowId];
+        const element = template.content.firstElementChild.cloneNode(true);
+        element.querySelector(".tabTitle").value = tab.tabTitle;
+        element.querySelector(".url").value = tab.url;
+        element.querySelector(".openInNewTab").checked =
+            tab.openInNewTab || false;
+        addRadioListener(element); // Add listener for radio button selection
+        elements.add(element);
+    }
+    document.querySelector(tabAppendElement).append(...elements);
+    updateSaveButtonState();
 }
 
 function addTab() {
@@ -210,6 +213,90 @@ saveButton.addEventListener("click", saveTab);
 
 const addButton = document.querySelector(".add");
 addButton.addEventListener("click", addTab);
+
+/**
+ * Finds all valid Tabs in the popup and saves them as a JSON object to the user's pc
+ */
+function exportTabs() {
+    const validTabs = processTabs();
+    const jsonTabs = JSON.stringify({ tabs: validTabs });
+    // Create a Blob & object URL
+    const blob = new Blob([jsonTabs], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    // Build <a> and "click" it
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "why-salesforce.json";
+    document.body.appendChild(a);
+    a.click();
+    // Cleanup
+    a.remove();
+    URL.revokeObjectURL(url);
+}
+
+const exportButton = document.querySelector(".export");
+exportButton.addEventListener("click", exportTabs);
+
+/**
+ * Reads and processes JSON files using modern Promise-based API.
+ *
+ * @param {Event} event - The event triggered by the file input
+ * @returns {Promise<void>}
+ */
+async function importTabs(event) {
+    event.preventDefault();
+    const file = event.target.files[0];
+    if (file.type !== "application/json") {
+        setMessage("error", "The file you chose is not supported.");
+        return;
+    }
+    const jsonString = await file.text();
+    let tabArray;
+    try {
+        tabArray = JSON.parse(jsonString)?.tabs ?? [];
+    } catch (e) {
+        setMessage("error", "Invalid JSON file.");
+        return;
+    }
+    // accept only valid tabs
+    const validImportedTabs = tabArray.filter(
+        (tab) =>
+            tab.tabTitle != null && tab.url != null && tab.openInNewTab != null
+    );
+    if (validImportedTabs.length === 0) {
+        setMessage("error", "The file you chose does not contain valid tabs.");
+        return;
+    }
+    const alreadySavedTabsObj = await getSavedTabsFromStorage();
+    const alreadySavedTabs = alreadySavedTabsObj?.[storageKey] ?? [];
+    // filter out tabs that already exist (same tabTitle, url, and openInNewTab)
+    const newTabs = validImportedTabs.filter(
+        (importedTab) =>
+            !alreadySavedTabs.some(
+                (existingTab) =>
+                    existingTab.tabTitle === importedTab.tabTitle &&
+                    existingTab.url === importedTab.url &&
+                    existingTab.openInNewTab === importedTab.openInNewTab
+            )
+    );
+    if (newTabs.length === 0) {
+        setMessage("success", "All tabs already exist. Nothing to import.");
+        event.target.value = "";
+        return;
+    }
+    // append only the new tabs
+    alreadySavedTabs.push(...newTabs);
+    setBrowserStorage(alreadySavedTabs);
+    // reset the table
+    document.querySelector(tabAppendElement).innerHTML = "";
+    // reload the tabs
+    loadTabs();
+    // reset file input so the same file can be imported again
+    event.target.value = "";
+}
+
+const importButton = document.querySelector(".import");
+importButton.addEventListener("change", importTabs);
 
 updateSaveButtonState();
 handleTabMoverButtonVisibility();

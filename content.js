@@ -72,7 +72,7 @@ function initTabs() {
         },
     ];
 
-    browser.storage.sync.set({ sfmWhySF: tabs }, function () {
+    browser.storage.sync.set({ [storageKey]: tabs }, function () {
         //TODO combine with popup.js with background service
     });
     return tabs;
