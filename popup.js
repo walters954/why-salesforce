@@ -132,38 +132,33 @@ function setBrowserStorage(tabs) {
         .then(() => {
             setMessage("success", SUCCESS_MESSAGE);
 
-            // Send message to content script to refresh tabs
+            // Try to send message to content script to refresh tabs
+            // This may fail if not on a Salesforce page, which is fine
             return browser.tabs.query({ active: true, currentWindow: true });
         })
         .then((queryTabs) => {
             if (queryTabs && queryTabs.length > 0 && queryTabs[0].id) {
-                return browser.tabs.sendMessage(queryTabs[0].id, {
-                    action: "refresh_tabs",
-                    tabs: tabs, // Send the updated tabs data
-                });
+                return browser.tabs
+                    .sendMessage(queryTabs[0].id, {
+                        action: "refresh_tabs",
+                        tabs: tabs,
+                    })
+                    .then((response) => {
+                        if (response && response.success) {
+                            console.log("Tab refresh message sent and acknowledged.");
+                        }
+                    })
+                    .catch((err) => {
+                        // This is expected if not on a Salesforce setup page
+                        console.log("Could not refresh tabs (not on Salesforce page):", err.message);
+                    });
             } else {
-                // No active tab found, throw an error or handle appropriately
                 console.log("No active tab found to send refresh message to.");
-                // Optionally return a resolved promise to avoid breaking the chain if this isn't critical
-                return Promise.resolve();
-            }
-        })
-        .then((response) => {
-            // Check if response exists and has success property
-            if (response && response.success) {
-                console.log("Tab refresh message sent and acknowledged.");
-            } else {
-                // Handle cases where response is undefined (e.g., no content script receiver) or unsuccessful
-                console.log(
-                    "Tab refresh message sent, but no/failed response or no receiver."
-                );
             }
         })
         .catch((error) => {
-            console.error(
-                "Error during storage set or message sending:",
-                error
-            );
+            // This only catches storage errors, not message sending errors
+            console.error("Error saving to storage:", error);
             setMessage("error", `Failed to save changes: ${error.message}`);
         });
 }
