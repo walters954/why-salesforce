@@ -239,17 +239,31 @@ exportButton.addEventListener("click", exportTabs);
  * @returns {Promise<void>}
  */
 async function importTabs(event) {
-    event.preventDefault();
+    console.log("[Import] importTabs triggered", event);
+    console.log("[Import] event.target:", event.target);
+    console.log("[Import] event.target.files:", event.target.files);
     const file = event.target.files[0];
+    console.log("[Import] File selected:", file);
+    if (!file) {
+        console.log("[Import] No file selected");
+        return;
+    }
+    console.log("[Import] File type:", file.type, "File name:", file.name);
     if (file.type !== "application/json") {
+        console.log("[Import] File type not supported:", file.type);
         setMessage("error", "The file you chose is not supported.");
         return;
     }
     const jsonString = await file.text();
+    console.log("[Import] JSON string:", jsonString.substring(0, 200));
     let tabArray;
     try {
-        tabArray = JSON.parse(jsonString)?.tabs ?? [];
+        const parsed = JSON.parse(jsonString);
+        console.log("[Import] Parsed JSON:", parsed);
+        tabArray = parsed?.tabs ?? [];
+        console.log("[Import] Tab array:", tabArray);
     } catch (e) {
+        console.error("[Import] JSON parse error:", e);
         setMessage("error", "Invalid JSON file.");
         return;
     }
@@ -258,12 +272,16 @@ async function importTabs(event) {
         (tab) =>
             tab.tabTitle != null && tab.url != null && tab.openInNewTab != null
     );
+    console.log("[Import] Valid imported tabs:", validImportedTabs);
     if (validImportedTabs.length === 0) {
+        console.log("[Import] No valid tabs found in file");
         setMessage("error", "The file you chose does not contain valid tabs.");
         return;
     }
     const alreadySavedTabsObj = await getSavedTabsFromStorage();
+    console.log("[Import] Already saved tabs obj:", alreadySavedTabsObj);
     const alreadySavedTabs = alreadySavedTabsObj?.[storageKey] ?? [];
+    console.log("[Import] Already saved tabs:", alreadySavedTabs);
     // filter out tabs that already exist (same tabTitle, url, and openInNewTab)
     const newTabs = validImportedTabs.filter(
         (importedTab) =>
@@ -274,24 +292,34 @@ async function importTabs(event) {
                     existingTab.openInNewTab === importedTab.openInNewTab
             )
     );
+    console.log("[Import] New tabs to add:", newTabs);
     if (newTabs.length === 0) {
+        console.log("[Import] All tabs already exist");
         setMessage("success", "All tabs already exist. Nothing to import.");
         event.target.value = "";
         return;
     }
     // append only the new tabs
     alreadySavedTabs.push(...newTabs);
+    console.log("[Import] Saving combined tabs:", alreadySavedTabs);
     setBrowserStorage(alreadySavedTabs);
     // reset the table
     document.querySelector(tabAppendElement).innerHTML = "";
     // reload the tabs
+    console.log("[Import] Reloading tabs...");
     loadTabs();
     // reset file input so the same file can be imported again
     event.target.value = "";
 }
 
 const importButton = document.querySelector(".import");
-importButton.addEventListener("change", importTabs);
+console.log("[Init] Import button element:", importButton);
+if (importButton) {
+    importButton.addEventListener("change", importTabs);
+    console.log("[Init] Import event listener attached");
+} else {
+    console.error("[Init] Import button not found!");
+}
 
 updateSaveButtonState();
 handleTabMoverButtonVisibility();
