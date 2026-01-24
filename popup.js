@@ -251,30 +251,38 @@ async function importTabs(event) {
   const file = event.target.files[0];
   if (file.type !== "application/json") {
     setMessage("error", "The file you chose is not supported.");
-    return
+    return;
   }
   const jsonString = await file.text();
-  const tabArray = JSON.parse(jsonString)?.tabs ?? [];
+  let tabArray;
+  try {
+    tabArray = JSON.parse(jsonString)?.tabs ?? [];
+  } catch (e) {
+    setMessage("error", "Invalid JSON file.");
+    return;
+  }
   // accept only valid tabs
-  const importTabs = tabArray
-    .filter(tab => 
+  const validImportedTabs = tabArray
+    .filter(tab =>
       tab.tabTitle != null &&
       tab.url != null &&
       tab.openInNewTab != null
     );
-  if(importTabs.length === 0){
+  if(validImportedTabs.length === 0){
     setMessage("error", "The file you chose does not contain valid tabs.");
-    return
+    return;
   }
   const alreadySavedTabsObj = await getSavedTabsFromStorage();
   const alreadySavedTabs = alreadySavedTabsObj?.[storageKey] ?? [];
   // append the newly imported tabs
-  alreadySavedTabs.push(...importTabs);
+  alreadySavedTabs.push(...validImportedTabs);
   setBrowserStorage(alreadySavedTabs);
   // reset the table
-  document.querySelector(tabAppendElement).innerHTML = null;
+  document.querySelector(tabAppendElement).innerHTML = "";
   // reload the tabs
   loadTabs();
+  // reset file input so the same file can be imported again
+  event.target.value = "";
 }
 
 const importButton = document.querySelector(".import");
