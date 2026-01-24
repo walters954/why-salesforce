@@ -274,8 +274,21 @@ async function importTabs(event) {
   }
   const alreadySavedTabsObj = await getSavedTabsFromStorage();
   const alreadySavedTabs = alreadySavedTabsObj?.[storageKey] ?? [];
-  // append the newly imported tabs
-  alreadySavedTabs.push(...validImportedTabs);
+  // filter out tabs that already exist (same tabTitle, url, and openInNewTab)
+  const newTabs = validImportedTabs.filter(importedTab =>
+    !alreadySavedTabs.some(existingTab =>
+      existingTab.tabTitle === importedTab.tabTitle &&
+      existingTab.url === importedTab.url &&
+      existingTab.openInNewTab === importedTab.openInNewTab
+    )
+  );
+  if (newTabs.length === 0) {
+    setMessage("success", "All tabs already exist. Nothing to import.");
+    event.target.value = "";
+    return;
+  }
+  // append only the new tabs
+  alreadySavedTabs.push(...newTabs);
   setBrowserStorage(alreadySavedTabs);
   // reset the table
   document.querySelector(tabAppendElement).innerHTML = "";
